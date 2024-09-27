@@ -18,15 +18,14 @@ endif
 
 #================================ TARGET NAMES ================================#
 CLANG_FILE = ../materials/linters/.clang-format
-PARSER = main
 TEST = test_laucnher
 #==============================================================================#
 
 #=============================== DIRECTORY NAMES ==============================#
 BUILD_DIR = build
 PARSER_DIR = parser
-TRANSFORM_DIR = transformations
-COMMON_DIR = common
+CONTROLLER_DIR = controller
+FIGURE_DIR = figure
 TEST_DIR = tests
 DVI_DIR = docs
 DIST_DIR = distribution
@@ -35,8 +34,6 @@ QTGRAPHICS = graphics
 #==============================================================================#
 
 #====================== LIST OF FILE AND DIRS IN MODULES ======================#
-SOURCE_PARSER = $(wildcard $(PARSER_DIR)/*.c)
-SOURCE_TRANSFORM= $(wildcard $(TRANSFORM_DIR)/*.c)
 SOURCE_TEST = $(wildcard $(TEST_DIR)/*.cpp)
 #==============================================================================#
 
@@ -70,7 +67,7 @@ tests: clean
 	@rm -rf $(TEST)
 
 gcov_report: clean
-	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS) --coverage
+	$(CPP) $(CPPFLAGS) $(SOURCE_TEST) -o $(TEST) $(GFLAGS) --coverage
 	@./$(TEST)
 	@lcov -t "tests" -o tests.info -c -d . -rc lcov_branch_coverage=1 --exclude "$(PWD)/tests/*" --exclude "$(PWD)/QtGifImage/*"
 	@genhtml -o report tests.info -rc lcov_branch_coverage=1
@@ -78,21 +75,21 @@ gcov_report: clean
 
 format:
 	@cp $(CLANG_FILE) .
-	@find . -name '*.c' -o -name '*.h' -o -name '*.cpp' -o -name '*.hpp' 2>/dev/null | xargs -r clang-format -i
+	@find . -name '*.cpp' -o -name '*.hpp' -o -name '*.tpp' -o -name '*.h' 2>/dev/null | xargs -r clang-format -i
 	@rm .clang-format
 	@echo "formatting..."
 
 format_check:
 	@cp $(CLANG_FILE) .
-	@find . -name '*.c' -o -name '*.h' -o -name '*.cpp' -o -name '*.hpp' 2>/dev/null | xargs -r clang-format -n
+	@find . -name '*.cpp' -o -name '*.hpp' -o -name '*.tpp' -o -name '*.h' 2>/dev/null | xargs -r clang-format -n
 	@rm .clang-format
 	@echo "checking format..."
 
 cppcheck:
-	cppcheck --enable=all --suppress=missingIncludeSystem $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/* $(TEST_DIR)/* $(QTMAIN)/* $(QTGRAPHICS)/* ./*cpp ./*h
+	cppcheck --enable=all --suppress=missingIncludeSystem $(PARSER_DIR)/* $(CONTROLLER_DIR)/* $(FIGURE_DIR)/* $(TEST_DIR)/* $(QTMAIN)/* $(QTGRAPHICS)/* ./*cpp ./*h
 
 valgrind_tests: clean
-	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS)
+	$(CPP) $(CPPFLAGS) $(SOURCE_TEST) -o $(TEST) $(GFLAGS)
 	@echo "\nstarting valgrind on tests...\n"
 	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(TEST)
 	@cat valgrind_out.txt
@@ -101,7 +98,7 @@ valgrind_tests: clean
 rebuild: uninstall install
 
 clean:
-	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist a.out $(BUILD_DIR) $(DVI_DIR) $(DIST_DIR)
+	@rm -rf *.gcno *.gcda *.info report $(TEST) *.dSYM dist a.out $(BUILD_DIR) $(DVI_DIR) $(DIST_DIR)
 	@echo "cleaning...\n"
 
 dvi:
