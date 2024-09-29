@@ -7,9 +7,8 @@
 #include <QWheelEvent>
 #include <QtOpenGL>
 
-extern "C" {
-#include "../common/common.h"
-}
+
+#include "../controller/worker.hpp"
 
 #define CENTRAL_PR 0
 #define PARALLEL_PR 1
@@ -19,11 +18,13 @@ extern "C" {
 #define ROUND 1
 #define SQUARE 2
 
+class RenderStrategy;
+
 class Viewer : public QOpenGLWidget {
   Q_OBJECT
 
  public:
-  Figure *new_data;
+  RenderStrategy* render_strategy = NULL;
   double curr_scale = 1;
 
   Viewer(QWidget *parent = nullptr);
@@ -32,6 +33,7 @@ class Viewer : public QOpenGLWidget {
   void update_alpha(int valueX, int valueY);
   void update_move_vector(int valueX, int valueY);
   void update_scale(int value);
+  void setRenderStrategy(RenderStrategy* strategy);
 
   double vertex_r = 0, vertex_g = 0, vertex_b = 1;
   double polygon_r = 0, polygon_g = 1, polygon_b = 0;
@@ -53,5 +55,8 @@ class Viewer : public QOpenGLWidget {
   QPoint new_pos;
   QString start_file = QString("./obj_files/3dviewer.obj");
   double move_coef;
+
+  Worker *w;
 };
+
 #endif  // VIEWER_H
