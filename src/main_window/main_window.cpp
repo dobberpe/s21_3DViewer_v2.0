@@ -1,5 +1,4 @@
 #include "main_window.h"
-#include "command.h"
 
 using namespace s21;
 
@@ -40,16 +39,22 @@ void main_window::rotation_setup() {
   rotationXSlider->setRange(-180, 180);
   connect(rotationXSlider, &QSlider::valueChanged, this,
           &main_window::on_rotationXSlider_valueChanged);
+  connect(rotationXSlider, &QSlider::sliderReleased, this,
+          &main_window::on_rotationXSlider_sliderReleased);
 
   rotationYSlider = new QSlider(Qt::Horizontal);
   rotationYSlider->setRange(-180, 180);
   connect(rotationYSlider, &QSlider::valueChanged, this,
           &main_window::on_rotationYSlider_valueChanged);
+  connect(rotationYSlider, &QSlider::sliderReleased, this,
+          &main_window::on_rotationYSlider_sliderReleased);
 
   rotationZSlider = new QSlider(Qt::Horizontal);
   rotationZSlider->setRange(-180, 180);
   connect(rotationZSlider, &QSlider::valueChanged, this,
           &main_window::on_rotationZSlider_valueChanged);
+  connect(rotationZSlider, &QSlider::sliderReleased, this,
+          &main_window::on_rotationZSlider_sliderReleased);
 
   rotationXSpinBox = new QSpinBox;
   rotationXSpinBox->setRange(-180, 180);
@@ -72,16 +77,22 @@ void main_window::move_setup() {
   moveXSlider->setRange(-180, 180);
   connect(moveXSlider, &QSlider::valueChanged, this,
           &main_window::on_moveXSlider_valueChanged);
+  connect(moveXSlider, &QSlider::sliderReleased, this,
+          &main_window::on_moveXSlider_sliderReleased);
 
   moveYSlider = new QSlider(Qt::Horizontal);
   moveYSlider->setRange(-180, 180);
   connect(moveYSlider, &QSlider::valueChanged, this,
           &main_window::on_moveYSlider_valueChanged);
+  connect(moveYSlider, &QSlider::sliderReleased, this,
+          &main_window::on_moveYSlider_sliderReleased);
 
   moveZSlider = new QSlider(Qt::Horizontal);
   moveZSlider->setRange(-180, 180);
   connect(moveZSlider, &QSlider::valueChanged, this,
           &main_window::on_moveZSlider_valueChanged);
+  connect(moveZSlider, &QSlider::sliderReleased, this,
+          &main_window::on_moveZSlider_sliderReleased);
 
   moveXSpinBox = new QSpinBox;
   moveXSpinBox->setRange(-10000, 10000);
@@ -104,6 +115,8 @@ void main_window::scale_setup() {
   scaleSlider->setRange(-180, 180);
   connect(scaleSlider, &QSlider::valueChanged, this,
           &main_window::on_scaleSlider_valueChanged);
+  connect(scaleSlider, &QSlider::sliderReleased, this,
+          &main_window::on_scaleSlider_sliderReleased);
 
   increaseScaleButton = new QPushButton("+");
   increaseScaleButton->setFixedSize(QSize(20, 20));
@@ -133,11 +146,15 @@ void main_window::appearance_setup() {
   vertexSizeSlider->setRange(1, 20);
   connect(vertexSizeSlider, &QSlider::valueChanged, this,
           &main_window::on_vertexSizeSlider_valueChanged);
+  connect(vertexSizeSlider, &QSlider::sliderReleased, this,
+          &main_window::on_vertexSizeSlider_sliderReleased);
 
   edgesWidthSlider = new QSlider(Qt::Horizontal);
   edgesWidthSlider->setRange(1, 20);
   connect(edgesWidthSlider, &QSlider::valueChanged, this,
           &main_window::on_edgesWidthSlider_valueChanged);
+  connect(edgesWidthSlider, &QSlider::sliderReleased, this,
+          &main_window::on_edgesWidthSlider_sliderReleased);
 
   projectionTypeComboBox = new QComboBox;
   projectionTypeComboBox->addItem("Центральная");
@@ -226,96 +243,221 @@ void main_window::on_loadButton_clicked() {
 }
 
 void main_window::on_rotationXSlider_valueChanged(int value) {
-  if (rotationXSpinBox->value() != value) rotationXSpinBox->setValue(value);
+  if (!updateFromSpinBox) {
+      updateFromSlider = true;
+      rotationXSpinBox->setValue(value);
+      updateFromSlider = false;
+  }
 }
 
 void main_window::on_rotationYSlider_valueChanged(int value) {
-  if (rotationYSpinBox->value() != value) rotationYSpinBox->setValue(value);
+  if (!updateFromSpinBox) {
+      updateFromSlider = true;
+      rotationYSpinBox->setValue(value);
+      updateFromSlider = false;
+  }
 }
 
 void main_window::on_rotationZSlider_valueChanged(int value) {
-  if (rotationZSpinBox->value() != value) rotationZSpinBox->setValue(value);
+  if (!updateFromSpinBox) {
+      updateFromSlider = true;
+      rotationZSpinBox->setValue(value);
+      updateFromSlider = false;
+  }
+}
+
+void main_window::on_rotationXSlider_sliderReleased() {
+    if (lastCommand) CommandManager::get_CommandManager()->executeCommand(new RotateCommand(*(dynamic_cast<RotateCommand*>(firstCommand)), *(dynamic_cast<RotateCommand*>(lastCommand))));
+    delete firstCommand;
+    firstCommand = nullptr;
+    if (lastCommand) delete lastCommand;
+    lastCommand = nullptr;
+    qDebug() << "release";
+}
+
+void main_window::on_rotationYSlider_sliderReleased() {
+    if (lastCommand) CommandManager::get_CommandManager()->executeCommand(new RotateCommand(*(dynamic_cast<RotateCommand*>(firstCommand)), *(dynamic_cast<RotateCommand*>(lastCommand))));
+    delete firstCommand;
+    firstCommand = nullptr;
+    if (lastCommand) delete lastCommand;
+    lastCommand = nullptr;
+    qDebug() << "release";
+}
+
+void main_window::on_rotationZSlider_sliderReleased() {
+    if (lastCommand) CommandManager::get_CommandManager()->executeCommand(new RotateCommand(*(dynamic_cast<RotateCommand*>(firstCommand)), *(dynamic_cast<RotateCommand*>(lastCommand))));
+    delete firstCommand;
+    firstCommand = nullptr;
+    if (lastCommand) delete lastCommand;
+    lastCommand = nullptr;
+    qDebug() << "release";
 }
 
 void main_window::on_rotationXSpinBox_valueChanged(int value) {
-  CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, value - curr_rotateX, 0, 0));
-  curr_rotateX = value;
-  if (rotationXSlider->value() != value) rotationXSlider->setValue(value);
+    if (updateFromSlider) {
+        if (lastCommand) delete lastCommand;
+        lastCommand = new RotateCommand(v, value - curr_rotateX, 0, 0);
+        lastCommand->execute();
+        if (!firstCommand) firstCommand = lastCommand;
+        qDebug() << "from slider";
+    } else {
+        CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, value - curr_rotateX, 0, 0));
+        updateFromSpinBox = true;
+        rotationXSlider->setValue(value);
+        updateFromSpinBox = false;
+        qDebug() << "from spinbox";
+    }
+    curr_rotateX = value;
 }
 
 void main_window::on_rotationYSpinBox_valueChanged(int value) {
-  CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, 0, value - curr_rotateY, 0));
-  curr_rotateY = value;
-  if (rotationYSlider->value() != value) rotationYSlider->setValue(value);
+    if (updateFromSlider) {
+        if (lastCommand) delete lastCommand;
+        lastCommand = new RotateCommand(v, 0, value - curr_rotateY, 0);
+        lastCommand->execute();
+        if (!firstCommand) firstCommand = lastCommand;
+        qDebug() << "from slider";
+    } else {
+        CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, 0, value - curr_rotateY, 0));
+        updateFromSpinBox = true;
+        rotationYSlider->setValue(value);
+        updateFromSpinBox = false;
+        qDebug() << "from spinbox";
+    }
+    curr_rotateY = value;
 }
 
 void main_window::on_rotationZSpinBox_valueChanged(int value) {
-  CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, 0, 0, value - curr_rotateZ));
-  curr_rotateZ = value;
-  if (rotationZSlider->value() != value) rotationZSlider->setValue(value);
+    if (updateFromSlider) {
+        if (lastCommand) delete lastCommand;
+        lastCommand = new RotateCommand(v, 0, 0, value - curr_rotateZ);
+        lastCommand->execute();
+        if (!firstCommand) firstCommand = lastCommand;
+        qDebug() << "from slider";
+    } else {
+        CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, 0, 0, value - curr_rotateZ));
+        updateFromSpinBox = true;
+        rotationZSlider->setValue(value);
+        updateFromSpinBox = false;
+        qDebug() << "from spinbox";
+    }
+    curr_rotateZ = value;
 }
 
 void main_window::on_moveXSlider_valueChanged(int value) {
-  if (moveXSpinBox->value() != value) moveXSpinBox->setValue(value);
+  if (!updateFromSpinBox) {
+    updateFromSlider = true;
+    moveXSpinBox->setValue(value);
+    updateFromSlider = false;
+  }
 }
 
 void main_window::on_moveYSlider_valueChanged(int value) {
-  if (moveYSpinBox->value() != value) moveYSpinBox->setValue(value);
+  if (!updateFromSpinBox) {
+    updateFromSlider = true;
+    moveYSpinBox->setValue(value);
+    updateFromSlider = false;
+  }
 }
 
 void main_window::on_moveZSlider_valueChanged(int value) {
-  if (moveZSpinBox->value() != value) moveZSpinBox->setValue(value);
+  if (!updateFromSpinBox) {
+    updateFromSlider = true;
+    moveZSpinBox->setValue(value);
+    updateFromSlider = false;
+  }
+}
+
+void main_window::on_moveXSlider_sliderReleased() {
+    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(*(dynamic_cast<MoveCommand*>(firstCommand)), *(dynamic_cast<MoveCommand*>(lastCommand))));
+    delete firstCommand;
+    firstCommand = nullptr;
+    if (lastCommand) delete lastCommand;
+    lastCommand = nullptr;
+}
+
+void main_window::on_moveYSlider_sliderReleased() {
+    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(*(dynamic_cast<MoveCommand*>(firstCommand)), *(dynamic_cast<MoveCommand*>(lastCommand))));
+    delete firstCommand;
+    firstCommand = nullptr;
+    if (lastCommand) delete lastCommand;
+    lastCommand = nullptr;
+}
+
+void main_window::on_moveZSlider_sliderReleased() {
+    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(*(dynamic_cast<MoveCommand*>(firstCommand)), *(dynamic_cast<MoveCommand*>(lastCommand))));
+    delete firstCommand;
+    firstCommand = nullptr;
+    if (lastCommand) delete lastCommand;
+    lastCommand = nullptr;
 }
 
 void main_window::on_moveXSpinBox_valueChanged(int value) {
-  if ((value != -180 || moveXSlider->value() != -180) &&
-      (value != 180 || moveXSlider->value() != 180)) {
-    if (value < -180) {
-      if (moveXSlider->value() != -180) moveXSlider->setValue(-180);
-    } else if (value > 180) {
-      if (moveXSlider->value() != 180) moveXSlider->setValue(180);
-    } else if (moveXSlider->value() != value)
-      moveXSlider->setValue(value);
-    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, value - curr_moveX, 0, 0));
+    if (updateFromSlider) {
+        if (lastCommand) delete lastCommand;
+        lastCommand = new MoveCommand(v, value - curr_moveX, 0, 0);
+        lastCommand->execute();
+        if (!firstCommand) firstCommand = lastCommand;
+    } else {
+        CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, value - curr_moveX, 0, 0));
+        if (value >= -180 && value <= 180) {
+            updateFromSpinBox = true;
+            moveXSlider->setValue(value);
+            updateFromSpinBox = false;
+        }
+    }
     curr_moveX = value;
-  } else
-    moveXSpinBox->setValue(curr_moveX);
 }
 
 void main_window::on_moveYSpinBox_valueChanged(int value) {
-  if ((value != -180 || moveYSlider->value() != -180) &&
-      (value != 180 || moveYSlider->value() != 180)) {
-    if (value < -180) {
-      if (moveYSlider->value() != -180) moveYSlider->setValue(-180);
-    } else if (value > 180) {
-      if (moveYSlider->value() != 180) moveYSlider->setValue(180);
-    } else if (moveYSlider->value() != value)
-      moveYSlider->setValue(value);
-    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, 0, value - curr_moveY, 0));
+    if (updateFromSlider) {
+        if (lastCommand) delete lastCommand;
+        lastCommand = new MoveCommand(v, 0, value - curr_moveY, 0);
+        lastCommand->execute();
+        if (!firstCommand) firstCommand = lastCommand;
+    } else {
+        CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, 0, value - curr_moveY, 0));
+        if (value >= -180 && value <= 180) {
+            updateFromSpinBox = true;
+            moveYSlider->setValue(value);
+            updateFromSpinBox = false;
+        }
+    }
     curr_moveY = value;
-  } else
-    moveYSpinBox->setValue(curr_moveY);
 }
 
 void main_window::on_moveZSpinBox_valueChanged(int value) {
-  if ((value != -180 || moveZSlider->value() != -180) &&
-      (value != 180 || moveZSlider->value() != 180)) {
-    if (value < -180) {
-      if (moveZSlider->value() != -180) moveZSlider->setValue(-180);
-    } else if (value > 180) {
-      if (moveZSlider->value() != 180) moveZSlider->setValue(180);
-    } else if (moveZSlider->value() != value)
-      moveZSlider->setValue(value);
-    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, 0, 0, value - curr_moveZ));
+    if (updateFromSlider) {
+        if (lastCommand) delete lastCommand;
+        lastCommand = new MoveCommand(v, 0, 0, value - curr_moveZ);
+        lastCommand->execute();
+        if (!firstCommand) firstCommand = lastCommand;
+    } else {
+        CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, 0, 0, value - curr_moveZ));
+        if (value >= -180 && value <= 180) {
+            updateFromSpinBox = true;
+            moveZSlider->setValue(value);
+            updateFromSpinBox = false;
+        }
+    }
     curr_moveZ = value;
-  } else
-    moveZSpinBox->setValue(curr_moveZ);
 }
 
 void main_window::on_scaleSlider_valueChanged(int value) {
   int scale = value - curr_scale;
-  CommandManager::get_CommandManager()->executeCommand(new ScaleCommand(v, v->curr_scale * pow(scale > 0 ? 1.001 : 0.999, abs(scale))));
+  if (lastCommand) delete lastCommand;
+  lastCommand = new ScaleCommand(v, v->curr_scale * pow(scale > 0 ? 1.001 : 0.999, abs(scale)));
+  lastCommand->execute();
+  if (!firstCommand) firstCommand = lastCommand;
   curr_scale = value;
+}
+
+void main_window::on_scaleSlider_sliderReleased() {
+  CommandManager::get_CommandManager()->executeCommand(new ScaleCommand(*(dynamic_cast<ScaleCommand*>(firstCommand)), *(dynamic_cast<ScaleCommand*>(lastCommand))));
+    delete firstCommand;
+    firstCommand = nullptr;
+    if (lastCommand) delete lastCommand;
+    lastCommand = nullptr;
 }
 
 void main_window::on_increaseScaleButton_clicked() {
@@ -345,11 +487,33 @@ void main_window::on_edgesColorButton_clicked() {
 }
 
 void main_window::on_vertexSizeSlider_valueChanged(int value) {
-  CommandManager::get_CommandManager()->executeCommand(new VertexSizeCommand(v, value));
+  if (lastCommand) delete lastCommand;
+  lastCommand = new VertexSizeCommand(v, value);
+  lastCommand->execute();
+  if (!firstCommand) firstCommand = lastCommand;
 }
 
 void main_window::on_edgesWidthSlider_valueChanged(int value) {
-  CommandManager::get_CommandManager()->executeCommand(new LineWidthCommand(v, value));
+  if (lastCommand) delete lastCommand;
+  lastCommand = new LineWidthCommand(v, value);
+  lastCommand->execute();
+  if (!firstCommand) firstCommand = lastCommand;
+}
+
+void main_window::on_vertexSizeSlider_sliderReleased() {
+    CommandManager::get_CommandManager()->executeCommand(new VertexSizeCommand(*(dynamic_cast<VertexSizeCommand*>(firstCommand)), *(dynamic_cast<VertexSizeCommand*>(lastCommand))));
+    delete firstCommand;
+    firstCommand = nullptr;
+    if (lastCommand) delete lastCommand;
+    lastCommand = nullptr;
+}
+
+void main_window::on_edgesWidthSlider_sliderReleased() {
+    CommandManager::get_CommandManager()->executeCommand(new LineWidthCommand(*(dynamic_cast<LineWidthCommand*>(firstCommand)), *(dynamic_cast<LineWidthCommand*>(lastCommand))));
+    delete firstCommand;
+    firstCommand = nullptr;
+    if (lastCommand) delete lastCommand;
+    lastCommand = nullptr;
 }
 
 void main_window::on_projectionTypeComboBox_indexChanged(int index) {

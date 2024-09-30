@@ -16,6 +16,7 @@
 #include <QVBoxLayout>
 
 #include "graphics/graphics.h"
+#include "command.h"
 
 #define ROTATE true
 #define MOVE false
@@ -33,16 +34,23 @@ namespace s21 {
         void on_rotationXSlider_valueChanged(int value);
         void on_rotationYSlider_valueChanged(int value);
         void on_rotationZSlider_valueChanged(int value);
+        void on_rotationXSlider_sliderReleased();
+        void on_rotationYSlider_sliderReleased();
+        void on_rotationZSlider_sliderReleased();
         void on_rotationXSpinBox_valueChanged(int value);
         void on_rotationYSpinBox_valueChanged(int value);
         void on_rotationZSpinBox_valueChanged(int value);
         void on_moveXSlider_valueChanged(int value);
         void on_moveYSlider_valueChanged(int value);
         void on_moveZSlider_valueChanged(int value);
+        void on_moveXSlider_sliderReleased();
+        void on_moveYSlider_sliderReleased();
+        void on_moveZSlider_sliderReleased();
         void on_moveXSpinBox_valueChanged(int value);
         void on_moveYSpinBox_valueChanged(int value);
         void on_moveZSpinBox_valueChanged(int value);
         void on_scaleSlider_valueChanged(int value);
+        void on_scaleSlider_sliderReleased();
         void on_increaseScaleButton_clicked();
         void on_decreaseScaleButton_clicked();
         void on_backgroundColorButton_clicked();
@@ -50,6 +58,8 @@ namespace s21 {
         void on_edgesColorButton_clicked();
         void on_vertexSizeSlider_valueChanged(int value);
         void on_edgesWidthSlider_valueChanged(int value);
+        void on_vertexSizeSlider_sliderReleased();
+        void on_edgesWidthSlider_sliderReleased();
         void on_projectionTypeComboBox_indexChanged(int index);
         void on_vertexTypeComboBox_indexChanged(int index);
         void on_edgesTypeComboBox_indexChanged(int index);
@@ -76,6 +86,11 @@ namespace s21 {
         void setupFileInfo(QVBoxLayout *rightColumnLayout);
 
         Viewer *v;
+
+        bool updateFromSlider = false;
+        bool updateFromSpinBox = false;
+        ICommand* firstCommand = nullptr;
+        ICommand* lastCommand = nullptr;
 
         QPushButton *loadButton;
         QSlider *rotationXSlider;

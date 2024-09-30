@@ -13,14 +13,15 @@ namespace s21 {
     class ICommand {
     public:
         virtual ~ICommand();
-        virtual void execute() = 0;
+        virtual bool execute() = 0;
         virtual void undo() = 0;
     };
 
     class RotateCommand : public ICommand {
     public:
         RotateCommand(Viewer* v_, double x_, double y_, double z_);
-        void execute() override;
+        RotateCommand(const RotateCommand& first, const RotateCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
@@ -31,7 +32,8 @@ namespace s21 {
     class MoveCommand : public ICommand {
     public:
         MoveCommand(Viewer* v_, double x_, double y_, double z_);
-        void execute() override;
+        MoveCommand(const MoveCommand& first, const MoveCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
@@ -42,7 +44,8 @@ namespace s21 {
     class ScaleCommand : public ICommand {
     public:
         ScaleCommand(Viewer* v_, double s);
-        void execute() override;
+        ScaleCommand(const ScaleCommand& first, const ScaleCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
@@ -53,7 +56,8 @@ namespace s21 {
     class BgColorCommand : public ICommand {
     public:
         BgColorCommand(Viewer* v_, double r_, double g_, double b_);
-        void execute() override;
+        BgColorCommand(const BgColorCommand& first, const BgColorCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
@@ -64,7 +68,8 @@ namespace s21 {
     class VertexColorCommand : public ICommand {
     public:
         VertexColorCommand(Viewer* v_, double r_, double g_, double b_);
-        void execute() override;
+        VertexColorCommand(const VertexColorCommand& first, const VertexColorCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
@@ -75,7 +80,8 @@ namespace s21 {
     class PolygonColorCommand : public ICommand {
     public:
         PolygonColorCommand(Viewer* v_, double r_, double g_, double b_);
-        void execute() override;
+        PolygonColorCommand(const PolygonColorCommand& first, const PolygonColorCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
@@ -86,7 +92,8 @@ namespace s21 {
     class VertexSizeCommand : public ICommand {
     public:
         VertexSizeCommand(Viewer* v_, double s);
-        void execute() override;
+        VertexSizeCommand(const VertexSizeCommand& first, const VertexSizeCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
@@ -97,7 +104,8 @@ namespace s21 {
     class LineWidthCommand : public ICommand {
     public:
         LineWidthCommand(Viewer* v_, double s);
-        void execute() override;
+        LineWidthCommand(const LineWidthCommand& first, const LineWidthCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
@@ -108,7 +116,8 @@ namespace s21 {
     class ProjectionTypeCommand : public ICommand {
     public:
         ProjectionTypeCommand(Viewer* v_, int t);
-        void execute() override;
+        ProjectionTypeCommand(const ProjectionTypeCommand& first, const ProjectionTypeCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
@@ -119,7 +128,8 @@ namespace s21 {
     class VertexTypeCommand : public ICommand {
     public:
         VertexTypeCommand(Viewer* v_, int t);
-        void execute() override;
+        VertexTypeCommand(const VertexTypeCommand& first, const VertexTypeCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
@@ -130,7 +140,8 @@ namespace s21 {
     class LineTypeCommand : public ICommand {
     public:
         LineTypeCommand(Viewer* v_, int t);
-        void execute() override;
+        LineTypeCommand(const LineTypeCommand& first, const LineTypeCommand& last);
+        bool execute() override;
         void undo() override;
     private:
         Viewer* v;
