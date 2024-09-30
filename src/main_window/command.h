@@ -44,19 +44,18 @@ namespace s21 {
     class ScaleCommand : public ICommand {
     public:
         ScaleCommand(Viewer* v_, double s);
-        ScaleCommand(const ScaleCommand& first, const ScaleCommand& last);
+        ScaleCommand(const ScaleCommand& prev, const ScaleCommand& curr);
         bool execute() override;
         void undo() override;
+        double get_scale() const;
     private:
         Viewer* v;
         double scale;
-        double prev_scale;
     };
 
     class BgColorCommand : public ICommand {
     public:
         BgColorCommand(Viewer* v_, double r_, double g_, double b_);
-        BgColorCommand(const BgColorCommand& first, const BgColorCommand& last);
         bool execute() override;
         void undo() override;
     private:
@@ -68,7 +67,6 @@ namespace s21 {
     class VertexColorCommand : public ICommand {
     public:
         VertexColorCommand(Viewer* v_, double r_, double g_, double b_);
-        VertexColorCommand(const VertexColorCommand& first, const VertexColorCommand& last);
         bool execute() override;
         void undo() override;
     private:
@@ -80,7 +78,6 @@ namespace s21 {
     class PolygonColorCommand : public ICommand {
     public:
         PolygonColorCommand(Viewer* v_, double r_, double g_, double b_);
-        PolygonColorCommand(const PolygonColorCommand& first, const PolygonColorCommand& last);
         bool execute() override;
         void undo() override;
     private:
@@ -95,6 +92,7 @@ namespace s21 {
         VertexSizeCommand(const VertexSizeCommand& first, const VertexSizeCommand& last);
         bool execute() override;
         void undo() override;
+        double get_prev() const;
     private:
         Viewer* v;
         double size;
@@ -107,6 +105,7 @@ namespace s21 {
         LineWidthCommand(const LineWidthCommand& first, const LineWidthCommand& last);
         bool execute() override;
         void undo() override;
+        double get_prev() const;
     private:
         Viewer* v;
         double size;
@@ -116,9 +115,9 @@ namespace s21 {
     class ProjectionTypeCommand : public ICommand {
     public:
         ProjectionTypeCommand(Viewer* v_, int t);
-        ProjectionTypeCommand(const ProjectionTypeCommand& first, const ProjectionTypeCommand& last);
         bool execute() override;
         void undo() override;
+        int get_type() const;
     private:
         Viewer* v;
         int type;
@@ -128,9 +127,9 @@ namespace s21 {
     class VertexTypeCommand : public ICommand {
     public:
         VertexTypeCommand(Viewer* v_, int t);
-        VertexTypeCommand(const VertexTypeCommand& first, const VertexTypeCommand& last);
         bool execute() override;
         void undo() override;
+        int get_type() const;
     private:
         Viewer* v;
         int type;
@@ -140,9 +139,9 @@ namespace s21 {
     class LineTypeCommand : public ICommand {
     public:
         LineTypeCommand(Viewer* v_, int t);
-        LineTypeCommand(const LineTypeCommand& first, const LineTypeCommand& last);
         bool execute() override;
         void undo() override;
+        int get_type() const;
     private:
         Viewer* v;
         int type;

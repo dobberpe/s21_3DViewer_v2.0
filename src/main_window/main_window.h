@@ -34,23 +34,17 @@ namespace s21 {
         void on_rotationXSlider_valueChanged(int value);
         void on_rotationYSlider_valueChanged(int value);
         void on_rotationZSlider_valueChanged(int value);
-        void on_rotationXSlider_sliderReleased();
-        void on_rotationYSlider_sliderReleased();
-        void on_rotationZSlider_sliderReleased();
         void on_rotationXSpinBox_valueChanged(int value);
         void on_rotationYSpinBox_valueChanged(int value);
         void on_rotationZSpinBox_valueChanged(int value);
         void on_moveXSlider_valueChanged(int value);
         void on_moveYSlider_valueChanged(int value);
         void on_moveZSlider_valueChanged(int value);
-        void on_moveXSlider_sliderReleased();
-        void on_moveYSlider_sliderReleased();
-        void on_moveZSlider_sliderReleased();
         void on_moveXSpinBox_valueChanged(int value);
         void on_moveYSpinBox_valueChanged(int value);
         void on_moveZSpinBox_valueChanged(int value);
         void on_scaleSlider_valueChanged(int value);
-        void on_scaleSlider_sliderReleased();
+        void on_transformSlider_sliderReleased();
         void on_increaseScaleButton_clicked();
         void on_decreaseScaleButton_clicked();
         void on_backgroundColorButton_clicked();
@@ -84,6 +78,9 @@ namespace s21 {
         void setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate);
         void setupSettings(QVBoxLayout *rightColumnLayout);
         void setupFileInfo(QVBoxLayout *rightColumnLayout);
+        void sliderSetValueMuted(QSlider *slider, int value);
+        void spinBoxSetValueMuted(QSpinBox *spinBox, int value);
+        void comboBoxSetValueMuted(QComboBox *comboBox, int value);
 
         Viewer *v;
 
@@ -135,9 +132,7 @@ namespace s21 {
         int curr_rotateX = 0;
         int curr_rotateY = 0;
         int curr_rotateZ = 0;
-
         int curr_scale = 0;
-    signals:
     };
 }
 

@@ -74,21 +74,18 @@ void MoveCommand::undo() {
 
 tuple<double, double, double> MoveCommand::get_shift() const { return make_tuple(x, y, z); }
 
-ScaleCommand::ScaleCommand(Viewer *v_, double s) : v(v_), scale(s), prev_scale(v_->curr_scale) {}
+ScaleCommand::ScaleCommand(Viewer *v_, double s) : v(v_), scale(s) {}
 
-ScaleCommand::ScaleCommand(const ScaleCommand &first, const ScaleCommand &last) {
-    if (first.v == last.v) {
-        v = first.v;
-        prev_scale = first.prev_scale;
-        scale = last.scale;
-    } else throw exception();
+ScaleCommand::ScaleCommand(const ScaleCommand &prev, const ScaleCommand &curr) {
+    v = prev.v;
+    scale = prev.scale + curr.scale;
 }
 
 bool ScaleCommand::execute() {
     bool res = false;
 
-    if (scale != prev_scale) {
-        v->curr_scale = scale;
+    if (scale != 0) {
+        v->curr_scale *= pow(scale > 0 ? 1.001 : 0.999, abs(scale));
         scale_figure(v->new_data, v->curr_scale);
         v->update();
         res = true;
@@ -98,24 +95,14 @@ bool ScaleCommand::execute() {
 }
 
 void ScaleCommand::undo() {
-    v->curr_scale = prev_scale;
+    v->curr_scale /= pow(scale > 0 ? 1.001 : 0.999, abs(scale));
     scale_figure(v->new_data, v->curr_scale);
     v->update();
 }
 
-BgColorCommand::BgColorCommand(Viewer *v_, double r_, double g_, double b_) : v(v_), r(r_), g(g_), b(b_), prev_r(v_->bg_r), prev_g(v_->bg_g), prev_b(v_->bg_b) {}
+double ScaleCommand::get_scale() const { return scale; }
 
-BgColorCommand::BgColorCommand(const BgColorCommand &first, const BgColorCommand &last) {
-    if (first.v == last.v) {
-        v = first.v;
-        prev_r = first.prev_r;
-        prev_g = first.prev_g;
-        prev_b = first.prev_b;
-        r = last.r;
-        g = last.g;
-        b = last.b;
-    } else throw exception();
-}
+BgColorCommand::BgColorCommand(Viewer *v_, double r_, double g_, double b_) : v(v_), r(r_), g(g_), b(b_), prev_r(v_->bg_r), prev_g(v_->bg_g), prev_b(v_->bg_b) {}
 
 bool BgColorCommand::execute() {
     bool res = false;
@@ -140,18 +127,6 @@ void BgColorCommand::undo() {
 
 VertexColorCommand::VertexColorCommand(Viewer *v_, double r_, double g_, double b_) : v(v_), r(r_), g(g_), b(b_), prev_r(v_->vertex_r), prev_g(v_->vertex_g), prev_b(v_->vertex_b) {}
 
-VertexColorCommand::VertexColorCommand(const VertexColorCommand &first, const VertexColorCommand &last) {
-    if (first.v == last.v) {
-        v = first.v;
-        prev_r = first.prev_r;
-        prev_g = first.prev_g;
-        prev_b = first.prev_b;
-        r = last.r;
-        g = last.g;
-        b = last.b;
-    } else throw exception();
-}
-
 bool VertexColorCommand::execute() {
     bool res = false;
 
@@ -174,18 +149,6 @@ void VertexColorCommand::undo() {
 }
 
 PolygonColorCommand::PolygonColorCommand(Viewer *v_, double r_, double g_, double b_) : v(v_), r(r_), g(g_), b(b_), prev_r(v_->polygon_r), prev_g(v_->polygon_g), prev_b(v_->polygon_b) {}
-
-PolygonColorCommand::PolygonColorCommand(const PolygonColorCommand &first, const PolygonColorCommand &last) {
-    if (first.v == last.v) {
-        v = first.v;
-        prev_r = first.prev_r;
-        prev_g = first.prev_g;
-        prev_b = first.prev_b;
-        r = last.r;
-        g = last.g;
-        b = last.b;
-    } else throw exception();
-}
 
 bool PolygonColorCommand::execute() {
     bool res = false;
@@ -235,6 +198,8 @@ void VertexSizeCommand::undo() {
     v->update();
 }
 
+double VertexSizeCommand::get_prev() const { return prev_size; }
+
 LineWidthCommand::LineWidthCommand(Viewer *v_, double s) : v(v_), size(s), prev_size(v_->line_width) {}
 
 LineWidthCommand::LineWidthCommand(const LineWidthCommand &first, const LineWidthCommand &last) {
@@ -262,15 +227,9 @@ void LineWidthCommand::undo() {
     v->update();
 }
 
-ProjectionTypeCommand::ProjectionTypeCommand(Viewer *v_, int t) : v(v_), type(t), prev_type(v_->projection_type) {}
+double LineWidthCommand::get_prev() const { return prev_size; }
 
-ProjectionTypeCommand::ProjectionTypeCommand(const ProjectionTypeCommand &first, const ProjectionTypeCommand &last) {
-    if (first.v == last.v) {
-        v = first.v;
-        prev_type= first.prev_type;
-        type = last.type;
-    } else throw exception();
-}
+ProjectionTypeCommand::ProjectionTypeCommand(Viewer *v_, int t) : v(v_), type(t), prev_type(v_->projection_type) {}
 
 bool ProjectionTypeCommand::execute() {
     bool res = false;
@@ -289,15 +248,9 @@ void ProjectionTypeCommand::undo() {
     v->update();
 }
 
-VertexTypeCommand::VertexTypeCommand(Viewer *v_, int t) : v(v_), type(t), prev_type(v_->vertex_type) {}
+int ProjectionTypeCommand::get_type() const { return prev_type; }
 
-VertexTypeCommand::VertexTypeCommand(const VertexTypeCommand &first, const VertexTypeCommand &last) {
-    if (first.v == last.v) {
-        v = first.v;
-        prev_type= first.prev_type;
-        type = last.type;
-    } else throw exception();
-}
+VertexTypeCommand::VertexTypeCommand(Viewer *v_, int t) : v(v_), type(t), prev_type(v_->vertex_type) {}
 
 bool VertexTypeCommand::execute() {
     bool res = false;
@@ -316,15 +269,9 @@ void VertexTypeCommand::undo() {
     v->update();
 }
 
-LineTypeCommand::LineTypeCommand(Viewer *v_, int t) : v(v_), type(t), prev_type(v_->line_type) {}
+int VertexTypeCommand::get_type() const { return prev_type; }
 
-LineTypeCommand::LineTypeCommand(const LineTypeCommand &first, const LineTypeCommand &last) {
-    if (first.v == last.v) {
-        v = first.v;
-        prev_type= first.prev_type;
-        type = last.type;
-    } else throw exception();
-}
+LineTypeCommand::LineTypeCommand(Viewer *v_, int t) : v(v_), type(t), prev_type(v_->line_type) {}
 
 bool LineTypeCommand::execute() {
     bool res = false;
@@ -342,6 +289,8 @@ void LineTypeCommand::undo() {
     v->line_type = prev_type;
     v->update();
 }
+
+int LineTypeCommand::get_type() const { return prev_type; }
 
 CommandManager *CommandManager::get_CommandManager() {
     static CommandManager cm;
