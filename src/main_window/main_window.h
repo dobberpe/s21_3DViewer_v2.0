@@ -87,8 +87,7 @@ namespace s21 {
 
         Viewer *v;
 
-        bool updateFromSlider = false;
-        bool updateFromSpinBox = false;
+        bool syncUpdate = false;
         ICommand* firstCommand = nullptr;
         ICommand* lastCommand = nullptr;
 

@@ -20,13 +20,12 @@ namespace s21 {
     class RotateCommand : public ICommand {
     public:
         RotateCommand(Viewer* v_, double x_, double y_, double z_);
-        RotateCommand(const RotateCommand& first, const RotateCommand& last);
+        RotateCommand(const RotateCommand& prev, const RotateCommand& curr);
         bool execute() override;
         void undo() override;
     private:
         Viewer* v;
         double x, y, z;
-        double prev_x, prev_y, prev_z;
     };
 
     class MoveCommand : public ICommand {
@@ -155,6 +154,7 @@ namespace s21 {
         void operator =(const CommandManager&) = delete;
         static CommandManager* get_CommandManager();
 
+        void addCommand(ICommand *command);
         void executeCommand(ICommand *command);
         void undoCommand();
         void redoCommand();

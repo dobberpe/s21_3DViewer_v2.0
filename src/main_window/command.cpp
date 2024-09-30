@@ -6,42 +6,36 @@ using namespace s21;
 
 ICommand::~ICommand() {}
 
-RotateCommand::RotateCommand(Viewer* v_, double x_, double y_, double z_) : v(v_), x(x_), y(y_), z(z_), prev_x(v_->new_data->alpha_x), prev_y(v_->new_data->alpha_y), prev_z(v_->new_data->alpha_z) {
-    qDebug() << "RotateCM " << prev_x << " " << prev_y << " " << prev_z << " " << x << " " << y << " " << z;
-}
+RotateCommand::RotateCommand(Viewer* v_, double x_, double y_, double z_) : v(v_), x(x_), y(y_), z(z_) {}
 
-RotateCommand::RotateCommand(const RotateCommand &first, const RotateCommand &last) {
-    if (first.v == last.v) {
-        prev_x = first.prev_x;
-        prev_y = first.prev_y;
-        prev_z = first.prev_z;
-        x = last.x;
-        y = last.y;
-        z = last.z;
-        qDebug() << "RotateCM FL" << prev_x << " " << prev_y << " " << prev_z << " " << x << " " << y << " " << z;
-    } else throw exception();
+RotateCommand::RotateCommand(const RotateCommand &prev, const RotateCommand &curr) {
+    v = prev.v;
+    x = prev.x + curr.x;
+    y = prev.y + curr.y;
+    z = prev.z + curr.z;
+    qDebug() << x << " " << y << " " << z;
 }
 
 bool RotateCommand::execute() {
     bool res = false;
 
-    if (!(x == prev_x && y == prev_y && z == prev_z)) {
+    if (x || y || z) {
         v->new_data->alpha_x = x;
         v->new_data->alpha_y = y;
         v->new_data->alpha_z = z;
         rotate_figure(v->new_data);
         v->update();
         res = true;
-        qDebug() << "executed";
     }
 
     return res;
 }
 
 void RotateCommand::undo() {
-    v->new_data->alpha_x = prev_x;
-    v->new_data->alpha_y = prev_y;
-    v->new_data->alpha_z = prev_z;
+    qDebug() << "undo rotate";
+    v->new_data->alpha_x = -x;
+    v->new_data->alpha_y = -y;
+    v->new_data->alpha_z = -z;
     rotate_figure(v->new_data);
     v->update();
 }
@@ -50,6 +44,7 @@ MoveCommand::MoveCommand(Viewer *v_, double x_, double y_, double z_) : v(v_), x
 
 MoveCommand::MoveCommand(const MoveCommand &first, const MoveCommand &last) {
     if (first.v == last.v) {
+        v = first.v;
         prev_x = first.prev_x;
         prev_y = first.prev_y;
         prev_z = first.prev_z;
@@ -86,6 +81,7 @@ ScaleCommand::ScaleCommand(Viewer *v_, double s) : v(v_), scale(s), prev_scale(v
 
 ScaleCommand::ScaleCommand(const ScaleCommand &first, const ScaleCommand &last) {
     if (first.v == last.v) {
+        v = first.v;
         prev_scale = first.prev_scale;
         scale = last.scale;
     } else throw exception();
@@ -114,6 +110,7 @@ BgColorCommand::BgColorCommand(Viewer *v_, double r_, double g_, double b_) : v(
 
 BgColorCommand::BgColorCommand(const BgColorCommand &first, const BgColorCommand &last) {
     if (first.v == last.v) {
+        v = first.v;
         prev_r = first.prev_r;
         prev_g = first.prev_g;
         prev_b = first.prev_b;
@@ -148,6 +145,7 @@ VertexColorCommand::VertexColorCommand(Viewer *v_, double r_, double g_, double 
 
 VertexColorCommand::VertexColorCommand(const VertexColorCommand &first, const VertexColorCommand &last) {
     if (first.v == last.v) {
+        v = first.v;
         prev_r = first.prev_r;
         prev_g = first.prev_g;
         prev_b = first.prev_b;
@@ -182,6 +180,7 @@ PolygonColorCommand::PolygonColorCommand(Viewer *v_, double r_, double g_, doubl
 
 PolygonColorCommand::PolygonColorCommand(const PolygonColorCommand &first, const PolygonColorCommand &last) {
     if (first.v == last.v) {
+        v = first.v;
         prev_r = first.prev_r;
         prev_g = first.prev_g;
         prev_b = first.prev_b;
@@ -216,6 +215,7 @@ VertexSizeCommand::VertexSizeCommand(Viewer *v_, double s) : v(v_), size(s), pre
 
 VertexSizeCommand::VertexSizeCommand(const VertexSizeCommand &first, const VertexSizeCommand &last) {
     if (first.v == last.v) {
+        v = first.v;
         prev_size = first.prev_size;
         size = last.size;
     } else throw exception();
@@ -242,6 +242,7 @@ LineWidthCommand::LineWidthCommand(Viewer *v_, double s) : v(v_), size(s), prev_
 
 LineWidthCommand::LineWidthCommand(const LineWidthCommand &first, const LineWidthCommand &last) {
     if (first.v == last.v) {
+        v = first.v;
         prev_size = first.prev_size;
         size = last.size;
     } else throw exception();
@@ -268,6 +269,7 @@ ProjectionTypeCommand::ProjectionTypeCommand(Viewer *v_, int t) : v(v_), type(t)
 
 ProjectionTypeCommand::ProjectionTypeCommand(const ProjectionTypeCommand &first, const ProjectionTypeCommand &last) {
     if (first.v == last.v) {
+        v = first.v;
         prev_type= first.prev_type;
         type = last.type;
     } else throw exception();
@@ -294,6 +296,7 @@ VertexTypeCommand::VertexTypeCommand(Viewer *v_, int t) : v(v_), type(t), prev_t
 
 VertexTypeCommand::VertexTypeCommand(const VertexTypeCommand &first, const VertexTypeCommand &last) {
     if (first.v == last.v) {
+        v = first.v;
         prev_type= first.prev_type;
         type = last.type;
     } else throw exception();
@@ -320,6 +323,7 @@ LineTypeCommand::LineTypeCommand(Viewer *v_, int t) : v(v_), type(t), prev_type(
 
 LineTypeCommand::LineTypeCommand(const LineTypeCommand &first, const LineTypeCommand &last) {
     if (first.v == last.v) {
+        v = first.v;
         prev_type= first.prev_type;
         type = last.type;
     } else throw exception();
@@ -347,14 +351,19 @@ CommandManager *CommandManager::get_CommandManager() {
     return &cm;
 }
 
+void CommandManager::addCommand(ICommand *command) {
+    qDebug() << "add cm";
+    history.push(command);
+    clearUndoHistory();
+}
+
 void CommandManager::executeCommand(ICommand *command) {
-    if (command->execute()) {
-        history.push(command);
-        clearUndoHistory();
-    }
+    qDebug() << "exec cm";
+    if (command->execute()) addCommand(command);
 }
 
 void CommandManager::undoCommand() {
+    qDebug() << "undo cm";
     if (!history.empty()) {
         ICommand* command = history.top();
         command->undo();
