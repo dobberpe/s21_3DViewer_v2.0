@@ -299,6 +299,7 @@ CommandManager *CommandManager::get_CommandManager() {
 
 void CommandManager::addCommand(ICommand *command) {
     history.push(command);
+    qDebug() << "add " << history.size();
     clearUndoHistory();
 }
 
@@ -312,6 +313,7 @@ ICommand *CommandManager::undoCommand() {
     if (!history.empty()) {
         command = history.top();
         command->undo();
+        qDebug() << "undo " << history.size();
         history.pop();
         undoHistory.push(command);
     }

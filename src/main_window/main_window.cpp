@@ -250,7 +250,6 @@ void main_window::on_rotationXSlider_valueChanged(int value) {
         ICommand *tmp = new RotateCommand(*(dynamic_cast<RotateCommand*>(firstCommand)), *(dynamic_cast<RotateCommand*>(lastCommand)));
         delete firstCommand;
         delete lastCommand;
-        lastCommand = nullptr;
         firstCommand = tmp;
     }
 
@@ -267,7 +266,6 @@ void main_window::on_rotationYSlider_valueChanged(int value) {
         ICommand *tmp = new RotateCommand(*(dynamic_cast<RotateCommand*>(firstCommand)), *(dynamic_cast<RotateCommand*>(lastCommand)));
         delete firstCommand;
         delete lastCommand;
-        lastCommand = nullptr;
         firstCommand = tmp;
     }
 
@@ -284,7 +282,6 @@ void main_window::on_rotationZSlider_valueChanged(int value) {
         ICommand *tmp = new RotateCommand(*(dynamic_cast<RotateCommand*>(firstCommand)), *(dynamic_cast<RotateCommand*>(lastCommand)));
         delete firstCommand;
         delete lastCommand;
-        lastCommand = nullptr;
         firstCommand = tmp;
     }
 
@@ -322,7 +319,6 @@ void main_window::on_moveXSlider_valueChanged(int value) {
         ICommand *tmp = new MoveCommand(*(dynamic_cast<MoveCommand*>(firstCommand)), *(dynamic_cast<MoveCommand*>(lastCommand)));
         delete firstCommand;
         delete lastCommand;
-        lastCommand = nullptr;
         firstCommand = tmp;
     }
 
@@ -339,7 +335,6 @@ void main_window::on_moveYSlider_valueChanged(int value) {
         ICommand *tmp = new MoveCommand(*(dynamic_cast<MoveCommand*>(firstCommand)), *(dynamic_cast<MoveCommand*>(lastCommand)));
         delete firstCommand;
         delete lastCommand;
-        lastCommand = nullptr;
         firstCommand = tmp;
     }
 
@@ -349,14 +344,13 @@ void main_window::on_moveYSlider_valueChanged(int value) {
 }
 
 void main_window::on_moveZSlider_valueChanged(int value) {
-    lastCommand = new MoveCommand(v, 0, 0, value - curr_moveX);
+    lastCommand = new MoveCommand(v, 0, 0, value - curr_moveZ);
     lastCommand->execute();
     if (!firstCommand) firstCommand = lastCommand;
     else {
         ICommand *tmp = new MoveCommand(*(dynamic_cast<MoveCommand*>(firstCommand)), *(dynamic_cast<MoveCommand*>(lastCommand)));
         delete firstCommand;
         delete lastCommand;
-        lastCommand = nullptr;
         firstCommand = tmp;
     }
 
