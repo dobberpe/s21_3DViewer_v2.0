@@ -1,4 +1,7 @@
 #include "main_window.h"
+#include "command.h"
+
+using namespace s21;
 
 main_window::main_window(QWidget *parent) : QMainWindow(parent) {
   setWindowTitle("3dViewer");
@@ -218,6 +221,7 @@ void main_window::on_loadButton_clicked() {
     amountVnumberLabel->setText(QString::number(v->new_data->amount_vertex));
     amountEnumberLabel->setText(
         QString::number(v->new_data->amount_polygon_edges));
+    CommandManager::get_CommandManager()->clear();
   }
 }
 
@@ -234,19 +238,19 @@ void main_window::on_rotationZSlider_valueChanged(int value) {
 }
 
 void main_window::on_rotationXSpinBox_valueChanged(int value) {
-  rotate_event(value - curr_rotateX, 0, 0);
+  CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, value - curr_rotateX, 0, 0));
   curr_rotateX = value;
   if (rotationXSlider->value() != value) rotationXSlider->setValue(value);
 }
 
 void main_window::on_rotationYSpinBox_valueChanged(int value) {
-  rotate_event(0, value - curr_rotateY, 0);
+  CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, 0, value - curr_rotateY, 0));
   curr_rotateY = value;
   if (rotationYSlider->value() != value) rotationYSlider->setValue(value);
 }
 
 void main_window::on_rotationZSpinBox_valueChanged(int value) {
-  rotate_event(0, 0, value - curr_rotateZ);
+  CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, 0, 0, value - curr_rotateZ));
   curr_rotateZ = value;
   if (rotationZSlider->value() != value) rotationZSlider->setValue(value);
 }
@@ -272,7 +276,7 @@ void main_window::on_moveXSpinBox_valueChanged(int value) {
       if (moveXSlider->value() != 180) moveXSlider->setValue(180);
     } else if (moveXSlider->value() != value)
       moveXSlider->setValue(value);
-    move_event(value - curr_moveX, 0, 0);
+    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, value - curr_moveX, 0, 0));
     curr_moveX = value;
   } else
     moveXSpinBox->setValue(curr_moveX);
@@ -287,7 +291,7 @@ void main_window::on_moveYSpinBox_valueChanged(int value) {
       if (moveYSlider->value() != 180) moveYSlider->setValue(180);
     } else if (moveYSlider->value() != value)
       moveYSlider->setValue(value);
-    move_event(0, value - curr_moveY, 0);
+    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, 0, value - curr_moveY, 0));
     curr_moveY = value;
   } else
     moveYSpinBox->setValue(curr_moveY);
@@ -302,7 +306,7 @@ void main_window::on_moveZSpinBox_valueChanged(int value) {
       if (moveZSlider->value() != 180) moveZSlider->setValue(180);
     } else if (moveZSlider->value() != value)
       moveZSlider->setValue(value);
-    move_event(0, 0, value - curr_moveZ);
+    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, 0, 0, value - curr_moveZ));
     curr_moveZ = value;
   } else
     moveZSpinBox->setValue(curr_moveZ);
@@ -310,10 +314,8 @@ void main_window::on_moveZSpinBox_valueChanged(int value) {
 
 void main_window::on_scaleSlider_valueChanged(int value) {
   int scale = value - curr_scale;
-  v->curr_scale *= pow(scale > 0 ? 1.001 : 0.999, abs(scale));
-  scale_figure(v->new_data, v->curr_scale);
+  CommandManager::get_CommandManager()->executeCommand(new ScaleCommand(v, v->curr_scale * pow(scale > 0 ? 1.001 : 0.999, abs(scale))));
   curr_scale = value;
-  v->update();
 }
 
 void main_window::on_increaseScaleButton_clicked() {
@@ -327,59 +329,39 @@ void main_window::on_decreaseScaleButton_clicked() {
 void main_window::on_backgroundColorButton_clicked() {
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета фона");
 
-  if (color.isValid()) {
-    v->bg_r = color.redF();
-    v->bg_g = color.greenF();
-    v->bg_b = color.blueF();
-    v->update();
-  }
+  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new BgColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_vertexColorButton_clicked() {
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета вершин");
 
-  if (color.isValid()) {
-    v->vertex_r = color.redF();
-    v->vertex_g = color.greenF();
-    v->vertex_b = color.blueF();
-    v->update();
-  }
+  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new VertexColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_edgesColorButton_clicked() {
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета ребер");
 
-  if (color.isValid()) {
-    v->polygon_r = color.redF();
-    v->polygon_g = color.greenF();
-    v->polygon_b = color.blueF();
-    v->update();
-  }
+  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new PolygonColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_vertexSizeSlider_valueChanged(int value) {
-  v->vertex_size = value;
-  v->update();
+  CommandManager::get_CommandManager()->executeCommand(new VertexSizeCommand(v, value));
 }
 
 void main_window::on_edgesWidthSlider_valueChanged(int value) {
-  v->line_width = value;
-  v->update();
+  CommandManager::get_CommandManager()->executeCommand(new LineWidthCommand(v, value));
 }
 
 void main_window::on_projectionTypeComboBox_indexChanged(int index) {
-  v->projection_type = index;
-  v->update();
+  CommandManager::get_CommandManager()->executeCommand(new ProjectionTypeCommand(v, index));
 }
 
 void main_window::on_vertexTypeComboBox_indexChanged(int index) {
-  v->vertex_type = index;
-  v->update();
+  CommandManager::get_CommandManager()->executeCommand(new VertexTypeCommand(v, index));
 }
 
 void main_window::on_edgesTypeComboBox_indexChanged(int index) {
-  v->line_type = index;
-  v->update();
+  CommandManager::get_CommandManager()->executeCommand(new LineTypeCommand(v, index));
 }
 
 void main_window::on_screenshotButton_clicked() {
@@ -445,6 +427,13 @@ void main_window::on_timer_timeout() {
     delete gifImage;
     gifImage = nullptr;
   }
+}
+
+void main_window::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Z && event->modifiers() == Qt::ControlModifier)
+        CommandManager::get_CommandManager()->undoCommand();  // Обработка Ctrl + Z
+    else if (event->key() == Qt::Key_Y && event->modifiers() == Qt::ControlModifier)
+        CommandManager::get_CommandManager()->redoCommand();  // Обработка Ctrl + Y
 }
 
 void main_window::save_settings() {

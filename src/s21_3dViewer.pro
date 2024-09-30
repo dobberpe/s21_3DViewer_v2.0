@@ -12,6 +12,7 @@ QMAKE_CXXFLAGS += -Wall -Wextra -Werror -std=c++17 -O0 -DGL_SILENCE_DEPRECATION
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    main_window/command.cpp \
     main_window/main_window.cpp \
     transformations/transformations.c \
     parser/memory_manipulation.c \
@@ -20,6 +21,7 @@ SOURCES += \
     graphics/graphics.cpp
 
 HEADERS += \
+    main_window/command.h \
     main_window/main_window.h \
     transformations/transformations.h \
     parser/parser.h \

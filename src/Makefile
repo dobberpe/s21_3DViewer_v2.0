@@ -8,24 +8,25 @@ CFLAGS = -Wall -Wextra -Werror -g --std=c11
 CPPFLAGS = -Wall -Wextra -Werror -g --std=c++17
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
-	GFLAGS = -lm -lgtest -lsubunit
+	GFLAGS = -lm -lcheck -lsubunit
 endif
 
 ifeq ($(UNAME), Darwin)
-	GFLAGS =  -I/opt/homebrew/include -L/opt/homebrew/lib -lgtest
+	GFLAGS =  -I/opt/homebrew/include -L/opt/homebrew/lib -lcheck
 endif
 #==============================================================================#
 
 #================================ TARGET NAMES ================================#
 CLANG_FILE = ../materials/linters/.clang-format
+PARSER = main
 TEST = test_laucnher
 #==============================================================================#
 
 #=============================== DIRECTORY NAMES ==============================#
 BUILD_DIR = build
 PARSER_DIR = parser
-CONTROLLER_DIR = controller
-FIGURE_DIR = figure
+TRANSFORM_DIR = transformations
+COMMON_DIR = common
 TEST_DIR = tests
 DVI_DIR = docs
 DIST_DIR = distribution
@@ -34,7 +35,9 @@ QTGRAPHICS = graphics
 #==============================================================================#
 
 #====================== LIST OF FILE AND DIRS IN MODULES ======================#
-SOURCE_TEST = $(wildcard $(TEST_DIR)/*.cpp)
+SOURCE_PARSER = $(wildcard $(PARSER_DIR)/*.c)
+SOURCE_TRANSFORM= $(wildcard $(TRANSFORM_DIR)/*.c)
+SOURCE_TEST = $(wildcard $(TEST_DIR)/*.c)
 #==============================================================================#
 
 #================================= MAIN TARGETS ===============================#
@@ -60,14 +63,14 @@ uninstall:
 	@echo "successfuly uninstalled"
 
 tests: clean
-	$(CPP) $(CPPFLAGS) $(SOURCE_TEST) -o $(TEST) $(GFLAGS)
+	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS)
 	@echo "\nrunning tests..."
 	@./$(TEST)
 	@echo "\ndeleting test launcher..."
 	@rm -rf $(TEST)
 
 gcov_report: clean
-	$(CPP) $(CPPFLAGS) $(SOURCE_TEST) -o $(TEST) $(GFLAGS) --coverage
+	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS) --coverage
 	@./$(TEST)
 	@lcov -t "tests" -o tests.info -c -d . -rc lcov_branch_coverage=1 --exclude "$(PWD)/tests/*" --exclude "$(PWD)/QtGifImage/*"
 	@genhtml -o report tests.info -rc lcov_branch_coverage=1
@@ -75,21 +78,21 @@ gcov_report: clean
 
 format:
 	@cp $(CLANG_FILE) .
-	@find . -name '*.cpp' -o -name '*.hpp' -o -name '*.tpp' -o -name '*.h' 2>/dev/null | xargs -r clang-format -i
+	@find . -name '*.c' -o -name '*.h' -o -name '*.cpp' -o -name '*.hpp' 2>/dev/null | xargs -r clang-format -i
 	@rm .clang-format
 	@echo "formatting..."
 
 format_check:
 	@cp $(CLANG_FILE) .
-	@find . -name '*.cpp' -o -name '*.hpp' -o -name '*.tpp' -o -name '*.h' 2>/dev/null | xargs -r clang-format -n
+	@find . -name '*.c' -o -name '*.h' -o -name '*.cpp' -o -name '*.hpp' 2>/dev/null | xargs -r clang-format -n
 	@rm .clang-format
 	@echo "checking format..."
 
 cppcheck:
-	cppcheck --enable=all --suppress=missingIncludeSystem $(PARSER_DIR)/* $(CONTROLLER_DIR)/* $(FIGURE_DIR)/* $(TEST_DIR)/* $(QTMAIN)/* $(QTGRAPHICS)/* ./*cpp ./*h
+	cppcheck --enable=all --suppress=missingIncludeSystem $(PARSER_DIR)/* $(TRANSFORM_DIR)/* $(COMMON_DIR)/* $(TEST_DIR)/* $(QTMAIN)/* $(QTGRAPHICS)/* ./*cpp ./*h
 
 valgrind_tests: clean
-	$(CPP) $(CPPFLAGS) $(SOURCE_TEST) -o $(TEST) $(GFLAGS)
+	$(CC) $(CFLAGS) $(SOURCE_TEST) $(SOURCE_PARSER) $(SOURCE_TRANSFORM) -o $(TEST) $(GFLAGS)
 	@echo "\nstarting valgrind on tests...\n"
 	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(TEST)
 	@cat valgrind_out.txt
@@ -98,7 +101,7 @@ valgrind_tests: clean
 rebuild: uninstall install
 
 clean:
-	@rm -rf *.gcno *.gcda *.info report $(TEST) *.dSYM dist a.out $(BUILD_DIR) $(DVI_DIR) $(DIST_DIR)
+	@rm -rf *.gcno *.gcda *.info report $(PARSER) $(TEST) *.dSYM dist a.out $(BUILD_DIR) $(DVI_DIR) $(DIST_DIR)
 	@echo "cleaning...\n"
 
 dvi:
