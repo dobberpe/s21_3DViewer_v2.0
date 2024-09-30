@@ -23,6 +23,7 @@ namespace s21 {
         RotateCommand(const RotateCommand& prev, const RotateCommand& curr);
         bool execute() override;
         void undo() override;
+        tuple<double, double, double> get_angle() const;
     private:
         Viewer* v;
         double x, y, z;
@@ -31,13 +32,13 @@ namespace s21 {
     class MoveCommand : public ICommand {
     public:
         MoveCommand(Viewer* v_, double x_, double y_, double z_);
-        MoveCommand(const MoveCommand& first, const MoveCommand& last);
+        MoveCommand(const MoveCommand& prev, const MoveCommand& curr);
         bool execute() override;
         void undo() override;
+        tuple<double, double, double> get_shift() const;
     private:
         Viewer* v;
         double x, y, z;
-        double prev_x, prev_y, prev_z;
     };
 
     class ScaleCommand : public ICommand {
@@ -156,8 +157,8 @@ namespace s21 {
 
         void addCommand(ICommand *command);
         void executeCommand(ICommand *command);
-        void undoCommand();
-        void redoCommand();
+        ICommand *undoCommand();
+        ICommand *redoCommand();
         void clear();
     private:
         CommandManager();

@@ -13,7 +13,6 @@ RotateCommand::RotateCommand(const RotateCommand &prev, const RotateCommand &cur
     x = prev.x + curr.x;
     y = prev.y + curr.y;
     z = prev.z + curr.z;
-    qDebug() << x << " " << y << " " << z;
 }
 
 bool RotateCommand::execute() {
@@ -32,7 +31,6 @@ bool RotateCommand::execute() {
 }
 
 void RotateCommand::undo() {
-    qDebug() << "undo rotate";
     v->new_data->alpha_x = -x;
     v->new_data->alpha_y = -y;
     v->new_data->alpha_z = -z;
@@ -40,24 +38,21 @@ void RotateCommand::undo() {
     v->update();
 }
 
-MoveCommand::MoveCommand(Viewer *v_, double x_, double y_, double z_) : v(v_), x(x_), y(y_), z(z_), prev_x(v_->new_data->trv.move_vector[crd::x]), prev_y(v_->new_data->trv.move_vector[crd::y]), prev_z(v_->new_data->trv.move_vector[crd::z]) {}
+tuple<double, double, double> RotateCommand::get_angle() const { return make_tuple(x, y, z); }
 
-MoveCommand::MoveCommand(const MoveCommand &first, const MoveCommand &last) {
-    if (first.v == last.v) {
-        v = first.v;
-        prev_x = first.prev_x;
-        prev_y = first.prev_y;
-        prev_z = first.prev_z;
-        x = last.x;
-        y = last.y;
-        z = last.z;
-    } else throw exception();
+MoveCommand::MoveCommand(Viewer *v_, double x_, double y_, double z_) : v(v_), x(x_), y(y_), z(z_) {}
+
+MoveCommand::MoveCommand(const MoveCommand &prev, const MoveCommand &curr) {
+    v = prev.v;
+    x = prev.x + curr.x;
+    y = prev.y + curr.y;
+    z = prev.z + curr.z;
 }
 
 bool MoveCommand::execute() {
     bool res = false;
 
-    if (!(x == prev_x && y == prev_y && z == prev_z)) {
+    if (x || y || z) {
         v->new_data->trv.move_vector[crd::x] = x;
         v->new_data->trv.move_vector[crd::y] = y;
         v->new_data->trv.move_vector[crd::z] = z;
@@ -70,12 +65,14 @@ bool MoveCommand::execute() {
 }
 
 void MoveCommand::undo() {
-    v->new_data->trv.move_vector[crd::x] = prev_x;
-    v->new_data->trv.move_vector[crd::y] = prev_y;
-    v->new_data->trv.move_vector[crd::z] = prev_z;
+    v->new_data->trv.move_vector[crd::x] = -x;
+    v->new_data->trv.move_vector[crd::y] = -y;
+    v->new_data->trv.move_vector[crd::z] = -z;
     move_figure(v->new_data);
     v->update();
 }
+
+tuple<double, double, double> MoveCommand::get_shift() const { return make_tuple(x, y, z); }
 
 ScaleCommand::ScaleCommand(Viewer *v_, double s) : v(v_), scale(s), prev_scale(v_->curr_scale) {}
 
@@ -352,33 +349,38 @@ CommandManager *CommandManager::get_CommandManager() {
 }
 
 void CommandManager::addCommand(ICommand *command) {
-    qDebug() << "add cm";
     history.push(command);
     clearUndoHistory();
 }
 
 void CommandManager::executeCommand(ICommand *command) {
-    qDebug() << "exec cm";
     if (command->execute()) addCommand(command);
 }
 
-void CommandManager::undoCommand() {
-    qDebug() << "undo cm";
+ICommand *CommandManager::undoCommand() {
+    ICommand *command = nullptr;
+
     if (!history.empty()) {
-        ICommand* command = history.top();
+        command = history.top();
         command->undo();
         history.pop();
         undoHistory.push(command);
     }
+
+    return command;
 }
 
-void CommandManager::redoCommand() {
+ICommand *CommandManager::redoCommand() {
+    ICommand *command = nullptr;
+
     if (!undoHistory.empty()) {
-        ICommand* command = undoHistory.top();
+        command = undoHistory.top();
         command->execute();
         undoHistory.pop();
         history.push(command);
     }
+
+    return command;
 }
 
 void CommandManager::clear() {
