@@ -7,10 +7,6 @@
 #include <QWheelEvent>
 #include <QtOpenGL>
 
-extern "C" {
-#include "../common/common.h"
-}
-
 #define CENTRAL_PR 0
 #define PARALLEL_PR 1
 #define SOLID_LINE 0
@@ -19,11 +15,13 @@ extern "C" {
 #define ROUND 1
 #define SQUARE 2
 
+#include "../controller/worker.hpp"
+
 class Viewer : public QOpenGLWidget {
   Q_OBJECT
 
  public:
-  Figure *new_data;
+  Worker *worker;
   double curr_scale = 1;
 
   Viewer(QWidget *parent = nullptr);
@@ -32,6 +30,7 @@ class Viewer : public QOpenGLWidget {
   void update_alpha(int valueX, int valueY);
   void update_move_vector(int valueX, int valueY);
   void update_scale(int value);
+  Worker* get_worker();
 
   double vertex_r = 0, vertex_g = 0, vertex_b = 1;
   double polygon_r = 0, polygon_g = 1, polygon_b = 0;

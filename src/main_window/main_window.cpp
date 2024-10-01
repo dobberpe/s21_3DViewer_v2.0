@@ -235,9 +235,9 @@ void main_window::on_loadButton_clicked() {
     curr_scale = 0;
     v->loadModel(fileName);
     fnameLabel->setText(QFileInfo(fileName).fileName());
-    amountVnumberLabel->setText(QString::number(v->new_data->amount_vertex));
+    amountVnumberLabel->setText(QString::number(v->get_worker()->get_n_vertices()));
     amountEnumberLabel->setText(
-        QString::number(v->new_data->amount_polygon_edges));
+        QString::number(v->get_worker()->get_n_polygons_edges()));
     CommandManager::get_CommandManager()->clear();
   }
 }
@@ -641,23 +641,6 @@ void main_window::load_settings() {
   syncUpdate = false;
 }
 
-void main_window::rotate_event(double rotate_X, double rotate_Y,
-                               double rotate_Z) {
-  v->new_data->alpha_x = rotate_X;
-  v->new_data->alpha_y = rotate_Y;
-  v->new_data->alpha_z = rotate_Z;
-  rotate_figure(v->new_data);
-  v->update();
-}
-
-void main_window::move_event(double move_X, double move_Y, double move_Z) {
-  v->new_data->trv.move_vector[crd::x] = move_X;
-  v->new_data->trv.move_vector[crd::y] = move_Y;
-  v->new_data->trv.move_vector[crd::z] = move_Z;
-  move_figure(v->new_data);
-  v->update();
-}
-
 void main_window::setupUI() {
   QWidget *centralWidget = new QWidget(this);
   setCentralWidget(centralWidget);
@@ -802,7 +785,7 @@ void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {
   QLabel *amountVLabel = new QLabel("Вершин:");
   QSpacerItem *amountVSpacer =
       new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-  amountVnumberLabel = new QLabel(QString::number(v->new_data->amount_vertex));
+  amountVnumberLabel = new QLabel(QString::number(v->get_worker()->get_n_vertices()));
 
   QHBoxLayout *amountVLayout = new QHBoxLayout;
   amountVLayout->addWidget(amountVLabel);
@@ -813,7 +796,7 @@ void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {
   QSpacerItem *amountESpacer =
       new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
   amountEnumberLabel =
-      new QLabel(QString::number(v->new_data->amount_polygon_edges));
+      new QLabel(QString::number(v->get_worker()->get_n_polygons_edges()));
 
   QHBoxLayout *amountELayout = new QHBoxLayout;
   amountELayout->addWidget(amountELabel);

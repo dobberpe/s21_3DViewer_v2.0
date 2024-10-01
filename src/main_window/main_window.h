@@ -16,7 +16,7 @@
 #include <QVBoxLayout>
 
 #include "graphics/graphics.h"
-#include "command.h"
+#include "../command/command.h"
 
 #define ROTATE true
 #define MOVE false
@@ -71,9 +71,6 @@ namespace s21 {
         void appearance_setup();
         void save_settings();
         void load_settings();
-        void rotate_event(double rotate_X, double rotate_Y, double rotate_Z);
-        void move_event(double move_X, double move_Y, double move_Z);
-        void scale_slider(double scale);
         void setupUI();
         void setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate);
         void setupSettings(QVBoxLayout *rightColumnLayout);

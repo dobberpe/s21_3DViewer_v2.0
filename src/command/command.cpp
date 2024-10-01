@@ -1,6 +1,4 @@
-
 #include "command.h"
-#include "../transformations/transformations.h"
 
 using namespace s21;
 
@@ -19,10 +17,7 @@ bool RotateCommand::execute() {
     bool res = false;
 
     if (x || y || z) {
-        v->new_data->alpha_x = x;
-        v->new_data->alpha_y = y;
-        v->new_data->alpha_z = z;
-        rotate_figure(v->new_data);
+        v->get_worker()->rotate_figure(x, y, z);
         v->update();
         res = true;
     }
@@ -31,10 +26,7 @@ bool RotateCommand::execute() {
 }
 
 void RotateCommand::undo() {
-    v->new_data->alpha_x = -x;
-    v->new_data->alpha_y = -y;
-    v->new_data->alpha_z = -z;
-    rotate_figure(v->new_data);
+    v->get_worker()->rotate_figure(-x, -y, -z);
     v->update();
 }
 
@@ -53,10 +45,7 @@ bool MoveCommand::execute() {
     bool res = false;
 
     if (x || y || z) {
-        v->new_data->trv.move_vector[crd::x] = x;
-        v->new_data->trv.move_vector[crd::y] = y;
-        v->new_data->trv.move_vector[crd::z] = z;
-        move_figure(v->new_data);
+        v->get_worker()->move_figure(x, y, z);
         v->update();
         res = true;
     }
@@ -65,10 +54,7 @@ bool MoveCommand::execute() {
 }
 
 void MoveCommand::undo() {
-    v->new_data->trv.move_vector[crd::x] = -x;
-    v->new_data->trv.move_vector[crd::y] = -y;
-    v->new_data->trv.move_vector[crd::z] = -z;
-    move_figure(v->new_data);
+    v->get_worker()->move_figure(-x, -y, -z);
     v->update();
 }
 
@@ -86,7 +72,7 @@ bool ScaleCommand::execute() {
 
     if (scale != 0) {
         v->curr_scale *= pow(scale > 0 ? 1.001 : 0.999, abs(scale));
-        scale_figure(v->new_data, v->curr_scale);
+        v->get_worker()->scale(v->curr_scale);
         v->update();
         res = true;
     }
@@ -96,7 +82,7 @@ bool ScaleCommand::execute() {
 
 void ScaleCommand::undo() {
     v->curr_scale /= pow(scale > 0 ? 1.001 : 0.999, abs(scale));
-    scale_figure(v->new_data, v->curr_scale);
+    v->get_worker()->scale(v->curr_scale);
     v->update();
 }
 

@@ -2,24 +2,23 @@
 
 Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {
   setWindowTitle("3dViewer");
-  new_data = new Figure();
+  worker = new Worker();
   loadModel(start_file);
 }
 
 void Viewer::loadModel(QString filename) {
-  destroy_figure(new_data);
-  parse_obj_file(filename.toUtf8().constData(), new_data);
-  align_to_center(new_data);
-  std::vector<double> values{new_data->x_min, new_data->y_min, new_data->z_min,
-                             new_data->x_max, new_data->y_max, new_data->z_max};
+  worker->parse_file(filename.toUtf8().constData());
+  std::vector<double> values{worker->get_x_min(), worker->get_y_min(), worker->get_z_min(),
+                             worker->get_x_max(), worker->get_y_max(), worker->get_z_max()};
   const auto [min, max] = std::minmax_element(begin(values), end(values));
   move_coef = (*max - *min) * 1.4;
   update();
 }
 
+Worker *Viewer::get_worker() { return worker; }
+
 Viewer::~Viewer() {
-  destroy_figure(new_data);
-  delete new_data;
+  delete worker;
 }
 
 void Viewer::initializeGL() { glEnable(GL_DEPTH_TEST); }
@@ -27,14 +26,10 @@ void Viewer::initializeGL() { glEnable(GL_DEPTH_TEST); }
 void Viewer::mouseMoveEvent(QMouseEvent *event) {
   new_pos = QPoint(event->globalPosition().toPoint() - cur_pos);
   if (event->buttons() & Qt::LeftButton) {
-    new_data->trv.move_vector[crd::x] = new_pos.x() * 0.00001 * move_coef;
-    new_data->trv.move_vector[crd::y] = -new_pos.y() * 0.00001 * move_coef;
-    move_figure(new_data);
+    worker->move_figure(new_pos.x() * 0.00001 * move_coef, -new_pos.y() * 0.00001 * move_coef, 0);
     update();
   } else if (event->buttons() & Qt::RightButton) {
-    new_data->alpha_x = new_pos.y() * 0.005;
-    new_data->alpha_y = new_pos.x() * 0.005;
-    rotate_figure(new_data);
+    worker->rotate_figure(new_pos.y() * 0.005, new_pos.x() * 0.005, 0);
     update();
   }
 }
@@ -42,7 +37,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event) {
 void Viewer::wheelEvent(QWheelEvent *event) {
   int num_degrees = event->angleDelta().y();
   curr_scale *= num_degrees < 0 ? 0.99 : 1.01;
-  scale_figure(new_data, curr_scale);
+  worker->scale(curr_scale);
   update();
 }
 
@@ -73,10 +68,10 @@ void Viewer::paintGL() {
   glEnableClientState(GL_VERTEX_ARRAY);
   if (vertex_type != NONE) {
     if (vertex_type == ROUND) glEnable(GL_POINT_SMOOTH);
-    glVertexPointer(3, GL_DOUBLE, 0, new_data->vertex);
+    glVertexPointer(3, GL_DOUBLE, 0, get<0>(worker->get_vertex_array()));
     glPointSize(vertex_size);
     glColor3f(vertex_r, vertex_g, vertex_b);
-    glDrawArrays(GL_POINTS, 0, new_data->amount_vertex);
+    glDrawArrays(GL_POINTS, 0, worker->get_n_vertices());
     if (vertex_type == ROUND) glDisable(GL_POINT_SMOOTH);
   }
 
@@ -86,9 +81,10 @@ void Viewer::paintGL() {
   }
   glLineWidth(line_width);
   glColor3f(polygon_r, polygon_g, polygon_b);
-  for (int i = 0; i < new_data->amount_polygon; i++)
-    glDrawElements(GL_LINES, new_data->polygon[i].amount_p, GL_UNSIGNED_INT,
-                   new_data->polygon[i].vertex_p);
+  auto [polygon_array, n_polygons] = worker->get_polygon_array();
+  for (size_t i = 0; i < n_polygons; ++i)
+    glDrawElements(GL_LINES, polygon_array[i].n_points, GL_UNSIGNED_INT,
+                     polygon_array[i].points.data());
   if (line_type == DASH_LINE) glDisable(GL_LINE_STIPPLE);
   glDisableClientState(GL_VERTEX_ARRAY);
 }
