@@ -60,11 +60,13 @@ namespace s21 {
         void on_screenshotButton_clicked();
         void on_gifButton_clicked();
         void on_timer_timeout();
+        void on_gifAction_triggered();
 
     protected:
         void keyPressEvent(QKeyEvent *event) override;
 
     private:
+        void setup_shortcuts();
         void rotation_setup();
         void move_setup();
         void scale_setup();
@@ -113,6 +115,7 @@ namespace s21 {
         QLabel *fnameLabel;
         QLabel *amountVnumberLabel;
         QLabel *amountEnumberLabel;
+
         QPushButton *gifButton;
         QGifImage *gifImage;
         QTimer *timer;

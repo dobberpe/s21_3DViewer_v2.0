@@ -11,20 +11,24 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
   v->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
   loadButton = new QPushButton("Выбор файла");
+  loadButton->setToolTip("Ctrl+O");
   connect(loadButton, &QPushButton::clicked, this,
           &main_window::on_loadButton_clicked);
 
+  setup_shortcuts();
   rotation_setup();
   move_setup();  
   scale_setup();  
   appearance_setup();
 
   screenshotButton = new QPushButton("Снимок экрана");
+  screenshotButton->setToolTip("Ctrl+S");
   connect(screenshotButton, &QPushButton::clicked, this,
           &main_window::on_screenshotButton_clicked);
 
   gifButton = new QPushButton("Запись экрана");
   gifButton->setCheckable(true);
+  gifButton->setToolTip("Ctrl+R");
   connect(gifButton, &QPushButton::clicked, this,
           &main_window::on_gifButton_clicked);
 
@@ -550,6 +554,11 @@ void main_window::on_timer_timeout() {
   }
 }
 
+void main_window::on_gifAction_triggered() {
+    gifButton->setChecked(true);
+    on_gifButton_clicked();
+}
+
 void main_window::keyPressEvent(QKeyEvent *event) {
     bool undo = true;
     firstCommand = nullptr;
@@ -559,7 +568,8 @@ void main_window::keyPressEvent(QKeyEvent *event) {
     else if (event->key() == Qt::Key_Y && event->modifiers() == Qt::ControlModifier) {
         undo = false;
         firstCommand = CommandManager::get_CommandManager()->redoCommand();  // Обработка Ctrl + Y
-    }
+    } else if (event->key() == Qt::Key_W && event->modifiers() == Qt::ControlModifier)
+        close();
 
     if (firstCommand) {
         if (dynamic_cast<RotateCommand*>(firstCommand)) {
@@ -607,6 +617,27 @@ void main_window::keyPressEvent(QKeyEvent *event) {
     }
 
     firstCommand = nullptr;
+}
+
+void main_window::setup_shortcuts() {
+    QAction *screenshotAction = new QAction(this);
+    screenshotAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S));
+
+    connect(screenshotAction, &QAction::triggered, this, &main_window::on_screenshotButton_clicked);
+
+    QAction *gifAction = new QAction(this);
+    gifAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
+
+    connect(gifAction, &QAction::triggered, this, &main_window::on_gifAction_triggered);
+
+    QAction *loadAction = new QAction(this);
+    loadAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_O));
+
+    connect(loadAction, &QAction::triggered, this, &main_window::on_loadButton_clicked);
+
+    addAction(screenshotAction);
+    addAction(gifAction);
+    addAction(loadAction);
 }
 
 void main_window::save_settings() {
