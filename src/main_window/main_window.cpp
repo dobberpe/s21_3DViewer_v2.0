@@ -295,6 +295,7 @@ void main_window::on_rotationXSpinBox_valueChanged(int value) {
     curr_rotateX = value;
 
     sliderSetValueMuted(rotationXSlider, value);
+    focusNextChild();
 }
 
 void main_window::on_rotationYSpinBox_valueChanged(int value) {
@@ -302,6 +303,7 @@ void main_window::on_rotationYSpinBox_valueChanged(int value) {
     curr_rotateY = value;
 
     sliderSetValueMuted(rotationYSlider, value);
+    focusNextChild();
 }
 
 void main_window::on_rotationZSpinBox_valueChanged(int value) {
@@ -309,6 +311,7 @@ void main_window::on_rotationZSpinBox_valueChanged(int value) {
     curr_rotateZ = value;
 
     sliderSetValueMuted(rotationZSlider, value);
+    focusNextChild();
 }
 
 void main_window::on_moveXSlider_valueChanged(int value) {
@@ -364,6 +367,7 @@ void main_window::on_moveXSpinBox_valueChanged(int value) {
     curr_moveX = value;
 
     sliderSetValueMuted(moveXSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
+    focusNextChild();
 }
 
 void main_window::on_moveYSpinBox_valueChanged(int value) {
@@ -371,6 +375,7 @@ void main_window::on_moveYSpinBox_valueChanged(int value) {
     curr_moveY = value;
 
     sliderSetValueMuted(moveYSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
+    focusNextChild();
 }
 
 void main_window::on_moveZSpinBox_valueChanged(int value) {
@@ -378,6 +383,7 @@ void main_window::on_moveZSpinBox_valueChanged(int value) {
     curr_moveZ = value;
 
     sliderSetValueMuted(moveZSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
+    focusNextChild();
 }
 
 void main_window::on_scaleSlider_valueChanged(int value) {
@@ -545,27 +551,30 @@ void main_window::on_timer_timeout() {
 }
 
 void main_window::keyPressEvent(QKeyEvent *event) {
+    bool undo = true;
     firstCommand = nullptr;
 
     if (event->key() == Qt::Key_Z && event->modifiers() == Qt::ControlModifier)
         firstCommand = CommandManager::get_CommandManager()->undoCommand();  // Обработка Ctrl + Z
-    else if (event->key() == Qt::Key_Y && event->modifiers() == Qt::ControlModifier)
+    else if (event->key() == Qt::Key_Y && event->modifiers() == Qt::ControlModifier) {
+        undo = false;
         firstCommand = CommandManager::get_CommandManager()->redoCommand();  // Обработка Ctrl + Y
+    }
 
     if (firstCommand) {
         if (dynamic_cast<RotateCommand*>(firstCommand)) {
             auto [x, y, z] = dynamic_cast<RotateCommand*>(firstCommand)->get_angle();
 
             if (x) {
-                curr_rotateX -= x;
+                curr_rotateX = undo ? curr_rotateX - x : curr_rotateX + x;
                 sliderSetValueMuted(rotationXSlider, curr_rotateX);
                 spinBoxSetValueMuted(rotationXSpinBox, curr_rotateX);
             } else if (y) {
-                curr_rotateY -= y;
+                curr_rotateY = undo ? curr_rotateY - y : curr_rotateY + y;
                 sliderSetValueMuted(rotationYSlider, curr_rotateY);
                 spinBoxSetValueMuted(rotationYSpinBox, curr_rotateY);
             } else {
-                curr_rotateZ -= z;
+                curr_rotateZ = undo ? curr_rotateZ - z : curr_rotateZ + z;
                 sliderSetValueMuted(rotationZSlider, curr_rotateZ);
                 spinBoxSetValueMuted(rotationZSpinBox, curr_rotateZ);
             }
@@ -573,22 +582,22 @@ void main_window::keyPressEvent(QKeyEvent *event) {
             auto [x, y, z] = dynamic_cast<MoveCommand*>(firstCommand)->get_shift();
 
             if (x) {
-                curr_moveX -= x;
+                curr_moveX = undo ? curr_moveX - x : curr_moveX + x;
                 sliderSetValueMuted(moveXSlider, (curr_moveX < -180) ? -180 : (curr_moveX > 180) ? 180 : curr_moveX);
                 spinBoxSetValueMuted(moveXSpinBox, curr_moveX);
             } else if (y) {
-                curr_moveY -= y;
+                curr_moveY = undo ? curr_moveY - y : curr_moveY + y;
                 sliderSetValueMuted(moveYSlider, (curr_moveY < -180) ? -180 : (curr_moveY > 180) ? 180 : curr_moveY);
                 spinBoxSetValueMuted(moveYSpinBox, curr_moveY);
             } else {
-                curr_moveZ -= z;
+                curr_moveZ = undo ? curr_moveZ - z : curr_moveZ + z;
                 sliderSetValueMuted(moveZSlider, (curr_moveZ < -180) ? -180 : (curr_moveZ > 180) ? 180 : curr_moveZ);
                 spinBoxSetValueMuted(moveZSpinBox, curr_moveZ);
             }
         } else if (dynamic_cast<ScaleCommand*>(firstCommand)) {
             double scale = dynamic_cast<ScaleCommand*>(firstCommand)->get_scale();
 
-            curr_scale -= scale;
+            curr_scale = undo ? curr_scale - scale : curr_scale + scale;
             sliderSetValueMuted(scaleSlider, curr_scale);
         } else if (dynamic_cast<VertexSizeCommand*>(firstCommand)) sliderSetValueMuted(vertexSizeSlider, dynamic_cast<VertexSizeCommand*>(firstCommand)->get_prev());
         else if (dynamic_cast<LineWidthCommand*>(firstCommand)) sliderSetValueMuted(edgesWidthSlider, dynamic_cast<LineWidthCommand*>(firstCommand)->get_prev());
