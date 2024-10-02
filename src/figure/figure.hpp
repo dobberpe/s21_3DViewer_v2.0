@@ -7,9 +7,9 @@ using namespace std;
 typedef enum { x = 0, y, z, homo } crd;
 
 struct Polygon {
-  vector<long> points;
+  vector<unsigned int> points;
   size_t n_points;
-  Polygon(const vector<long>& p_line)
+  Polygon(const vector<unsigned int>& p_line)
       : points(p_line), n_points(p_line.size()) {}
 };
 
