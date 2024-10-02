@@ -152,7 +152,7 @@ namespace s21 {
     public:
         CommandManager(const CommandManager&) = delete;
         void operator =(const CommandManager&) = delete;
-        static CommandManager* get_CommandManager();
+        static CommandManager& instance();
 
         void addCommand(ICommand *command);
         void executeCommand(ICommand *command);

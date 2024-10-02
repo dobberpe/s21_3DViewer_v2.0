@@ -17,7 +17,8 @@ SOURCES += \
     main_window/main_window.cpp \
     command/command.cpp \
     main.cpp \
-    graphics/graphics.cpp
+    graphics/graphics.cpp \
+    logger/logger.cpp
 
 HEADERS += \
     main_window/main_window.h \
@@ -28,7 +29,8 @@ HEADERS += \
     figure/figure.hpp \
     figure/figure.tpp \
     parser/parser.hpp \
-    parser/parser.tpp
+    parser/parser.tpp \
+    logger/logger.h
 
 # LIBS += -lGL -lGLU
 

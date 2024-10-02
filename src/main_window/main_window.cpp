@@ -1,4 +1,5 @@
 #include "main_window.h"
+#include "logger/logger.h"
 
 using namespace s21;
 
@@ -220,9 +221,11 @@ main_window::~main_window() {
 }
 
 void main_window::on_loadButton_clicked() {
+  Logger::instance().log("load file");
   QString fileName = QFileDialog::getOpenFileName(this, "Open Model File", "",
                                                   "OBJ Files (*.obj)");
   if (!fileName.isEmpty()) {
+    Logger::instance().log("fname not empty");
     rotationXSlider->setValue(0);
     rotationYSlider->setValue(0);
     rotationZSlider->setValue(0);
@@ -238,64 +241,37 @@ void main_window::on_loadButton_clicked() {
     curr_moveZ = 0;
     curr_scale = 0;
     v->loadModel(fileName);
+    Logger::instance().log("model loaded");
     fnameLabel->setText(QFileInfo(fileName).fileName());
     amountVnumberLabel->setText(QString::number(v->get_worker()->get_n_vertices()));
     amountEnumberLabel->setText(
         QString::number(v->get_worker()->get_n_polygons_edges()));
-    CommandManager::get_CommandManager()->clear();
+    Logger::instance().log("info set");
+    CommandManager::instance().clear();
   }
 }
 
 void main_window::on_rotationXSlider_valueChanged(int value) {
-    lastCommand = new RotateCommand(v, value - curr_rotateX, 0, 0);
-    lastCommand->execute();
-    if (!firstCommand) firstCommand = lastCommand;
-    else {
-        ICommand *tmp = new RotateCommand(*(dynamic_cast<RotateCommand*>(firstCommand)), *(dynamic_cast<RotateCommand*>(lastCommand)));
-        delete firstCommand;
-        delete lastCommand;
-        firstCommand = tmp;
-    }
-
+    Logger::instance().log("rotate x slider");
+    transformSlider_valueChanged(ROTATE, rotationXSpinBox, value, value - curr_rotateX, 0, 0);
     curr_rotateX = value;
-
-    spinBoxSetValueMuted(rotationXSpinBox, value);
 }
 
 void main_window::on_rotationYSlider_valueChanged(int value) {
-    lastCommand = new RotateCommand(v, 0, value - curr_rotateY, 0);
-    lastCommand->execute();
-    if (!firstCommand) firstCommand = lastCommand;
-    else {
-        ICommand *tmp = new RotateCommand(*(dynamic_cast<RotateCommand*>(firstCommand)), *(dynamic_cast<RotateCommand*>(lastCommand)));
-        delete firstCommand;
-        delete lastCommand;
-        firstCommand = tmp;
-    }
-
+    Logger::instance().log("rotate y slider");
+    transformSlider_valueChanged(ROTATE, rotationYSpinBox, value, 0, value - curr_rotateY, 0);
     curr_rotateY = value;
-
-    spinBoxSetValueMuted(rotationYSpinBox, value);
 }
 
 void main_window::on_rotationZSlider_valueChanged(int value) {
-    lastCommand = new RotateCommand(v, 0, 0, value - curr_rotateZ);
-    lastCommand->execute();
-    if (!firstCommand) firstCommand = lastCommand;
-    else {
-        ICommand *tmp = new RotateCommand(*(dynamic_cast<RotateCommand*>(firstCommand)), *(dynamic_cast<RotateCommand*>(lastCommand)));
-        delete firstCommand;
-        delete lastCommand;
-        firstCommand = tmp;
-    }
-
+    Logger::instance().log("rotate z slider");
+    transformSlider_valueChanged(ROTATE, rotationZSpinBox, value, 0, 0, value - curr_rotateZ);
     curr_rotateZ = value;
-
-    spinBoxSetValueMuted(rotationZSpinBox, value);
 }
 
 void main_window::on_rotationXSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, value - curr_rotateX, 0, 0));
+    Logger::instance().log("rotate x spin");
+    CommandManager::instance().executeCommand(new RotateCommand(v, value - curr_rotateX, 0, 0));
     curr_rotateX = value;
 
     sliderSetValueMuted(rotationXSlider, value);
@@ -303,7 +279,8 @@ void main_window::on_rotationXSpinBox_valueChanged(int value) {
 }
 
 void main_window::on_rotationYSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, 0, value - curr_rotateY, 0));
+    Logger::instance().log("rotate y spin");
+    CommandManager::instance().executeCommand(new RotateCommand(v, 0, value - curr_rotateY, 0));
     curr_rotateY = value;
 
     sliderSetValueMuted(rotationYSlider, value);
@@ -311,7 +288,8 @@ void main_window::on_rotationYSpinBox_valueChanged(int value) {
 }
 
 void main_window::on_rotationZSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, 0, 0, value - curr_rotateZ));
+    Logger::instance().log("rotate z spin");
+    CommandManager::instance().executeCommand(new RotateCommand(v, 0, 0, value - curr_rotateZ));
     curr_rotateZ = value;
 
     sliderSetValueMuted(rotationZSlider, value);
@@ -319,55 +297,51 @@ void main_window::on_rotationZSpinBox_valueChanged(int value) {
 }
 
 void main_window::on_moveXSlider_valueChanged(int value) {
-    lastCommand = new MoveCommand(v, value - curr_moveX, 0, 0);
-    lastCommand->execute();
-    if (!firstCommand) firstCommand = lastCommand;
-    else {
-        ICommand *tmp = new MoveCommand(*(dynamic_cast<MoveCommand*>(firstCommand)), *(dynamic_cast<MoveCommand*>(lastCommand)));
-        delete firstCommand;
-        delete lastCommand;
-        firstCommand = tmp;
-    }
-
+    Logger::instance().log("move x slider");
+    transformSlider_valueChanged(MOVE, moveXSpinBox, value, value - curr_moveX, 0, 0);
     curr_moveX = value;
-
-    spinBoxSetValueMuted(moveXSpinBox, value);
 }
 
 void main_window::on_moveYSlider_valueChanged(int value) {
-    lastCommand = new MoveCommand(v, 0, value - curr_moveY, 0);
-    lastCommand->execute();
-    if (!firstCommand) firstCommand = lastCommand;
-    else {
-        ICommand *tmp = new MoveCommand(*(dynamic_cast<MoveCommand*>(firstCommand)), *(dynamic_cast<MoveCommand*>(lastCommand)));
-        delete firstCommand;
-        delete lastCommand;
-        firstCommand = tmp;
-    }
-
+    Logger::instance().log("move y slider");
+    transformSlider_valueChanged(MOVE, moveYSpinBox, value, 0, value - curr_moveY, 0);
     curr_moveY = value;
-
-    spinBoxSetValueMuted(moveYSpinBox, value);
 }
 
 void main_window::on_moveZSlider_valueChanged(int value) {
-    lastCommand = new MoveCommand(v, 0, 0, value - curr_moveZ);
+    Logger::instance().log("move z slider");
+    transformSlider_valueChanged(MOVE, moveZSpinBox, value, 0, 0, value - curr_moveZ);
+    curr_moveZ = value;
+}
+
+void main_window::transformSlider_valueChanged(bool rotate, QSpinBox *spinBox, int value, int x, int y, int z) {
+    Logger::instance().log("lastCM =");
+    if (rotate) lastCommand = new RotateCommand(v, x, y, z);
+    else lastCommand = new MoveCommand(v, x, y, z);
     lastCommand->execute();
-    if (!firstCommand) firstCommand = lastCommand;
-    else {
-        ICommand *tmp = new MoveCommand(*(dynamic_cast<MoveCommand*>(firstCommand)), *(dynamic_cast<MoveCommand*>(lastCommand)));
+    if (!firstCommand) {
+        firstCommand = lastCommand;
+        Logger::instance().log("firstCM = lastCM");
+    } else {
+        ICommand *tmp;
+        Logger::instance().log("tmp =");
+        if (rotate) tmp = new RotateCommand(*(dynamic_cast<RotateCommand*>(firstCommand)), *(dynamic_cast<RotateCommand*>(lastCommand)));
+        else tmp = new MoveCommand(*(dynamic_cast<MoveCommand*>(firstCommand)), *(dynamic_cast<MoveCommand*>(lastCommand)));
+
         delete firstCommand;
+        Logger::instance().log("delete firstCM");
         delete lastCommand;
+        Logger::instance().log("delete lastCM");
         firstCommand = tmp;
+        Logger::instance().log("first = tmp");
     }
 
-    curr_moveZ = value;
-
-    spinBoxSetValueMuted(moveZSpinBox, value);
+    spinBoxSetValueMuted(spinBox, value);
 }
 
 void main_window::on_moveXSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, value - curr_moveX, 0, 0));
+    Logger::instance().log("move x spin");
+    CommandManager::instance().executeCommand(new MoveCommand(v, value - curr_moveX, 0, 0));
     curr_moveX = value;
 
     sliderSetValueMuted(moveXSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
@@ -375,7 +349,8 @@ void main_window::on_moveXSpinBox_valueChanged(int value) {
 }
 
 void main_window::on_moveYSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, 0, value - curr_moveY, 0));
+    Logger::instance().log("move y spin");
+    CommandManager::instance().executeCommand(new MoveCommand(v, 0, value - curr_moveY, 0));
     curr_moveY = value;
 
     sliderSetValueMuted(moveYSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
@@ -383,7 +358,8 @@ void main_window::on_moveYSpinBox_valueChanged(int value) {
 }
 
 void main_window::on_moveZSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, 0, 0, value - curr_moveZ));
+    Logger::instance().log("move z spin");
+    CommandManager::instance().executeCommand(new MoveCommand(v, 0, 0, value - curr_moveZ));
     curr_moveZ = value;
 
     sliderSetValueMuted(moveZSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
@@ -391,105 +367,150 @@ void main_window::on_moveZSpinBox_valueChanged(int value) {
 }
 
 void main_window::on_scaleSlider_valueChanged(int value) {
+    Logger::instance().log("scale slider");
+    Logger::instance().log("lastCM =");
   lastCommand = new ScaleCommand(v, value - curr_scale);
   lastCommand->execute();
-  if (!firstCommand) firstCommand = lastCommand;
-  else {
+  if (!firstCommand) {
+      firstCommand = lastCommand;
+      Logger::instance().log("first = last");
+  } else {
+      Logger::instance().log("tmp =");
       ICommand *tmp = new ScaleCommand(*(dynamic_cast<ScaleCommand*>(firstCommand)), *(dynamic_cast<ScaleCommand*>(lastCommand)));
       delete firstCommand;
+      Logger::instance().log("delete firstCM");
       delete lastCommand;
+      Logger::instance().log("delete lastCM");
       firstCommand = tmp;
+      Logger::instance().log("first = tmp");
   }
 
   curr_scale = value;
 }
 
 void main_window::on_transformSlider_sliderReleased() {
-    CommandManager::get_CommandManager()->addCommand(firstCommand);
+    CommandManager::instance().addCommand(firstCommand);
     firstCommand = nullptr;
+    Logger::instance().log("firstCM = null");
     lastCommand = nullptr;
+    Logger::instance().log("lastCM = null");
 }
 
 void main_window::on_increaseScaleButton_clicked() {
+  Logger::instance().log("+ scale");
   scaleSlider->setValue(scaleSlider->value() + 1);
   on_transformSlider_sliderReleased();
 }
 
 void main_window::on_decreaseScaleButton_clicked() {
+  Logger::instance().log("- scale");
   scaleSlider->setValue(scaleSlider->value() - 1);
   on_transformSlider_sliderReleased();
 }
 
 void main_window::on_backgroundColorButton_clicked() {
+    Logger::instance().log("bg color button");
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета фона");
 
-  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new BgColorCommand(v, color.redF(), color.greenF(), color.blueF()));
+  if (color.isValid()) CommandManager::instance().executeCommand(new BgColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_vertexColorButton_clicked() {
+    Logger::instance().log("vertex color button");
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета вершин");
 
-  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new VertexColorCommand(v, color.redF(), color.greenF(), color.blueF()));
+  if (color.isValid()) CommandManager::instance().executeCommand(new VertexColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_edgesColorButton_clicked() {
+    Logger::instance().log("edges color button");
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета ребер");
 
-  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new PolygonColorCommand(v, color.redF(), color.greenF(), color.blueF()));
+  if (color.isValid()) CommandManager::instance().executeCommand(new PolygonColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_vertexSizeSlider_valueChanged(int value) {
     if (syncUpdate) VertexSizeCommand(v, value).execute();
     else {
-        if (lastCommand && lastCommand != firstCommand) delete lastCommand;
+        Logger::instance().log("vertex size slider");
+        if (lastCommand && lastCommand != firstCommand) {
+            delete lastCommand;
+            Logger::instance().log("delete lastCM");
+        }
+        Logger::instance().log("lastCM =");
         lastCommand = new VertexSizeCommand(v, value);
         lastCommand->execute();
-        if (!firstCommand) firstCommand = lastCommand;
+        if (!firstCommand) {
+            firstCommand = lastCommand;
+            Logger::instance().log("first = last");
+        }
     }
 }
 
 void main_window::on_edgesWidthSlider_valueChanged(int value) {
     if (syncUpdate) LineWidthCommand(v, value).execute();
     else {
-        if (lastCommand && lastCommand != firstCommand) delete lastCommand;
+        Logger::instance().log("edges width slider");
+        if (lastCommand && lastCommand != firstCommand) {
+            delete lastCommand;
+            Logger::instance().log("delete lastCM");
+        }
+        Logger::instance().log("lastCM =");
         lastCommand = new LineWidthCommand(v, value);
         lastCommand->execute();
-        if (!firstCommand) firstCommand = lastCommand;
+        if (!firstCommand) {
+            firstCommand = lastCommand;
+            Logger::instance().log("first = last");
+        }
     }
 }
 
 void main_window::on_vertexSizeSlider_sliderReleased() {
-    CommandManager::get_CommandManager()->executeCommand(new VertexSizeCommand(*(dynamic_cast<VertexSizeCommand*>(firstCommand)), *(dynamic_cast<VertexSizeCommand*>(lastCommand))));
+    CommandManager::instance().executeCommand(new VertexSizeCommand(*(dynamic_cast<VertexSizeCommand*>(firstCommand)), *(dynamic_cast<VertexSizeCommand*>(lastCommand))));
     delete firstCommand;
     firstCommand = nullptr;
+    Logger::instance().log("firstCM = null");
     if (lastCommand) delete lastCommand;
     lastCommand = nullptr;
+    Logger::instance().log("lastCM = null");
 }
 
 void main_window::on_edgesWidthSlider_sliderReleased() {
-    CommandManager::get_CommandManager()->executeCommand(new LineWidthCommand(*(dynamic_cast<LineWidthCommand*>(firstCommand)), *(dynamic_cast<LineWidthCommand*>(lastCommand))));
+    CommandManager::instance().executeCommand(new LineWidthCommand(*(dynamic_cast<LineWidthCommand*>(firstCommand)), *(dynamic_cast<LineWidthCommand*>(lastCommand))));
     delete firstCommand;
     firstCommand = nullptr;
+    Logger::instance().log("firstCM = null");
     if (lastCommand) delete lastCommand;
     lastCommand = nullptr;
+    Logger::instance().log("lastCM = null");
 }
 
 void main_window::on_projectionTypeComboBox_indexChanged(int index) {
   if (syncUpdate) ProjectionTypeCommand(v, index).execute();
-  else CommandManager::get_CommandManager()->executeCommand(new ProjectionTypeCommand(v, index));
+  else {
+      Logger::instance().log("pr type box");
+      CommandManager::instance().executeCommand(new ProjectionTypeCommand(v, index));
+  }
 }
 
 void main_window::on_vertexTypeComboBox_indexChanged(int index) {
   if (syncUpdate) VertexTypeCommand(v, index).execute();
-  else CommandManager::get_CommandManager()->executeCommand(new VertexTypeCommand(v, index));
+  else {
+      Logger::instance().log("vertex type box");
+      CommandManager::instance().executeCommand(new VertexTypeCommand(v, index));
+  }
 }
 
 void main_window::on_edgesTypeComboBox_indexChanged(int index) {
   if (syncUpdate) LineTypeCommand(v, index).execute();
-  else CommandManager::get_CommandManager()->executeCommand(new LineTypeCommand(v, index));
+  else {
+      Logger::instance().log("edges type box");
+      CommandManager::instance().executeCommand(new LineTypeCommand(v, index));
+  }
 }
 
 void main_window::on_screenshotButton_clicked() {
+    Logger::instance().log("screenshot button");
   // Создание QPixmap для захвата виджета viewer
   QPixmap pixmap(v->size());
   v->render(&pixmap);
@@ -522,6 +543,7 @@ void main_window::on_screenshotButton_clicked() {
 }
 
 void main_window::on_gifButton_clicked() {
+    Logger::instance().log("gif button");
   if (!timer->isActive()) {
     gifImage = new QGifImage();
     gifImage->setDefaultDelay(100);
@@ -530,6 +552,7 @@ void main_window::on_gifButton_clicked() {
 }
 
 void main_window::on_timer_timeout() {
+    Logger::instance().log("gif timeout");
   if (currentFrame < totalFrames) {
     QPixmap pixmap(v->size());
     v->render(&pixmap);
@@ -555,6 +578,7 @@ void main_window::on_timer_timeout() {
 }
 
 void main_window::on_gifAction_triggered() {
+    Logger::instance().log("gif action");
     gifButton->setChecked(true);
     on_gifButton_clicked();
 }
@@ -562,61 +586,70 @@ void main_window::on_gifAction_triggered() {
 void main_window::keyPressEvent(QKeyEvent *event) {
     bool undo = true;
     firstCommand = nullptr;
+    Logger::instance().log("firstCM = null");
 
-    if (event->key() == Qt::Key_Z && event->modifiers() == Qt::ControlModifier)
-        firstCommand = CommandManager::get_CommandManager()->undoCommand();  // Обработка Ctrl + Z
-    else if (event->key() == Qt::Key_Y && event->modifiers() == Qt::ControlModifier) {
+    if (event->key() == Qt::Key_Z && event->modifiers() == Qt::ControlModifier) {
+        Logger::instance().log("ctrl z");
+        firstCommand = CommandManager::instance().undoCommand();  // Обработка Ctrl + Z
+    } else if (event->key() == Qt::Key_Y && event->modifiers() == Qt::ControlModifier) {
+        Logger::instance().log("ctrl y");
         undo = false;
-        firstCommand = CommandManager::get_CommandManager()->redoCommand();  // Обработка Ctrl + Y
-    } else if (event->key() == Qt::Key_W && event->modifiers() == Qt::ControlModifier)
+        firstCommand = CommandManager::instance().redoCommand();  // Обработка Ctrl + Y
+    } else if (event->key() == Qt::Key_W && event->modifiers() == Qt::ControlModifier) {
+        Logger::instance().log("ctrl w");
         close();
-
-    if (firstCommand) {
-        if (dynamic_cast<RotateCommand*>(firstCommand)) {
-            auto [x, y, z] = dynamic_cast<RotateCommand*>(firstCommand)->get_angle();
-
-            if (x) {
-                curr_rotateX = undo ? curr_rotateX - x : curr_rotateX + x;
-                sliderSetValueMuted(rotationXSlider, curr_rotateX);
-                spinBoxSetValueMuted(rotationXSpinBox, curr_rotateX);
-            } else if (y) {
-                curr_rotateY = undo ? curr_rotateY - y : curr_rotateY + y;
-                sliderSetValueMuted(rotationYSlider, curr_rotateY);
-                spinBoxSetValueMuted(rotationYSpinBox, curr_rotateY);
-            } else {
-                curr_rotateZ = undo ? curr_rotateZ - z : curr_rotateZ + z;
-                sliderSetValueMuted(rotationZSlider, curr_rotateZ);
-                spinBoxSetValueMuted(rotationZSpinBox, curr_rotateZ);
-            }
-        } else if (dynamic_cast<MoveCommand*>(firstCommand)) {
-            auto [x, y, z] = dynamic_cast<MoveCommand*>(firstCommand)->get_shift();
-
-            if (x) {
-                curr_moveX = undo ? curr_moveX - x : curr_moveX + x;
-                sliderSetValueMuted(moveXSlider, (curr_moveX < -180) ? -180 : (curr_moveX > 180) ? 180 : curr_moveX);
-                spinBoxSetValueMuted(moveXSpinBox, curr_moveX);
-            } else if (y) {
-                curr_moveY = undo ? curr_moveY - y : curr_moveY + y;
-                sliderSetValueMuted(moveYSlider, (curr_moveY < -180) ? -180 : (curr_moveY > 180) ? 180 : curr_moveY);
-                spinBoxSetValueMuted(moveYSpinBox, curr_moveY);
-            } else {
-                curr_moveZ = undo ? curr_moveZ - z : curr_moveZ + z;
-                sliderSetValueMuted(moveZSlider, (curr_moveZ < -180) ? -180 : (curr_moveZ > 180) ? 180 : curr_moveZ);
-                spinBoxSetValueMuted(moveZSpinBox, curr_moveZ);
-            }
-        } else if (dynamic_cast<ScaleCommand*>(firstCommand)) {
-            double scale = dynamic_cast<ScaleCommand*>(firstCommand)->get_scale();
-
-            curr_scale = undo ? curr_scale - scale : curr_scale + scale;
-            sliderSetValueMuted(scaleSlider, curr_scale);
-        } else if (dynamic_cast<VertexSizeCommand*>(firstCommand)) sliderSetValueMuted(vertexSizeSlider, dynamic_cast<VertexSizeCommand*>(firstCommand)->get_prev());
-        else if (dynamic_cast<LineWidthCommand*>(firstCommand)) sliderSetValueMuted(edgesWidthSlider, dynamic_cast<LineWidthCommand*>(firstCommand)->get_prev());
-        else if (dynamic_cast<ProjectionTypeCommand*>(firstCommand)) comboBoxSetValueMuted(projectionTypeComboBox, dynamic_cast<ProjectionTypeCommand*>(firstCommand)->get_type());
-        else if (dynamic_cast<VertexTypeCommand*>(firstCommand)) comboBoxSetValueMuted(vertexTypeComboBox, dynamic_cast<VertexTypeCommand*>(firstCommand)->get_type());
-        else if (dynamic_cast<LineTypeCommand*>(firstCommand)) comboBoxSetValueMuted(edgesTypeComboBox, dynamic_cast<LineTypeCommand*>(firstCommand)->get_type());
     }
 
+    if (firstCommand) undo_UI(undo);
+
     firstCommand = nullptr;
+    Logger::instance().log("firstCM = null");
+}
+
+void main_window::undo_UI(bool undo) {
+    Logger::instance().log("undo ui");
+    if (dynamic_cast<RotateCommand*>(firstCommand)) {
+        auto [x, y, z] = dynamic_cast<RotateCommand*>(firstCommand)->get_angle();
+
+        if (x) {
+            curr_rotateX = undo ? curr_rotateX - x : curr_rotateX + x;
+            sliderSetValueMuted(rotationXSlider, curr_rotateX);
+            spinBoxSetValueMuted(rotationXSpinBox, curr_rotateX);
+        } else if (y) {
+            curr_rotateY = undo ? curr_rotateY - y : curr_rotateY + y;
+            sliderSetValueMuted(rotationYSlider, curr_rotateY);
+            spinBoxSetValueMuted(rotationYSpinBox, curr_rotateY);
+        } else {
+            curr_rotateZ = undo ? curr_rotateZ - z : curr_rotateZ + z;
+            sliderSetValueMuted(rotationZSlider, curr_rotateZ);
+            spinBoxSetValueMuted(rotationZSpinBox, curr_rotateZ);
+        }
+    } else if (dynamic_cast<MoveCommand*>(firstCommand)) {
+        auto [x, y, z] = dynamic_cast<MoveCommand*>(firstCommand)->get_shift();
+
+        if (x) {
+            curr_moveX = undo ? curr_moveX - x : curr_moveX + x;
+            sliderSetValueMuted(moveXSlider, (curr_moveX < -180) ? -180 : (curr_moveX > 180) ? 180 : curr_moveX);
+            spinBoxSetValueMuted(moveXSpinBox, curr_moveX);
+        } else if (y) {
+            curr_moveY = undo ? curr_moveY - y : curr_moveY + y;
+            sliderSetValueMuted(moveYSlider, (curr_moveY < -180) ? -180 : (curr_moveY > 180) ? 180 : curr_moveY);
+            spinBoxSetValueMuted(moveYSpinBox, curr_moveY);
+        } else {
+            curr_moveZ = undo ? curr_moveZ - z : curr_moveZ + z;
+            sliderSetValueMuted(moveZSlider, (curr_moveZ < -180) ? -180 : (curr_moveZ > 180) ? 180 : curr_moveZ);
+            spinBoxSetValueMuted(moveZSpinBox, curr_moveZ);
+        }
+    } else if (dynamic_cast<ScaleCommand*>(firstCommand)) {
+        double scale = dynamic_cast<ScaleCommand*>(firstCommand)->get_scale();
+
+        curr_scale = undo ? curr_scale - scale : curr_scale + scale;
+        sliderSetValueMuted(scaleSlider, curr_scale);
+    } else if (dynamic_cast<VertexSizeCommand*>(firstCommand)) sliderSetValueMuted(vertexSizeSlider, dynamic_cast<VertexSizeCommand*>(firstCommand)->get_prev());
+    else if (dynamic_cast<LineWidthCommand*>(firstCommand)) sliderSetValueMuted(edgesWidthSlider, dynamic_cast<LineWidthCommand*>(firstCommand)->get_prev());
+    else if (dynamic_cast<ProjectionTypeCommand*>(firstCommand)) comboBoxSetValueMuted(projectionTypeComboBox, dynamic_cast<ProjectionTypeCommand*>(firstCommand)->get_type());
+    else if (dynamic_cast<VertexTypeCommand*>(firstCommand)) comboBoxSetValueMuted(vertexTypeComboBox, dynamic_cast<VertexTypeCommand*>(firstCommand)->get_type());
+    else if (dynamic_cast<LineTypeCommand*>(firstCommand)) comboBoxSetValueMuted(edgesTypeComboBox, dynamic_cast<LineTypeCommand*>(firstCommand)->get_type());
 }
 
 void main_window::setup_shortcuts() {
@@ -641,6 +674,7 @@ void main_window::setup_shortcuts() {
 }
 
 void main_window::save_settings() {
+  Logger::instance().log("save settings");
   QSettings settings("School21", "3DViewer_v1.0");
   settings.setValue("bgColor", QColor(static_cast<int>(v->bg_r * 255),
                                       static_cast<int>(v->bg_g * 255),
@@ -659,7 +693,9 @@ void main_window::save_settings() {
 }
 
 void main_window::load_settings() {
+  Logger::instance().log("load settings");
   QSettings settings("School21", "3DViewer_v1.0");
+  Logger::instance().log("settings opened");
   QColor bgColor(settings.value("bgColor", "#FFFFFF").toString());
   QColor vColor(settings.value("vColor", "#00FF00").toString());
   QColor eColor(settings.value("eColor", "#0000FF").toString());
@@ -672,12 +708,15 @@ void main_window::load_settings() {
   v->polygon_r = eColor.redF();
   v->polygon_g = eColor.greenF();
   v->polygon_b = eColor.blueF();
+  Logger::instance().log("color set");
   syncUpdate = true;
   vertexSizeSlider->setValue(settings.value("vSize", 1).toInt());
   edgesWidthSlider->setValue(settings.value("eWidth", 1).toInt());
+  Logger::instance().log("size sliders set");
   projectionTypeComboBox->setCurrentIndex(settings.value("pType", 0).toInt());
   vertexTypeComboBox->setCurrentIndex(settings.value("vType", 0).toInt());
   edgesTypeComboBox->setCurrentIndex(settings.value("eType", 0).toInt());
+  Logger::instance().log("type set");
   syncUpdate = false;
 }
 

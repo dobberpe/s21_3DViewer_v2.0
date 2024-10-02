@@ -77,9 +77,11 @@ namespace s21 {
         void setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate);
         void setupSettings(QVBoxLayout *rightColumnLayout);
         void setupFileInfo(QVBoxLayout *rightColumnLayout);
+        void transformSlider_valueChanged(bool rotate, QSpinBox *slider, int value, int x, int y, int z);
         void sliderSetValueMuted(QSlider *slider, int value);
         void spinBoxSetValueMuted(QSpinBox *spinBox, int value);
         void comboBoxSetValueMuted(QComboBox *comboBox, int value);
+        void undo_UI(bool undo);
 
         Viewer *v;
 
