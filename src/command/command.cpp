@@ -81,7 +81,9 @@ bool ScaleCommand::execute() {
     bool res = false;
 
     if (scale != 0) {
+        Logger::instance().log("curr scale in v was " + QString::number(v->curr_scale));
         v->curr_scale *= pow(scale > 0 ? 1.001 : 0.999, abs(scale));
+        Logger::instance().log("curr scale in v is " + QString::number(v->curr_scale));
         v->get_worker()->scale(v->curr_scale);
         v->update();
         res = true;
@@ -91,7 +93,9 @@ bool ScaleCommand::execute() {
 }
 
 void ScaleCommand::undo() {
+    Logger::instance().log("curr scale in v was " + QString::number(v->curr_scale));
     v->curr_scale /= pow(scale > 0 ? 1.001 : 0.999, abs(scale));
+    Logger::instance().log("curr scale in v is " + QString::number(v->curr_scale));
     v->get_worker()->scale(v->curr_scale);
     v->update();
 }
