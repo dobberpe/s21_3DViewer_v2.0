@@ -243,7 +243,7 @@ void main_window::on_loadButton_clicked() {
 }
 
 void main_window::on_rotationXSlider_valueChanged(int value) {
-    lastCommand = new RotateCommand(v->get_worker(), value - curr_rotateX, 0, 0);
+    lastCommand = new RotateCommand(v, value - curr_rotateX, 0, 0);
     lastCommand->execute();
     if (!firstCommand) firstCommand = lastCommand;
     else {
@@ -259,7 +259,7 @@ void main_window::on_rotationXSlider_valueChanged(int value) {
 }
 
 void main_window::on_rotationYSlider_valueChanged(int value) {
-    lastCommand = new RotateCommand(v->get_worker(), 0, value - curr_rotateY, 0);
+    lastCommand = new RotateCommand(v, 0, value - curr_rotateY, 0);
     lastCommand->execute();
     if (!firstCommand) firstCommand = lastCommand;
     else {
@@ -275,7 +275,7 @@ void main_window::on_rotationYSlider_valueChanged(int value) {
 }
 
 void main_window::on_rotationZSlider_valueChanged(int value) {
-    lastCommand = new RotateCommand(v->get_worker(), 0, 0, value - curr_rotateZ);
+    lastCommand = new RotateCommand(v, 0, 0, value - curr_rotateZ);
     lastCommand->execute();
     if (!firstCommand) firstCommand = lastCommand;
     else {
@@ -291,28 +291,28 @@ void main_window::on_rotationZSlider_valueChanged(int value) {
 }
 
 void main_window::on_rotationXSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v->get_worker(), value - curr_rotateX, 0, 0));
+    CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, value - curr_rotateX, 0, 0));
     curr_rotateX = value;
 
     sliderSetValueMuted(rotationXSlider, value);
 }
 
 void main_window::on_rotationYSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v->get_worker(), 0, value - curr_rotateY, 0));
+    CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, 0, value - curr_rotateY, 0));
     curr_rotateY = value;
 
     sliderSetValueMuted(rotationYSlider, value);
 }
 
 void main_window::on_rotationZSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v->get_worker(), 0, 0, value - curr_rotateZ));
+    CommandManager::get_CommandManager()->executeCommand(new RotateCommand(v, 0, 0, value - curr_rotateZ));
     curr_rotateZ = value;
 
     sliderSetValueMuted(rotationZSlider, value);
 }
 
 void main_window::on_moveXSlider_valueChanged(int value) {
-    lastCommand = new MoveCommand(v->get_worker(), value - curr_moveX, 0, 0);
+    lastCommand = new MoveCommand(v, value - curr_moveX, 0, 0);
     lastCommand->execute();
     if (!firstCommand) firstCommand = lastCommand;
     else {
@@ -328,7 +328,7 @@ void main_window::on_moveXSlider_valueChanged(int value) {
 }
 
 void main_window::on_moveYSlider_valueChanged(int value) {
-    lastCommand = new MoveCommand(v->get_worker(), 0, value - curr_moveY, 0);
+    lastCommand = new MoveCommand(v, 0, value - curr_moveY, 0);
     lastCommand->execute();
     if (!firstCommand) firstCommand = lastCommand;
     else {
@@ -344,7 +344,7 @@ void main_window::on_moveYSlider_valueChanged(int value) {
 }
 
 void main_window::on_moveZSlider_valueChanged(int value) {
-    lastCommand = new MoveCommand(v->get_worker(), 0, 0, value - curr_moveZ);
+    lastCommand = new MoveCommand(v, 0, 0, value - curr_moveZ);
     lastCommand->execute();
     if (!firstCommand) firstCommand = lastCommand;
     else {
@@ -360,28 +360,28 @@ void main_window::on_moveZSlider_valueChanged(int value) {
 }
 
 void main_window::on_moveXSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v->get_worker(), value - curr_moveX, 0, 0));
+    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, value - curr_moveX, 0, 0));
     curr_moveX = value;
 
     sliderSetValueMuted(moveXSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
 }
 
 void main_window::on_moveYSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v->get_worker(), 0, value - curr_moveY, 0));
+    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, 0, value - curr_moveY, 0));
     curr_moveY = value;
 
     sliderSetValueMuted(moveYSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
 }
 
 void main_window::on_moveZSpinBox_valueChanged(int value) {
-    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v->get_worker(), 0, 0, value - curr_moveZ));
+    CommandManager::get_CommandManager()->executeCommand(new MoveCommand(v, 0, 0, value - curr_moveZ));
     curr_moveZ = value;
 
     sliderSetValueMuted(moveZSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
 }
 
 void main_window::on_scaleSlider_valueChanged(int value) {
-  lastCommand = new ScaleCommand(v->get_worker(), value - curr_scale);
+  lastCommand = new ScaleCommand(v, value - curr_scale);
   lastCommand->execute();
   if (!firstCommand) firstCommand = lastCommand;
   else {
@@ -413,36 +413,36 @@ void main_window::on_decreaseScaleButton_clicked() {
 void main_window::on_backgroundColorButton_clicked() {
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета фона");
 
-  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new BgColorCommand(v->get_worker(), color.redF(), color.greenF(), color.blueF()));
+  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new BgColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_vertexColorButton_clicked() {
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета вершин");
 
-  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new VertexColorCommand(v->get_worker(), color.redF(), color.greenF(), color.blueF()));
+  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new VertexColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_edgesColorButton_clicked() {
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета ребер");
 
-  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new PolygonColorCommand(v->get_worker(), color.redF(), color.greenF(), color.blueF()));
+  if (color.isValid()) CommandManager::get_CommandManager()->executeCommand(new PolygonColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_vertexSizeSlider_valueChanged(int value) {
-    if (syncUpdate) VertexSizeCommand(v->get_worker(), value).execute();
+    if (syncUpdate) VertexSizeCommand(v, value).execute();
     else {
         if (lastCommand && lastCommand != firstCommand) delete lastCommand;
-        lastCommand = new VertexSizeCommand(v->get_worker(), value);
+        lastCommand = new VertexSizeCommand(v, value);
         lastCommand->execute();
         if (!firstCommand) firstCommand = lastCommand;
     }
 }
 
 void main_window::on_edgesWidthSlider_valueChanged(int value) {
-    if (syncUpdate) LineWidthCommand(v->get_worker(), value).execute();
+    if (syncUpdate) LineWidthCommand(v, value).execute();
     else {
         if (lastCommand && lastCommand != firstCommand) delete lastCommand;
-        lastCommand = new LineWidthCommand(v->get_worker(), value);
+        lastCommand = new LineWidthCommand(v, value);
         lastCommand->execute();
         if (!firstCommand) firstCommand = lastCommand;
     }
@@ -465,18 +465,18 @@ void main_window::on_edgesWidthSlider_sliderReleased() {
 }
 
 void main_window::on_projectionTypeComboBox_indexChanged(int index) {
-  if (syncUpdate) ProjectionTypeCommand(v->get_worker(), index).execute();
-  else CommandManager::get_CommandManager()->executeCommand(new ProjectionTypeCommand(v->get_worker(), index));
+  if (syncUpdate) ProjectionTypeCommand(v, index).execute();
+  else CommandManager::get_CommandManager()->executeCommand(new ProjectionTypeCommand(v, index));
 }
 
 void main_window::on_vertexTypeComboBox_indexChanged(int index) {
-  if (syncUpdate) VertexTypeCommand(v->get_worker(), index).execute();
-  else CommandManager::get_CommandManager()->executeCommand(new VertexTypeCommand(v->get_worker(), index));
+  if (syncUpdate) VertexTypeCommand(v, index).execute();
+  else CommandManager::get_CommandManager()->executeCommand(new VertexTypeCommand(v, index));
 }
 
 void main_window::on_edgesTypeComboBox_indexChanged(int index) {
-  if (syncUpdate) LineTypeCommand(v->get_worker(), index).execute();
-  else CommandManager::get_CommandManager()->executeCommand(new LineTypeCommand(v->get_worker(), index));
+  if (syncUpdate) LineTypeCommand(v, index).execute();
+  else CommandManager::get_CommandManager()->executeCommand(new LineTypeCommand(v, index));
 }
 
 void main_window::on_screenshotButton_clicked() {
