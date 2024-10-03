@@ -52,8 +52,6 @@ namespace s21 {
         void on_edgesColorButton_clicked();
         void on_vertexSizeSlider_valueChanged(int value);
         void on_edgesWidthSlider_valueChanged(int value);
-        void on_vertexSizeSlider_sliderReleased();
-        void on_edgesWidthSlider_sliderReleased();
         void on_projectionTypeComboBox_indexChanged(int index);
         void on_vertexTypeComboBox_indexChanged(int index);
         void on_edgesTypeComboBox_indexChanged(int index);
@@ -77,17 +75,14 @@ namespace s21 {
         void setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate);
         void setupSettings(QVBoxLayout *rightColumnLayout);
         void setupFileInfo(QVBoxLayout *rightColumnLayout);
-        void transformSlider_valueChanged(bool rotate, QSpinBox *slider, int value, int x, int y, int z);
         void sliderSetValueMuted(QSlider *slider, int value);
         void spinBoxSetValueMuted(QSpinBox *spinBox, int value);
         void comboBoxSetValueMuted(QComboBox *comboBox, int value);
-        void undo_UI(bool undo);
+        void undo_UI(ICommand* command, bool undo);
 
         Viewer *v;
 
         bool syncUpdate = false;
-        ICommand* firstCommand = nullptr;
-        ICommand* lastCommand = nullptr;
 
         QPushButton *loadButton;
         QSlider *rotationXSlider;

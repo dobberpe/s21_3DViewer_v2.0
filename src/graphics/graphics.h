@@ -45,6 +45,7 @@ class Viewer : public QOpenGLWidget {
   void resizeGL(int w, int h) override;
   void mousePressEvent(QMouseEvent *event) override;
   void mouseMoveEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
   void wheelEvent(QWheelEvent *event) override;
 
   QPoint cur_pos;

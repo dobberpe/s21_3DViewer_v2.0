@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "command/command.h"
 
 Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {
   setWindowTitle("3dViewer");
@@ -26,17 +27,20 @@ void Viewer::initializeGL() { glEnable(GL_DEPTH_TEST); }
 void Viewer::mouseMoveEvent(QMouseEvent *event) {
   new_pos = QPoint(event->globalPosition().toPoint() - cur_pos);
   if (event->buttons() & Qt::LeftButton) {
-    worker->move_figure(new_pos.x() * 0.00001 * move_coef, -new_pos.y() * 0.00001 * move_coef, 0);
+    CommandManager::instance().combineCommand(new RotateCommand(this, new_pos.x() * 0.00001 * move_coef, -new_pos.y() * 0.00001 * move_coef, 0, false));
     update();
   } else if (event->buttons() & Qt::RightButton) {
-    worker->rotate_figure(new_pos.y() * 0.005, new_pos.x() * 0.005, 0);
+    CommandManager::instance().combineCommand(new MoveCommand(this, new_pos.y() * 0.005, new_pos.x() * 0.005, 0, false));
     update();
   }
 }
 
+void Viewer::mouseReleaseEvent(QMouseEvent *event) {
+    if ((event->buttons() & Qt::LeftButton) || (event->buttons() & Qt::RightButton)) CommandManager::instance().combinedCommandFinished();
+}
+
 void Viewer::wheelEvent(QWheelEvent *event) {
-  int num_degrees = event->angleDelta().y();
-  worker->scale(pow(1.001, num_degrees));
+  CommandManager::instance().combineCommand(new ScaleCommand(this, event->angleDelta().y(), false));
   update();
 }
 

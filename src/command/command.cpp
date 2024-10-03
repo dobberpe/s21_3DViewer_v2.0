@@ -5,8 +5,8 @@ using namespace s21;
 
 ICommand::~ICommand() {}
 
-RotateCommand::RotateCommand(Viewer* v_, double x_, double y_, double z_) : v(v_), x(x_), y(y_), z(z_) {
-    Logger::instance().log("created rotate " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z));
+RotateCommand::RotateCommand(Viewer* v_, double x_, double y_, double z_, bool ui) : v(v_), x(x_), y(y_), z(z_), undo_ui(ui) {
+    Logger::instance().log("created rotate " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z) + " from " + (undo_ui ? "main window" : "viewer"));
 }
 
 RotateCommand::RotateCommand(const RotateCommand &prev, const RotateCommand &curr) {
@@ -14,7 +14,8 @@ RotateCommand::RotateCommand(const RotateCommand &prev, const RotateCommand &cur
     x = prev.x + curr.x;
     y = prev.y + curr.y;
     z = prev.z + curr.z;
-    Logger::instance().log("created combined rotate " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z));
+    undo_ui = prev.undo_ui;
+    Logger::instance().log("created combined rotate " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z) + " from " + (undo_ui ? "main window" : "viewer"));
 }
 
 bool RotateCommand::execute() {
@@ -34,10 +35,10 @@ void RotateCommand::undo() {
     v->update();
 }
 
-tuple<double, double, double> RotateCommand::get_angle() const { return make_tuple(x, y, z); }
+tuple<double, double, double> RotateCommand::get_angle() const { return undo_ui ? make_tuple(x, y, z) : make_tuple(0.0, 0.0, 0.0); }
 
-MoveCommand::MoveCommand(Viewer *v_, double x_, double y_, double z_) : v(v_), x(x_), y(y_), z(z_) {
-    Logger::instance().log("created move " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z));
+MoveCommand::MoveCommand(Viewer *v_, double x_, double y_, double z_, bool ui) : v(v_), x(x_), y(y_), z(z_), undo_ui(ui) {
+    Logger::instance().log("created move " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z) + " from " + (undo_ui ? "main window" : "viewer"));
 }
 
 MoveCommand::MoveCommand(const MoveCommand &prev, const MoveCommand &curr) {
@@ -45,7 +46,8 @@ MoveCommand::MoveCommand(const MoveCommand &prev, const MoveCommand &curr) {
     x = prev.x + curr.x;
     y = prev.y + curr.y;
     z = prev.z + curr.z;
-    Logger::instance().log("created combined move " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z));
+    undo_ui = prev.undo_ui;
+    Logger::instance().log("created combined move " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z) + " from " + (undo_ui ? "main window" : "viewer"));
 }
 
 bool MoveCommand::execute() {
@@ -65,16 +67,17 @@ void MoveCommand::undo() {
     v->update();
 }
 
-tuple<double, double, double> MoveCommand::get_shift() const { return make_tuple(x, y, z); }
+tuple<double, double, double> MoveCommand::get_shift() const { return undo_ui ? make_tuple(x, y, z) : make_tuple(0.0, 0.0, 0.0); }
 
-ScaleCommand::ScaleCommand(Viewer *v_, double s) : v(v_), scale(s) {
-    Logger::instance().log("created scale " + QString::number(scale));
+ScaleCommand::ScaleCommand(Viewer *v_, double s, bool ui) : v(v_), scale(s), undo_ui(ui) {
+    Logger::instance().log("created scale " + QString::number(scale) + " from " + (undo_ui ? "main window" : "viewer"));
 }
 
 ScaleCommand::ScaleCommand(const ScaleCommand &prev, const ScaleCommand &curr) {
     v = prev.v;
     scale = prev.scale + curr.scale;
-    Logger::instance().log("created combined scale " + QString::number(scale));
+    undo_ui = prev.undo_ui;
+    Logger::instance().log("created combined scale " + QString::number(scale) + " from " + (undo_ui ? "main window" : "viewer"));
 }
 
 bool ScaleCommand::execute() {
@@ -94,7 +97,7 @@ void ScaleCommand::undo() {
     v->update();
 }
 
-double ScaleCommand::get_scale() const { return scale; }
+double ScaleCommand::get_scale() const { return undo_ui ? scale : 0; }
 
 BgColorCommand::BgColorCommand(Viewer *v_, double r_, double g_, double b_) : v(v_), r(r_), g(g_), b(b_), prev_r(v_->bg_r), prev_g(v_->bg_g), prev_b(v_->bg_b) {
     Logger::instance().log("created bgColor " + QString::number(r) + " " + QString::number(g) + " " + QString::number(b));
@@ -319,6 +322,43 @@ void CommandManager::executeCommand(ICommand *command) {
     Logger::instance().log("exec command");
     if (command->execute()) addCommand(command);
 }
+
+
+
+void CommandManager::combineCommand(ICommand *command) {
+    Logger::instance().log("combine command");
+
+    if (combine_stopper || history.empty()) executeCommand(command);
+    else {
+        ICommand* prev_command = history.top();
+        ICommand* combined_command = nullptr;
+        if (dynamic_cast<RotateCommand*>(command) && dynamic_cast<RotateCommand*>(prev_command))
+            combined_command = new RotateCommand(*(dynamic_cast<RotateCommand*>(prev_command)), *(dynamic_cast<RotateCommand*>(command)));
+        else if (dynamic_cast<MoveCommand*>(command) && dynamic_cast<MoveCommand*>(prev_command))
+            combined_command = new MoveCommand(*(dynamic_cast<MoveCommand*>(prev_command)), *(dynamic_cast<MoveCommand*>(command)));
+        else if (dynamic_cast<ScaleCommand*>(command) && dynamic_cast<ScaleCommand*>(prev_command))
+            combined_command = new ScaleCommand(*(dynamic_cast<ScaleCommand*>(prev_command)), *(dynamic_cast<ScaleCommand*>(command)));
+        else if (dynamic_cast<VertexSizeCommand*>(command) && dynamic_cast<VertexSizeCommand*>(prev_command))
+            combined_command = new VertexSizeCommand(*(dynamic_cast<VertexSizeCommand*>(prev_command)), *(dynamic_cast<VertexSizeCommand*>(command)));
+        else if (dynamic_cast<LineWidthCommand*>(command) && dynamic_cast<LineWidthCommand*>(prev_command))
+            combined_command = new LineWidthCommand(*(dynamic_cast<LineWidthCommand*>(prev_command)), *(dynamic_cast<LineWidthCommand*>(command)));
+        else executeCommand(command);
+
+        if (combined_command) {
+            command->execute();
+            history.pop();
+            addCommand(combined_command);
+            delete prev_command;
+            delete command;
+        }
+    }
+
+    combine_stopper = false;
+
+    Logger::instance().log("history size " + QString::number(history.size()));
+}
+
+void CommandManager::combinedCommandFinished() { combine_stopper = true; }
 
 ICommand *CommandManager::undoCommand() {
     Logger::instance().log("undo command");

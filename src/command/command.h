@@ -19,7 +19,7 @@ namespace s21 {
 
     class RotateCommand : public ICommand {
     public:
-        RotateCommand(Viewer* v_, double x_, double y_, double z_);
+        RotateCommand(Viewer* v_, double x_, double y_, double z_, bool ui);
         RotateCommand(const RotateCommand& prev, const RotateCommand& curr);
         bool execute() override;
         void undo() override;
@@ -27,11 +27,12 @@ namespace s21 {
     private:
         Viewer* v;
         double x, y, z;
+        bool undo_ui;
     };
 
     class MoveCommand : public ICommand {
     public:
-        MoveCommand(Viewer* v_, double x_, double y_, double z_);
+        MoveCommand(Viewer* v_, double x_, double y_, double z_, bool ui);
         MoveCommand(const MoveCommand& prev, const MoveCommand& curr);
         bool execute() override;
         void undo() override;
@@ -39,11 +40,12 @@ namespace s21 {
     private:
         Viewer* v;
         double x, y, z;
+        bool undo_ui;
     };
 
     class ScaleCommand : public ICommand {
     public:
-        ScaleCommand(Viewer* v_, double s);
+        ScaleCommand(Viewer* v_, double s, bool ui);
         ScaleCommand(const ScaleCommand& prev, const ScaleCommand& curr);
         bool execute() override;
         void undo() override;
@@ -51,6 +53,7 @@ namespace s21 {
     private:
         Viewer* v;
         double scale;
+        bool undo_ui;
     };
 
     class BgColorCommand : public ICommand {
@@ -156,6 +159,8 @@ namespace s21 {
 
         void addCommand(ICommand *command);
         void executeCommand(ICommand *command);
+        void combineCommand(ICommand *command);
+        void combinedCommandFinished();
         ICommand *undoCommand();
         ICommand *redoCommand();
         void clear();
@@ -166,6 +171,7 @@ namespace s21 {
 
         stack<ICommand*> history;
         stack<ICommand*> undoHistory;
+        bool combine_stopper = false;
     };
 }
 
