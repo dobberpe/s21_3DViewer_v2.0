@@ -18,12 +18,14 @@ SOURCES += \
     command/command.cpp \
     main.cpp \
     graphics/graphics.cpp \
+    graphics/render_strategy.cpp \
     logger/logger.cpp
 
 HEADERS += \
     main_window/main_window.h \
     command/command.h \
     graphics/graphics.h \
+    graphics/render_strategy.h \
     controller/worker.hpp \
     controller/worker.tpp \
     figure/figure.hpp \

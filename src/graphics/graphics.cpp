@@ -1,11 +1,19 @@
 #include "graphics.h"
+#include "render_strategy.h"
 #include "command/command.h"
-#include "logger/logger.h"
+#include "../logger/logger.h"
+
 
 Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {
   setWindowTitle("3dViewer");
   worker = new Worker();
   loadModel(start_file);
+
+  CompositeRenderStrategy* compose  = new CompositeRenderStrategy();
+  compose->addStrategy(new VertexRenderStrategy());
+  compose->addStrategy(new PolygonRenderStrategy());
+  setRenderStrategy(compose);
+
 }
 
 void Viewer::loadModel(QString filename) {
@@ -21,6 +29,10 @@ Worker *Viewer::get_worker() { return worker; }
 
 Viewer::~Viewer() {
   delete worker;
+  if (render_strategy) {
+      delete render_strategy;
+  }
+
 }
 
 void Viewer::initializeGL() { glEnable(GL_DEPTH_TEST); }
@@ -73,27 +85,9 @@ void Viewer::paintGL() {
 
   // Рисование
   glEnableClientState(GL_VERTEX_ARRAY);
-  if (vertex_type != NONE) {
-    if (vertex_type == ROUND) glEnable(GL_POINT_SMOOTH);
-    glVertexPointer(3, GL_DOUBLE, 0, get<0>(worker->get_vertex_array()));
-    glPointSize(vertex_size);
-    glColor3f(vertex_r, vertex_g, vertex_b);
-    glDrawArrays(GL_POINTS, 0, worker->get_n_vertices());
-    if (vertex_type == ROUND) glDisable(GL_POINT_SMOOTH);
-  }
-
-  if (line_type == DASH_LINE) {
-    glEnable(GL_LINE_STIPPLE);
-    glLineStipple(1, 255);
-  }
-  glLineWidth(line_width);
-  glColor3f(polygon_r, polygon_g, polygon_b);
-  auto [polygon_array, n_polygons] = worker->get_polygon_array();
-  for (size_t i = 0; i < n_polygons; ++i)
-    glDrawElements(GL_LINES, polygon_array[i].n_points, GL_UNSIGNED_INT,
-                     polygon_array[i].points.data());
-  if (line_type == DASH_LINE) glDisable(GL_LINE_STIPPLE);
+  render_strategy->render(this);
   glDisableClientState(GL_VERTEX_ARRAY);
+
 }
 
 void Viewer::resizeGL(int w, int h) {
@@ -113,4 +107,11 @@ void Viewer::resizeGL(int w, int h) {
     float top = move_coef;
     glOrtho(left, right, bottom, top, -move_coef, move_coef * 100);
   }
+}
+
+void Viewer::setRenderStrategy(RenderStrategy* strategy) {
+    if (render_strategy) {
+        delete render_strategy;
+    }
+    render_strategy = strategy;
 }
