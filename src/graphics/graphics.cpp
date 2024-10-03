@@ -36,8 +36,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event) {
 
 void Viewer::wheelEvent(QWheelEvent *event) {
   int num_degrees = event->angleDelta().y();
-  curr_scale *= num_degrees < 0 ? 0.99 : 1.01;
-  worker->scale(curr_scale);
+  worker->scale(pow(1.001, num_degrees));
   update();
 }
 

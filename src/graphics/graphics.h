@@ -22,7 +22,6 @@ class Viewer : public QOpenGLWidget {
 
  public:
   Worker *worker;
-  double curr_scale = 1;
 
   Viewer(QWidget *parent = nullptr);
   ~Viewer();
