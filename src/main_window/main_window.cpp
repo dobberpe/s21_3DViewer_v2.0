@@ -226,13 +226,13 @@ void main_window::on_loadButton_clicked() {
                                                   "OBJ Files (*.obj)");
   if (!fileName.isEmpty()) {
     Logger::instance().log("fname not empty");
-    rotationXSlider->setValue(0);
-    rotationYSlider->setValue(0);
-    rotationZSlider->setValue(0);
-    moveXSlider->setValue(0);
-    moveYSlider->setValue(0);
-    moveZSlider->setValue(0);
-    scaleSlider->setValue(0);
+    sliderSetValueMuted(rotationXSlider, 0);
+    sliderSetValueMuted(rotationYSlider, 0);
+    sliderSetValueMuted(rotationZSlider, 0);
+    sliderSetValueMuted(moveXSlider, 0);
+    sliderSetValueMuted(moveYSlider, 0);
+    sliderSetValueMuted(moveZSlider, 0);
+    sliderSetValueMuted(scaleSlider, 0);
     curr_rotateX = 0;
     curr_rotateY = 0;
     curr_rotateZ = 0;
@@ -240,6 +240,10 @@ void main_window::on_loadButton_clicked() {
     curr_moveY = 0;
     curr_moveZ = 0;
     curr_scale = 0;
+    firstCommand = nullptr;
+    Logger::instance().log("firstCM = null");
+    lastCommand = nullptr;
+    Logger::instance().log("lastCM = null");
     v->loadModel(fileName);
     Logger::instance().log("model loaded");
     fnameLabel->setText(QFileInfo(fileName).fileName());
@@ -668,9 +672,21 @@ void main_window::setup_shortcuts() {
 
     connect(loadAction, &QAction::triggered, this, &main_window::on_loadButton_clicked);
 
+    QAction *increaseScaleAction = new QAction(this);
+    increaseScaleAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Equal));
+
+    connect(increaseScaleAction, &QAction::triggered, this, &main_window::on_increaseScaleButton_clicked);
+
+    QAction *decreaseScaleAction = new QAction(this);
+    decreaseScaleAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
+
+    connect(decreaseScaleAction, &QAction::triggered, this, &main_window::on_decreaseScaleButton_clicked);
+
     addAction(screenshotAction);
     addAction(gifAction);
     addAction(loadAction);
+    addAction(increaseScaleAction);
+    addAction(decreaseScaleAction);
 }
 
 void main_window::save_settings() {
