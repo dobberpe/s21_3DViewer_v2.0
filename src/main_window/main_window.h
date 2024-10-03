@@ -16,7 +16,7 @@
 #include <QVBoxLayout>
 
 #include "graphics/graphics.h"
-#include "../command/command.h"
+#include "command/command.h"
 
 #define ROTATE true
 #define MOVE false

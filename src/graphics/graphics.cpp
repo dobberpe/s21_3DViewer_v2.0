@@ -1,5 +1,6 @@
 #include "graphics.h"
 #include "command/command.h"
+#include "logger/logger.h"
 
 Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {
   setWindowTitle("3dViewer");
@@ -27,16 +28,19 @@ void Viewer::initializeGL() { glEnable(GL_DEPTH_TEST); }
 void Viewer::mouseMoveEvent(QMouseEvent *event) {
   new_pos = QPoint(event->globalPosition().toPoint() - cur_pos);
   if (event->buttons() & Qt::LeftButton) {
-    CommandManager::instance().combineCommand(new RotateCommand(this, new_pos.x() * 0.00001 * move_coef, -new_pos.y() * 0.00001 * move_coef, 0, false));
+    Logger::instance().log("mouse rotate");
+    CommandManager::instance().combineCommand(new RotateCommand(this, new_pos.y() * 0.00001 * move_coef, new_pos.x() * 0.00001 * move_coef, 0, false));
     update();
   } else if (event->buttons() & Qt::RightButton) {
-    CommandManager::instance().combineCommand(new MoveCommand(this, new_pos.y() * 0.005, new_pos.x() * 0.005, 0, false));
+    Logger::instance().log("mouse move");
+    CommandManager::instance().combineCommand(new MoveCommand(this, new_pos.x() * 0.005, -new_pos.y() * 0.005, 0, false));
     update();
   }
 }
 
 void Viewer::mouseReleaseEvent(QMouseEvent *event) {
-    if ((event->buttons() & Qt::LeftButton) || (event->buttons() & Qt::RightButton)) CommandManager::instance().combinedCommandFinished();
+    Logger::instance().log("mouse release");
+    if ((event->button() == Qt::LeftButton) || (event->button() == Qt::RightButton)) CommandManager::instance().combinedCommandFinished();
 }
 
 void Viewer::wheelEvent(QWheelEvent *event) {

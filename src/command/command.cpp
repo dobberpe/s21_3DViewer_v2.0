@@ -358,7 +358,10 @@ void CommandManager::combineCommand(ICommand *command) {
     Logger::instance().log("history size " + QString::number(history.size()));
 }
 
-void CommandManager::combinedCommandFinished() { combine_stopper = true; }
+void CommandManager::combinedCommandFinished() {
+    Logger::instance().log("combine_stopper = true");
+    combine_stopper = true;
+}
 
 ICommand *CommandManager::undoCommand() {
     Logger::instance().log("undo command");
