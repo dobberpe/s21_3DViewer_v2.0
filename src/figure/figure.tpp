@@ -29,6 +29,7 @@ inline Figure& Figure::get_instance() {
 /// @param y
 /// @param z
 inline void Figure::add_vertex(double x, double y, double z) {
+  Logger::instance().log("add_vertex " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z));
   if (!n_vertex) {
     x_max = x;
     y_max = y;
@@ -48,6 +49,7 @@ inline void Figure::add_vertex(double x, double y, double z) {
   vertex.push_back(y);
   vertex.push_back(z);
   ++n_vertex;
+  Logger::instance().log("n_vertex " + QString::number(n_vertex));
 }
 
 inline size_t Figure::get_n_vertex() const { return n_vertex; }
@@ -69,6 +71,7 @@ inline tuple<const Polygon*, size_t> Figure::get_polygon() const {
 inline void Figure::add_polygon(const Polygon& polygon) {
   polygons.push_back(polygon);
   ++n_polygons;
+  Logger::instance().log("n_polygons " + QString::number(n_polygons));
   n_polygon_edges += polygon.n_points / 2;
 }
 
@@ -121,19 +124,25 @@ inline void Figure::rotate_figure(double alpha_x, double alpha_y,
 
 /// @brief Clears all attributes of the figure
 inline void Figure::clear_figure() {
+  Logger::instance().log("clear_figure");
   vertex.clear();
   n_vertex = 0U;
+  Logger::instance().log("vertex cleared, n_vertex 0");
   polygons.clear();
   n_polygons = 0U;
   n_polygon_edges = 0U;
+  Logger::instance().log("polygons cleared, n_polygons 0, n_polygon_edges");
   x_min = 0;
   y_min = 0;
   z_min = 0;
   x_max = 0;
   y_max = 0;
   z_max = 0;
+  Logger::instance().log("x y z min max 0");
   move_matrix.clear();
+  Logger::instance().log("move matrix clear");
   rotation_matrix.clear();
+  Logger::instance().log("rotation matrix clear");
 }
 
 /// @brief Fills a move matrix 4x4, matrix is transposed by default

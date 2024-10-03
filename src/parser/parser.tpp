@@ -10,12 +10,14 @@ inline Parser::Parser() : figure(Figure::get_instance()) {}
 /// @param filePath path to file
 /// @return true in case file exists, false otherwise
 inline bool Parser::parse_file_to_figure(const string& filePath) {
+  Logger::instance().log("parse_file_to_figure");
   bool success = true;
   figure.clear_figure();
   ifstream file(filePath);
   string line;
 
   if (file.is_open()) {
+    Logger::instance().log("file opens");
     while (getline(file, line)) {
       line = strip_comment(line);
       if (line.compare(0, 2, "v ") == 0) {
@@ -46,6 +48,7 @@ inline string Parser::strip_comment(string& line) {
 /// @brief Reads a line that contains a vertex
 /// @param line
 inline void Parser::read_vertex_line(const string& line) {
+  Logger::instance().log("read_vertex_line");
   vector<double> coords;
   size_t start = 0;
   size_t end = line.find(' ');
@@ -67,6 +70,7 @@ inline void Parser::read_vertex_line(const string& line) {
     start = end + 1;
     end = line.find(' ', start);
   }
+  Logger::instance().log(valid ? "after cycle valid = true" : "after cycle valid = false");
 
   if (valid) {
     token = line.substr(start);
@@ -78,7 +82,7 @@ inline void Parser::read_vertex_line(const string& line) {
   }
   if (valid && (count == 3 || count == 4)) {
     figure.add_vertex(coords[0], coords[1], coords[2]);
-  }
+  } else Logger::instance().log(valid ? "count != 3 && count != 4" : "!valid");
 }
 
 /// @brief Reads a polygon token
@@ -141,6 +145,7 @@ inline bool Parser::read_polygon_token(const string& token) {
 /// @brief Reads polygon line
 /// @param line
 inline void Parser::read_polygon_line(const string& line) {
+  Logger::instance().log("read_polygon_line");
   size_t start = 0, end = line.find(' ');
   string token;
   bool valid = true;

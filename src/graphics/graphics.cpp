@@ -1,7 +1,6 @@
 #include "graphics.h"
 #include "render_strategy.h"
 #include "command/command.h"
-#include "../logger/logger.h"
 
 
 Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {

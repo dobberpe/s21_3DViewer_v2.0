@@ -2,6 +2,8 @@
 #define __figure_HPP__
 
 #include <iostream>
+#include "logger/logger.h"
+
 using namespace std;
 
 typedef enum { x = 0, y, z, homo } crd;

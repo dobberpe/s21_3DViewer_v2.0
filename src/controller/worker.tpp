@@ -10,6 +10,7 @@ inline Worker::Worker() : figure(Figure::get_instance()) {}
 /// @param file_path
 /// @return true if file exists
 inline bool Worker::parse_file(const string& file_path) {
+  Logger::instance().log("parse " + QString::fromStdString(file_path));
   Parser parser;
   bool res = false;
   res = parser.parse_file_to_figure(file_path);

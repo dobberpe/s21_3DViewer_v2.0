@@ -5,6 +5,7 @@
 #include <string>
 
 #include "../figure/figure.hpp"
+
 using namespace s21;
 
 namespace s21 {
