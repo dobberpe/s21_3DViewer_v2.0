@@ -10,6 +10,7 @@ inline Parser::Parser() : figure(Figure::get_instance()) {}
 /// @param filePath path to file
 /// @return true in case file exists, false otherwise
 inline bool Parser::parse_file_to_figure(const string& filePath) {
+  locale::global(locale::classic());
   Logger::instance().log("parse_file_to_figure");
   bool success = true;
   figure.clear_figure();
