@@ -1,10 +1,13 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+#include <deque>
 #include <stack>
 #include <vector>
 
 #include "../graphics/graphics.h"
+
+#define MAX_HISTORY_SIZE 100000
 
 using namespace std;
 
@@ -182,7 +185,7 @@ class CommandManager {
   void clearHistory();
   void clearUndoHistory();
 
-  stack<ICommand*> history;
+  deque<ICommand*> history;
   stack<ICommand*> undoHistory;
   bool combine_stopper = false;
 };

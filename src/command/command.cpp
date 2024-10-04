@@ -370,7 +370,12 @@ CommandManager &CommandManager::instance() {
 
 void CommandManager::addCommand(ICommand *command) {
   Logger::instance().log("add command");
-  history.push(command);
+  if (history.size() >= MAX_HISTORY_SIZE) {
+    Logger::instance().log("delete front command");
+    delete history.front();
+    history.pop_front();
+  }
+  history.push_back(command);
   clearUndoHistory();
 }
 
@@ -385,7 +390,7 @@ void CommandManager::combineCommand(ICommand *command) {
   if (combine_stopper || history.empty())
     executeCommand(command);
   else {
-    ICommand *prev_command = history.top();
+    ICommand *prev_command = history.back();
     ICommand *combined_command = nullptr;
     if (dynamic_cast<RotateCommand *>(command) &&
         dynamic_cast<RotateCommand *>(prev_command))
@@ -417,7 +422,7 @@ void CommandManager::combineCommand(ICommand *command) {
 
     if (combined_command) {
       command->execute();
-      history.pop();
+      history.pop_back();
       addCommand(combined_command);
       delete prev_command;
       delete command;
@@ -440,9 +445,9 @@ ICommand *CommandManager::undoCommand() {
 
   if (!history.empty()) {
     Logger::instance().log("undoing");
-    command = history.top();
+    command = history.back();
     command->undo();
-    history.pop();
+    history.pop_back();
     undoHistory.push(command);
   } else
     Logger::instance().log("nothing to undo");
@@ -459,7 +464,7 @@ ICommand *CommandManager::redoCommand() {
     command = undoHistory.top();
     command->execute();
     undoHistory.pop();
-    history.push(command);
+    history.push_back(command);
   } else
     Logger::instance().log("nothing to redo");
 
@@ -476,8 +481,8 @@ CommandManager::CommandManager() {}
 void CommandManager::clearHistory() {
   Logger::instance().log("clear undo");
   while (!history.empty()) {
-    delete history.top();
-    history.pop();
+    delete history.back();
+    history.pop_back();
   }
 }
 
