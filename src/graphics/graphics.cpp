@@ -4,6 +4,7 @@
 
 
 Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {
+  
   setWindowTitle("3dViewer");
   worker = new Worker();
   loadModel(start_file);
@@ -79,7 +80,6 @@ void Viewer::paintGL() {
     glOrtho(left, right, bottom, top, -move_coef, move_coef * 100);
   }
 
-  // Рисование
   glEnableClientState(GL_VERTEX_ARRAY);
   render_strategy->render(this);
   glDisableClientState(GL_VERTEX_ARRAY);

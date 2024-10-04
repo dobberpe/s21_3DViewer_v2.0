@@ -56,5 +56,8 @@ class Viewer : public QOpenGLWidget {
   QPoint new_pos;
   QString start_file = QString("./obj_files/3dviewer.obj");
   double move_coef;
+
+  Worker *w;
 };
+
 #endif  // VIEWER_H
