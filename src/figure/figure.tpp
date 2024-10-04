@@ -79,7 +79,7 @@ inline void Figure::add_polygon(const Polygon& polygon) {
 
 inline void Figure::move_figure(double x_factor, double y_factor,
                                 double z_factor) {
-  fill_move_matrix(x_factor, y_factor, z_factor);
+  fill_move_matrix(move_coefficient * x_factor, move_coefficient * y_factor, move_coefficient * z_factor);
   move_();
 }
 
