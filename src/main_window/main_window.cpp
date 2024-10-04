@@ -4,7 +4,7 @@
 
 using namespace s21;
 
-main_window::main_window(QWidget *parent) : QMainWindow(parent) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   setWindowTitle("3dViewer");
   // setMinimumSize(800, 600);
 
@@ -15,7 +15,7 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
   loadButton = new QPushButton("Выбор файла");
   loadButton->setToolTip("Ctrl+O");
   connect(loadButton, &QPushButton::clicked, this,
-          &main_window::on_loadButton_clicked);
+          &MainWindow::on_loadButton_clicked);
 
   setup_shortcuts();
   rotation_setup();
@@ -26,165 +26,177 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
   screenshotButton = new QPushButton("Снимок экрана");
   screenshotButton->setToolTip("Ctrl+S");
   connect(screenshotButton, &QPushButton::clicked, this,
-          &main_window::on_screenshotButton_clicked);
+          &MainWindow::on_screenshotButton_clicked);
 
   gifButton = new QPushButton("Запись экрана");
   gifButton->setCheckable(true);
   gifButton->setToolTip("Ctrl+R");
   connect(gifButton, &QPushButton::clicked, this,
-          &main_window::on_gifButton_clicked);
+          &MainWindow::on_gifButton_clicked);
 
   setupUI();
 
   timer = new QTimer(this);
-  connect(timer, &QTimer::timeout, this, &main_window::on_timer_timeout);
+  connect(timer, &QTimer::timeout, this, &MainWindow::on_timer_timeout);
 }
 
-void main_window::rotation_setup() {
+void MainWindow::rotation_setup() {
   rotationXSlider = new QSlider(Qt::Horizontal);
   rotationXSlider->setRange(-180, 180);
   connect(rotationXSlider, &QSlider::valueChanged, this,
-          &main_window::on_rotationXSlider_valueChanged);
+          &MainWindow::on_rotationXSlider_valueChanged);
   connect(rotationXSlider, &QSlider::sliderReleased, this,
-          &main_window::on_transformSlider_sliderReleased);
+          &MainWindow::on_transformSlider_sliderReleased);
 
   rotationYSlider = new QSlider(Qt::Horizontal);
   rotationYSlider->setRange(-180, 180);
   connect(rotationYSlider, &QSlider::valueChanged, this,
-          &main_window::on_rotationYSlider_valueChanged);
+          &MainWindow::on_rotationYSlider_valueChanged);
   connect(rotationYSlider, &QSlider::sliderReleased, this,
-          &main_window::on_transformSlider_sliderReleased);
+          &MainWindow::on_transformSlider_sliderReleased);
 
   rotationZSlider = new QSlider(Qt::Horizontal);
   rotationZSlider->setRange(-180, 180);
   connect(rotationZSlider, &QSlider::valueChanged, this,
-          &main_window::on_rotationZSlider_valueChanged);
+          &MainWindow::on_rotationZSlider_valueChanged);
   connect(rotationZSlider, &QSlider::sliderReleased, this,
-          &main_window::on_transformSlider_sliderReleased);
+          &MainWindow::on_transformSlider_sliderReleased);
 
-  rotationXSpinBox = new QSpinBox;
+  rotationXSpinBox = new MySpinBox(this);
   rotationXSpinBox->setRange(-180, 180);
   connect(rotationXSpinBox, &QSpinBox::valueChanged, this,
-          &main_window::on_rotationXSpinBox_valueChanged);
+          &MainWindow::on_rotationXSpinBox_valueChanged);
+  connect(rotationXSpinBox, &MySpinBox::focusLost, this,
+          &MainWindow::on_spinBox_focusLost);
 
-  rotationYSpinBox = new QSpinBox;
+  rotationYSpinBox = new MySpinBox(this);
   rotationYSpinBox->setRange(-180, 180);
   connect(rotationYSpinBox, &QSpinBox::valueChanged, this,
-          &main_window::on_rotationYSpinBox_valueChanged);
+          &MainWindow::on_rotationYSpinBox_valueChanged);
+  connect(rotationYSpinBox, &MySpinBox::focusLost, this,
+          &MainWindow::on_spinBox_focusLost);
 
-  rotationZSpinBox = new QSpinBox;
+  rotationZSpinBox = new MySpinBox(this);
   rotationZSpinBox->setRange(-180, 180);
   connect(rotationZSpinBox, &QSpinBox::valueChanged, this,
-          &main_window::on_rotationZSpinBox_valueChanged);
+          &MainWindow::on_rotationZSpinBox_valueChanged);
+  connect(rotationZSpinBox, &MySpinBox::focusLost, this,
+          &MainWindow::on_spinBox_focusLost);
 }
 
-void main_window::move_setup() {
+void MainWindow::move_setup() {
   moveXSlider = new QSlider(Qt::Horizontal);
   moveXSlider->setRange(-180, 180);
   connect(moveXSlider, &QSlider::valueChanged, this,
-          &main_window::on_moveXSlider_valueChanged);
+          &MainWindow::on_moveXSlider_valueChanged);
   connect(moveXSlider, &QSlider::sliderReleased, this,
-          &main_window::on_transformSlider_sliderReleased);
+          &MainWindow::on_transformSlider_sliderReleased);
 
   moveYSlider = new QSlider(Qt::Horizontal);
   moveYSlider->setRange(-180, 180);
   connect(moveYSlider, &QSlider::valueChanged, this,
-          &main_window::on_moveYSlider_valueChanged);
+          &MainWindow::on_moveYSlider_valueChanged);
   connect(moveYSlider, &QSlider::sliderReleased, this,
-          &main_window::on_transformSlider_sliderReleased);
+          &MainWindow::on_transformSlider_sliderReleased);
 
   moveZSlider = new QSlider(Qt::Horizontal);
   moveZSlider->setRange(-180, 180);
   connect(moveZSlider, &QSlider::valueChanged, this,
-          &main_window::on_moveZSlider_valueChanged);
+          &MainWindow::on_moveZSlider_valueChanged);
   connect(moveZSlider, &QSlider::sliderReleased, this,
-          &main_window::on_transformSlider_sliderReleased);
+          &MainWindow::on_transformSlider_sliderReleased);
 
-  moveXSpinBox = new QSpinBox;
+  moveXSpinBox = new MySpinBox(this);
   moveXSpinBox->setRange(-10000, 10000);
   connect(moveXSpinBox, &QSpinBox::valueChanged, this,
-          &main_window::on_moveXSpinBox_valueChanged);
+          &MainWindow::on_moveXSpinBox_valueChanged);
+  connect(moveXSpinBox, &MySpinBox::focusLost, this,
+          &MainWindow::on_spinBox_focusLost);
 
-  moveYSpinBox = new QSpinBox;
+  moveYSpinBox = new MySpinBox(this);
   moveYSpinBox->setRange(-10000, 10000);
   connect(moveYSpinBox, &QSpinBox::valueChanged, this,
-          &main_window::on_moveYSpinBox_valueChanged);
+          &MainWindow::on_moveYSpinBox_valueChanged);
+  connect(moveYSpinBox, &MySpinBox::focusLost, this,
+          &MainWindow::on_spinBox_focusLost);
 
-  moveZSpinBox = new QSpinBox;
+  moveZSpinBox = new MySpinBox(this);
   moveZSpinBox->setRange(-10000, 10000);
   connect(moveZSpinBox, &QSpinBox::valueChanged, this,
-          &main_window::on_moveZSpinBox_valueChanged);
+          &MainWindow::on_moveZSpinBox_valueChanged);
+  connect(moveZSpinBox, &MySpinBox::focusLost, this,
+          &MainWindow::on_spinBox_focusLost);
 }
 
-void main_window::scale_setup() {
+void MainWindow::scale_setup() {
   scaleSlider = new QSlider(Qt::Horizontal);
   scaleSlider->setRange(-180, 180);
   connect(scaleSlider, &QSlider::valueChanged, this,
-          &main_window::on_scaleSlider_valueChanged);
+          &MainWindow::on_scaleSlider_valueChanged);
   connect(scaleSlider, &QSlider::sliderReleased, this,
-          &main_window::on_transformSlider_sliderReleased);
+          &MainWindow::on_transformSlider_sliderReleased);
 
   increaseScaleButton = new QPushButton("+");
   increaseScaleButton->setFixedSize(QSize(20, 20));
   connect(increaseScaleButton, &QPushButton::clicked, this,
-          &main_window::on_increaseScaleButton_clicked);
+          &MainWindow::on_increaseScaleButton_clicked);
 
   decreaseScaleButton = new QPushButton("-");
   decreaseScaleButton->setFixedSize(QSize(20, 20));
   connect(decreaseScaleButton, &QPushButton::clicked, this,
-          &main_window::on_decreaseScaleButton_clicked);
+          &MainWindow::on_decreaseScaleButton_clicked);
 }
 
-void main_window::appearance_setup() {
+void MainWindow::appearance_setup() {
   backgroundColorButton = new QPushButton("Фон");
   connect(backgroundColorButton, &QPushButton::clicked, this,
-          &main_window::on_backgroundColorButton_clicked);
+          &MainWindow::on_backgroundColorButton_clicked);
 
   vertexColorButton = new QPushButton("Вершины");
   connect(vertexColorButton, &QPushButton::clicked, this,
-          &main_window::on_vertexColorButton_clicked);
+          &MainWindow::on_vertexColorButton_clicked);
 
   edgesColorButton = new QPushButton("Ребра");
   connect(edgesColorButton, &QPushButton::clicked, this,
-          &main_window::on_edgesColorButton_clicked);
+          &MainWindow::on_edgesColorButton_clicked);
 
   vertexSizeSlider = new QSlider(Qt::Horizontal);
   vertexSizeSlider->setRange(1, 20);
   connect(vertexSizeSlider, &QSlider::valueChanged, this,
-          &main_window::on_vertexSizeSlider_valueChanged);
+          &MainWindow::on_vertexSizeSlider_valueChanged);
   connect(vertexSizeSlider, &QSlider::sliderReleased, this,
-          &main_window::on_transformSlider_sliderReleased);
+          &MainWindow::on_transformSlider_sliderReleased);
 
   edgesWidthSlider = new QSlider(Qt::Horizontal);
   edgesWidthSlider->setRange(1, 20);
   connect(edgesWidthSlider, &QSlider::valueChanged, this,
-          &main_window::on_edgesWidthSlider_valueChanged);
+          &MainWindow::on_edgesWidthSlider_valueChanged);
   connect(edgesWidthSlider, &QSlider::sliderReleased, this,
-          &main_window::on_transformSlider_sliderReleased);
+          &MainWindow::on_transformSlider_sliderReleased);
 
   projectionTypeComboBox = new QComboBox;
   projectionTypeComboBox->addItem("Центральная");
   projectionTypeComboBox->addItem("Параллельная");
   connect(projectionTypeComboBox, &QComboBox::currentIndexChanged, this,
-          &main_window::on_projectionTypeComboBox_indexChanged);
+          &MainWindow::on_projectionTypeComboBox_indexChanged);
 
   vertexTypeComboBox = new QComboBox;
   vertexTypeComboBox->addItem("Отсутствуют");
   vertexTypeComboBox->addItem("Круг");
   vertexTypeComboBox->addItem("Квадрат");
   connect(vertexTypeComboBox, &QComboBox::currentIndexChanged, this,
-          &main_window::on_vertexTypeComboBox_indexChanged);
+          &MainWindow::on_vertexTypeComboBox_indexChanged);
 
   edgesTypeComboBox = new QComboBox;
   edgesTypeComboBox->addItem("Сплошные");
   edgesTypeComboBox->addItem("Штриховка");
   connect(edgesTypeComboBox, &QComboBox::currentIndexChanged, this,
-          &main_window::on_edgesTypeComboBox_indexChanged);
+          &MainWindow::on_edgesTypeComboBox_indexChanged);
 
   load_settings();
 }
 
-main_window::~main_window() {
+MainWindow::~MainWindow() {
   save_settings();
   delete v;
   delete loadButton;
@@ -221,7 +233,7 @@ main_window::~main_window() {
   delete timer;
 }
 
-void main_window::on_loadButton_clicked() {
+void MainWindow::on_loadButton_clicked() {
   Logger::instance().log("load file");
   QString fileName = QFileDialog::getOpenFileName(this, "Open Model File", "",
                                                   "OBJ Files (*.obj)");
@@ -253,7 +265,7 @@ void main_window::on_loadButton_clicked() {
   }
 }
 
-void main_window::on_rotationXSlider_valueChanged(int value) {
+void MainWindow::on_rotationXSlider_valueChanged(int value) {
   Logger::instance().log("rotate x slider");
   CommandManager::instance().combineCommand(
       new RotateCommand(v, value - curr_rotateX, 0, 0, true));
@@ -261,7 +273,7 @@ void main_window::on_rotationXSlider_valueChanged(int value) {
   curr_rotateX = value;
 }
 
-void main_window::on_rotationYSlider_valueChanged(int value) {
+void MainWindow::on_rotationYSlider_valueChanged(int value) {
   Logger::instance().log("rotate y slider");
   CommandManager::instance().combineCommand(
       new RotateCommand(v, 0, value - curr_rotateY, 0, true));
@@ -269,7 +281,7 @@ void main_window::on_rotationYSlider_valueChanged(int value) {
   curr_rotateY = value;
 }
 
-void main_window::on_rotationZSlider_valueChanged(int value) {
+void MainWindow::on_rotationZSlider_valueChanged(int value) {
   Logger::instance().log("rotate z slider");
   CommandManager::instance().combineCommand(
       new RotateCommand(v, 0, 0, value - curr_rotateZ, true));
@@ -277,37 +289,34 @@ void main_window::on_rotationZSlider_valueChanged(int value) {
   curr_rotateZ = value;
 }
 
-void main_window::on_rotationXSpinBox_valueChanged(int value) {
+void MainWindow::on_rotationXSpinBox_valueChanged(int value) {
   Logger::instance().log("rotate x spin");
-  CommandManager::instance().executeCommand(
+  CommandManager::instance().combineCommand(
       new RotateCommand(v, value - curr_rotateX, 0, 0, true));
   curr_rotateX = value;
 
   sliderSetValueMuted(rotationXSlider, value);
-  focusNextChild();
 }
 
-void main_window::on_rotationYSpinBox_valueChanged(int value) {
+void MainWindow::on_rotationYSpinBox_valueChanged(int value) {
   Logger::instance().log("rotate y spin");
-  CommandManager::instance().executeCommand(
+  CommandManager::instance().combineCommand(
       new RotateCommand(v, 0, value - curr_rotateY, 0, true));
   curr_rotateY = value;
 
   sliderSetValueMuted(rotationYSlider, value);
-  focusNextChild();
 }
 
-void main_window::on_rotationZSpinBox_valueChanged(int value) {
+void MainWindow::on_rotationZSpinBox_valueChanged(int value) {
   Logger::instance().log("rotate z spin");
-  CommandManager::instance().executeCommand(
+  CommandManager::instance().combineCommand(
       new RotateCommand(v, 0, 0, value - curr_rotateZ, true));
   curr_rotateZ = value;
 
   sliderSetValueMuted(rotationZSlider, value);
-  focusNextChild();
 }
 
-void main_window::on_moveXSlider_valueChanged(int value) {
+void MainWindow::on_moveXSlider_valueChanged(int value) {
   Logger::instance().log("move x slider");
   CommandManager::instance().combineCommand(
       new MoveCommand(v, value - curr_moveX, 0, 0, true));
@@ -315,7 +324,7 @@ void main_window::on_moveXSlider_valueChanged(int value) {
   curr_moveX = value;
 }
 
-void main_window::on_moveYSlider_valueChanged(int value) {
+void MainWindow::on_moveYSlider_valueChanged(int value) {
   Logger::instance().log("move y slider");
   CommandManager::instance().combineCommand(
       new MoveCommand(v, 0, value - curr_moveY, 0, true));
@@ -323,7 +332,7 @@ void main_window::on_moveYSlider_valueChanged(int value) {
   curr_moveY = value;
 }
 
-void main_window::on_moveZSlider_valueChanged(int value) {
+void MainWindow::on_moveZSlider_valueChanged(int value) {
   Logger::instance().log("move z slider");
   CommandManager::instance().combineCommand(
       new MoveCommand(v, 0, 0, value - curr_moveZ, true));
@@ -331,43 +340,42 @@ void main_window::on_moveZSlider_valueChanged(int value) {
   curr_moveZ = value;
 }
 
-void main_window::on_moveXSpinBox_valueChanged(int value) {
+void MainWindow::on_moveXSpinBox_valueChanged(int value) {
   Logger::instance().log("move x spin");
-  CommandManager::instance().executeCommand(
+  CommandManager::instance().combineCommand(
       new MoveCommand(v, value - curr_moveX, 0, 0, true));
   curr_moveX = value;
 
   sliderSetValueMuted(moveXSlider, (value < -180)  ? -180
                                    : (value > 180) ? 180
                                                    : value);
-  focusNextChild();
 }
 
-void main_window::on_moveYSpinBox_valueChanged(int value) {
+void MainWindow::on_moveYSpinBox_valueChanged(int value) {
   Logger::instance().log("move y spin");
-  CommandManager::instance().executeCommand(
+  CommandManager::instance().combineCommand(
       new MoveCommand(v, 0, value - curr_moveY, 0, true));
   curr_moveY = value;
 
   sliderSetValueMuted(moveYSlider, (value < -180)  ? -180
                                    : (value > 180) ? 180
                                                    : value);
-  focusNextChild();
 }
 
-void main_window::on_moveZSpinBox_valueChanged(int value) {
+void MainWindow::on_moveZSpinBox_valueChanged(int value) {
   Logger::instance().log("move z spin");
-  CommandManager::instance().executeCommand(
+  CommandManager::instance().combineCommand(
       new MoveCommand(v, 0, 0, value - curr_moveZ, true));
   curr_moveZ = value;
 
   sliderSetValueMuted(moveZSlider, (value < -180)  ? -180
                                    : (value > 180) ? 180
                                                    : value);
-  focusNextChild();
 }
 
-void main_window::on_scaleSlider_valueChanged(int value) {
+void MainWindow::on_spinBox_focusLost() { CommandManager::instance().combinedCommandFinished(); }
+
+void MainWindow::on_scaleSlider_valueChanged(int value) {
   Logger::instance().log("scale slider");
   CommandManager::instance().combineCommand(
       new ScaleCommand(v, value - curr_scale, true));
@@ -375,23 +383,23 @@ void main_window::on_scaleSlider_valueChanged(int value) {
   curr_scale = value;
 }
 
-void main_window::on_transformSlider_sliderReleased() {
+void MainWindow::on_transformSlider_sliderReleased() {
   CommandManager::instance().combinedCommandFinished();
 }
 
-void main_window::on_increaseScaleButton_clicked() {
+void MainWindow::on_increaseScaleButton_clicked() {
   Logger::instance().log("+ scale");
   scaleSlider->setValue(scaleSlider->value() + 1);
   on_transformSlider_sliderReleased();
 }
 
-void main_window::on_decreaseScaleButton_clicked() {
+void MainWindow::on_decreaseScaleButton_clicked() {
   Logger::instance().log("- scale");
   scaleSlider->setValue(scaleSlider->value() - 1);
   on_transformSlider_sliderReleased();
 }
 
-void main_window::on_backgroundColorButton_clicked() {
+void MainWindow::on_backgroundColorButton_clicked() {
   Logger::instance().log("bg color button");
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета фона");
 
@@ -400,7 +408,7 @@ void main_window::on_backgroundColorButton_clicked() {
         new BgColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
-void main_window::on_vertexColorButton_clicked() {
+void MainWindow::on_vertexColorButton_clicked() {
   Logger::instance().log("vertex color button");
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета вершин");
 
@@ -409,7 +417,7 @@ void main_window::on_vertexColorButton_clicked() {
         new VertexColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
-void main_window::on_edgesColorButton_clicked() {
+void MainWindow::on_edgesColorButton_clicked() {
   Logger::instance().log("edges color button");
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета ребер");
 
@@ -418,7 +426,7 @@ void main_window::on_edgesColorButton_clicked() {
         v, color.redF(), color.greenF(), color.blueF()));
 }
 
-void main_window::on_vertexSizeSlider_valueChanged(int value) {
+void MainWindow::on_vertexSizeSlider_valueChanged(int value) {
   if (syncUpdate)
     VertexSizeCommand(v, value).execute();
   else {
@@ -427,7 +435,7 @@ void main_window::on_vertexSizeSlider_valueChanged(int value) {
   }
 }
 
-void main_window::on_edgesWidthSlider_valueChanged(int value) {
+void MainWindow::on_edgesWidthSlider_valueChanged(int value) {
   if (syncUpdate)
     LineWidthCommand(v, value).execute();
   else {
@@ -436,7 +444,7 @@ void main_window::on_edgesWidthSlider_valueChanged(int value) {
   }
 }
 
-void main_window::on_projectionTypeComboBox_indexChanged(int index) {
+void MainWindow::on_projectionTypeComboBox_indexChanged(int index) {
   if (syncUpdate)
     ProjectionTypeCommand(v, index).execute();
   else {
@@ -446,7 +454,7 @@ void main_window::on_projectionTypeComboBox_indexChanged(int index) {
   }
 }
 
-void main_window::on_vertexTypeComboBox_indexChanged(int index) {
+void MainWindow::on_vertexTypeComboBox_indexChanged(int index) {
   if (syncUpdate)
     VertexTypeCommand(v, index).execute();
   else {
@@ -455,7 +463,7 @@ void main_window::on_vertexTypeComboBox_indexChanged(int index) {
   }
 }
 
-void main_window::on_edgesTypeComboBox_indexChanged(int index) {
+void MainWindow::on_edgesTypeComboBox_indexChanged(int index) {
   if (syncUpdate)
     LineTypeCommand(v, index).execute();
   else {
@@ -464,7 +472,7 @@ void main_window::on_edgesTypeComboBox_indexChanged(int index) {
   }
 }
 
-void main_window::on_screenshotButton_clicked() {
+void MainWindow::on_screenshotButton_clicked() {
   Logger::instance().log("screenshot button");
   // Создание QPixmap для захвата виджета viewer
   QPixmap pixmap(v->size());
@@ -497,7 +505,7 @@ void main_window::on_screenshotButton_clicked() {
   }
 }
 
-void main_window::on_gifButton_clicked() {
+void MainWindow::on_gifButton_clicked() {
   Logger::instance().log("gif button");
   if (!timer->isActive()) {
     gifImage = new QGifImage();
@@ -506,7 +514,7 @@ void main_window::on_gifButton_clicked() {
   }
 }
 
-void main_window::on_timer_timeout() {
+void MainWindow::on_timer_timeout() {
   Logger::instance().log("gif timeout");
   if (currentFrame < totalFrames) {
     QPixmap pixmap(v->size());
@@ -532,13 +540,13 @@ void main_window::on_timer_timeout() {
   }
 }
 
-void main_window::on_gifAction_triggered() {
+void MainWindow::on_gifAction_triggered() {
   Logger::instance().log("gif action");
   gifButton->setChecked(true);
   on_gifButton_clicked();
 }
 
-void main_window::keyPressEvent(QKeyEvent *event) {
+void MainWindow::keyPressEvent(QKeyEvent *event) {
   bool undo = true;
 
   ICommand *command = nullptr;
@@ -559,7 +567,7 @@ void main_window::keyPressEvent(QKeyEvent *event) {
   if (command) undo_UI(command, undo);
 }
 
-void main_window::undo_UI(ICommand *command, bool undo) {
+void MainWindow::undo_UI(ICommand *command, bool undo) {
   Logger::instance().log("undo ui");
   if (dynamic_cast<RotateCommand *>(command)) {
     auto [x, y, z] = dynamic_cast<RotateCommand *>(command)->get_angle();
@@ -623,36 +631,36 @@ void main_window::undo_UI(ICommand *command, bool undo) {
                           dynamic_cast<LineTypeCommand *>(command)->get_type());
 }
 
-void main_window::setup_shortcuts() {
+void MainWindow::setup_shortcuts() {
   QAction *screenshotAction = new QAction(this);
   screenshotAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S));
 
   connect(screenshotAction, &QAction::triggered, this,
-          &main_window::on_screenshotButton_clicked);
+          &MainWindow::on_screenshotButton_clicked);
 
   QAction *gifAction = new QAction(this);
   gifAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
 
   connect(gifAction, &QAction::triggered, this,
-          &main_window::on_gifAction_triggered);
+          &MainWindow::on_gifAction_triggered);
 
   QAction *loadAction = new QAction(this);
   loadAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_O));
 
   connect(loadAction, &QAction::triggered, this,
-          &main_window::on_loadButton_clicked);
+          &MainWindow::on_loadButton_clicked);
 
   QAction *increaseScaleAction = new QAction(this);
   increaseScaleAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Equal));
 
   connect(increaseScaleAction, &QAction::triggered, this,
-          &main_window::on_increaseScaleButton_clicked);
+          &MainWindow::on_increaseScaleButton_clicked);
 
   QAction *decreaseScaleAction = new QAction(this);
   decreaseScaleAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
 
   connect(decreaseScaleAction, &QAction::triggered, this,
-          &main_window::on_decreaseScaleButton_clicked);
+          &MainWindow::on_decreaseScaleButton_clicked);
 
   addAction(screenshotAction);
   addAction(gifAction);
@@ -661,7 +669,7 @@ void main_window::setup_shortcuts() {
   addAction(decreaseScaleAction);
 }
 
-void main_window::save_settings() {
+void MainWindow::save_settings() {
   Logger::instance().log("save settings");
   QSettings settings("School21", "3DViewer_v1.0");
   settings.setValue("bgColor", QColor(static_cast<int>(v->bg_r * 255),
@@ -680,7 +688,7 @@ void main_window::save_settings() {
   settings.setValue("eType", v->line_type);
 }
 
-void main_window::load_settings() {
+void MainWindow::load_settings() {
   Logger::instance().log("load settings");
   QSettings settings("School21", "3DViewer_v1.0");
   Logger::instance().log("settings opened");
@@ -708,7 +716,7 @@ void main_window::load_settings() {
   syncUpdate = false;
 }
 
-void main_window::setupUI() {
+void MainWindow::setupUI() {
   QWidget *centralWidget = new QWidget(this);
   setCentralWidget(centralWidget);
 
@@ -745,7 +753,7 @@ void main_window::setupUI() {
   mainLayout->setColumnStretch(1, 1);
 }
 
-void main_window::setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate) {
+void MainWindow::setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate) {
   QLabel *label = new QLabel(rotate ? "Поворот" : "Перемещение");
 
   QLabel *xLabel = new QLabel("x:");
@@ -780,7 +788,7 @@ void main_window::setupSliderBox(QVBoxLayout *rightColumnLayout, bool rotate) {
   rightColumnLayout->addWidget(frame);
 }
 
-void main_window::setupSettings(QVBoxLayout *rightColumnLayout) {
+void MainWindow::setupSettings(QVBoxLayout *rightColumnLayout) {
   QLabel *colorLabel = new QLabel("Цветовая палитра");
   QHBoxLayout *colorButtonsLayout = new QHBoxLayout;
   colorButtonsLayout->addWidget(backgroundColorButton);
@@ -838,7 +846,7 @@ void main_window::setupSettings(QVBoxLayout *rightColumnLayout) {
   rightColumnLayout->addWidget(typeFrame);
 }
 
-void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {
+void MainWindow::setupFileInfo(QVBoxLayout *rightColumnLayout) {
   QLabel *filenameLabel = new QLabel("Имя файла:");
   QSpacerItem *fnameSpacer =
       new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -884,20 +892,36 @@ void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {
   rightColumnLayout->addWidget(frame);
 }
 
-void main_window::sliderSetValueMuted(QSlider *slider, int value) {
+void MainWindow::sliderSetValueMuted(QSlider *slider, int value) {
   slider->blockSignals(true);
   slider->setValue(value);
   slider->blockSignals(false);
 }
 
-void main_window::spinBoxSetValueMuted(QSpinBox *spinBox, int value) {
+void MainWindow::spinBoxSetValueMuted(QSpinBox *spinBox, int value) {
   spinBox->blockSignals(true);
   spinBox->setValue(value);
   spinBox->blockSignals(false);
 }
 
-void main_window::comboBoxSetValueMuted(QComboBox *comboBox, int value) {
+void MainWindow::comboBoxSetValueMuted(QComboBox *comboBox, int value) {
   comboBox->blockSignals(true);
   comboBox->setCurrentIndex(value);
   comboBox->blockSignals(false);
+}
+
+MySpinBox::MySpinBox(MainWindow *w, QWidget *parent) : QSpinBox(parent), window(w) {}
+
+void MySpinBox::keyPressEvent(QKeyEvent *event) {
+    Logger::instance().log("MySpinBox keyPressEvent");
+    if ((event->key() == Qt::Key_Z && event->modifiers() == Qt::ControlModifier) || (event->key() == Qt::Key_Y && event->modifiers() == Qt::ControlModifier) || (event->key() == Qt::Key_W && event->modifiers() == Qt::ControlModifier)) {
+        CommandManager::instance().combinedCommandFinished();
+        window->keyPressEvent(event);
+    }
+    else QSpinBox::keyPressEvent(event);
+}
+
+void MySpinBox::focusOutEvent(QFocusEvent *event) {
+    QSpinBox::focusOutEvent(event);
+    emit focusLost();
 }

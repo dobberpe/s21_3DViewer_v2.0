@@ -23,11 +23,29 @@
 
 namespace s21 {
 
-class main_window : public QMainWindow {
+class MainWindow;
+
+class MySpinBox : public QSpinBox {
+    Q_OBJECT
+public:
+    MySpinBox(MainWindow *w, QWidget *parent = nullptr);
+
+signals:
+    void focusLost();
+
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
+
+private:
+    MainWindow *window;
+};
+
+class MainWindow : public QMainWindow {
   Q_OBJECT
  public:
-  explicit main_window(QWidget *parent = nullptr);
-  ~main_window();
+  explicit MainWindow(QWidget *parent = nullptr);
+  ~MainWindow();
 
  private slots:
   void on_loadButton_clicked();
@@ -43,6 +61,7 @@ class main_window : public QMainWindow {
   void on_moveXSpinBox_valueChanged(int value);
   void on_moveYSpinBox_valueChanged(int value);
   void on_moveZSpinBox_valueChanged(int value);
+  void on_spinBox_focusLost();
   void on_scaleSlider_valueChanged(int value);
   void on_transformSlider_sliderReleased();
   void on_increaseScaleButton_clicked();
@@ -61,6 +80,7 @@ class main_window : public QMainWindow {
   void on_gifAction_triggered();
 
  protected:
+  friend class MySpinBox;
   void keyPressEvent(QKeyEvent *event) override;
 
  private:
@@ -88,15 +108,15 @@ class main_window : public QMainWindow {
   QSlider *rotationXSlider;
   QSlider *rotationYSlider;
   QSlider *rotationZSlider;
-  QSpinBox *rotationXSpinBox;
-  QSpinBox *rotationYSpinBox;
-  QSpinBox *rotationZSpinBox;
+  MySpinBox *rotationXSpinBox;
+  MySpinBox *rotationYSpinBox;
+  MySpinBox *rotationZSpinBox;
   QSlider *moveXSlider;
   QSlider *moveYSlider;
   QSlider *moveZSlider;
-  QSpinBox *moveXSpinBox;
-  QSpinBox *moveYSpinBox;
-  QSpinBox *moveZSpinBox;
+  MySpinBox *moveXSpinBox;
+  MySpinBox *moveYSpinBox;
+  MySpinBox *moveZSpinBox;
   QSlider *scaleSlider;
   QPushButton *increaseScaleButton;
   QPushButton *decreaseScaleButton;
