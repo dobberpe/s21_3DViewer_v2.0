@@ -36,13 +36,13 @@ void Viewer::mouseMoveEvent(QMouseEvent *event) {
   if (event->buttons() & Qt::LeftButton) {
     Logger::instance().log("mouse rotate");
     CommandManager::instance().executeCommand(
-        new RotateCommand(this, new_pos.y() * 0.00001,
-                          new_pos.x() * 0.00001, 0, false));
+        new RotateCommand(this, new_pos.y() * 0.01,
+                          new_pos.x() * 0.01, 0, false));
   } else if (event->buttons() & Qt::RightButton) {
     Logger::instance().log("mouse move");
     CommandManager::instance().combineCommand(
-        new MoveCommand(this, new_pos.x() * 0.00001,
-                        -new_pos.y() * 0.00001, 0, false));
+        new MoveCommand(this, new_pos.x() * 0.01,
+                        -new_pos.y() * 0.01, 0, false));
   }
 }
 

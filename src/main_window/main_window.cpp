@@ -310,7 +310,7 @@ void main_window::on_rotationZSpinBox_valueChanged(int value) {
 void main_window::on_moveXSlider_valueChanged(int value) {
   Logger::instance().log("move x slider");
   CommandManager::instance().combineCommand(
-      new MoveCommand(v, (value - curr_moveX) * 0.001, 0, 0, true));
+      new MoveCommand(v, value - curr_moveX, 0, 0, true));
   spinBoxSetValueMuted(moveXSpinBox, value);
   curr_moveX = value;
 }
@@ -318,7 +318,7 @@ void main_window::on_moveXSlider_valueChanged(int value) {
 void main_window::on_moveYSlider_valueChanged(int value) {
   Logger::instance().log("move y slider");
   CommandManager::instance().combineCommand(
-      new MoveCommand(v, 0, (value - curr_moveY) * 0.001, 0, true));
+      new MoveCommand(v, 0, value - curr_moveY, 0, true));
   spinBoxSetValueMuted(moveYSpinBox, value);
   curr_moveY = value;
 }
@@ -326,7 +326,7 @@ void main_window::on_moveYSlider_valueChanged(int value) {
 void main_window::on_moveZSlider_valueChanged(int value) {
   Logger::instance().log("move z slider");
   CommandManager::instance().combineCommand(
-      new MoveCommand(v, 0, 0, (value - curr_moveZ) * 0.001, true));
+      new MoveCommand(v, 0, 0, value - curr_moveZ, true));
   spinBoxSetValueMuted(moveZSpinBox, value);
   curr_moveZ = value;
 }
@@ -334,7 +334,7 @@ void main_window::on_moveZSlider_valueChanged(int value) {
 void main_window::on_moveXSpinBox_valueChanged(int value) {
   Logger::instance().log("move x spin");
   CommandManager::instance().executeCommand(
-      new MoveCommand(v, (value - curr_moveX) * 0.001, 0, 0, true));
+      new MoveCommand(v, value - curr_moveX, 0, 0, true));
   curr_moveX = value;
 
   sliderSetValueMuted(moveXSlider, (value < -180)  ? -180
@@ -346,7 +346,7 @@ void main_window::on_moveXSpinBox_valueChanged(int value) {
 void main_window::on_moveYSpinBox_valueChanged(int value) {
   Logger::instance().log("move y spin");
   CommandManager::instance().executeCommand(
-      new MoveCommand(v, 0, (value - curr_moveY) * 0.001, 0, true));
+      new MoveCommand(v, 0, value - curr_moveY, 0, true));
   curr_moveY = value;
 
   sliderSetValueMuted(moveYSlider, (value < -180)  ? -180
@@ -358,7 +358,7 @@ void main_window::on_moveYSpinBox_valueChanged(int value) {
 void main_window::on_moveZSpinBox_valueChanged(int value) {
   Logger::instance().log("move z spin");
   CommandManager::instance().executeCommand(
-      new MoveCommand(v, 0, 0, (value - curr_moveZ) * 0.001, true));
+      new MoveCommand(v, 0, 0, value - curr_moveZ, true));
   curr_moveZ = value;
 
   sliderSetValueMuted(moveZSlider, (value < -180)  ? -180

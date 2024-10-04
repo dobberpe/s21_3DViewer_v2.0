@@ -69,7 +69,7 @@ bool MoveCommand::execute() {
   bool res = false;
 
   if (x || y || z) {
-    v->get_worker()->move_figure(x, y, z);
+    v->get_worker()->move_figure(x * 0.001, y * 0.001, z * 0.001);
     v->update();
     res = true;
   }
@@ -78,7 +78,7 @@ bool MoveCommand::execute() {
 }
 
 void MoveCommand::undo() {
-  v->get_worker()->move_figure(-x, -y, -z);
+  v->get_worker()->move_figure(-x * 0.001, -y * 0.001, -z * 0.001);
   v->update();
 }
 
