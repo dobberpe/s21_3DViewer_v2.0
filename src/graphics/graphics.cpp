@@ -41,11 +41,9 @@ void Viewer::mouseMoveEvent(QMouseEvent *event) {
   if (event->buttons() & Qt::LeftButton) {
     Logger::instance().log("mouse rotate");
     CommandManager::instance().executeCommand(new RotateCommand(this, new_pos.y() * 0.00001 * move_coef, new_pos.x() * 0.00001 * move_coef, 0, false));
-    update();
   } else if (event->buttons() & Qt::RightButton) {
     Logger::instance().log("mouse move");
     CommandManager::instance().combineCommand(new MoveCommand(this, new_pos.x() * 0.005, -new_pos.y() * 0.005, 0, false));
-    update();
   }
 }
 
@@ -56,7 +54,6 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event) {
 
 void Viewer::wheelEvent(QWheelEvent *event) {
   CommandManager::instance().combineCommand(new ScaleCommand(this, event->angleDelta().y(), false));
-  update();
 }
 
 void Viewer::mousePressEvent(QMouseEvent *event) {
