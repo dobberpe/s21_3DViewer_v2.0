@@ -22,7 +22,7 @@ bool RotateCommand::execute() {
     bool res = false;
 
     if (x || y || z) {
-        v->get_worker()->rotate_figure(x, y, z);
+        v->get_worker()->rotate_figure(x, y, z, false);
         v->update();
         res = true;
     }
@@ -31,7 +31,7 @@ bool RotateCommand::execute() {
 }
 
 void RotateCommand::undo() {
-    v->get_worker()->rotate_figure(-x, -y, -z);
+    v->get_worker()->rotate_figure(-x, -y, -z, true);
     v->update();
 }
 

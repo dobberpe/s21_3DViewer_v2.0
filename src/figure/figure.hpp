@@ -52,7 +52,7 @@ class Figure {
 
   void move_figure(double x_factor, double y_factor, double z_factor);
 
-  void rotate_figure(double alpha_x, double alpha_y, double alpha_z);
+  void rotate_figure(double alpha_x, double alpha_y, double alpha_z, bool undo);
 
   void clear_figure();
 

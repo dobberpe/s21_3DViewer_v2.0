@@ -40,7 +40,7 @@ void Viewer::mouseMoveEvent(QMouseEvent *event) {
   new_pos = QPoint(event->globalPosition().toPoint() - cur_pos);
   if (event->buttons() & Qt::LeftButton) {
     Logger::instance().log("mouse rotate");
-    CommandManager::instance().combineCommand(new RotateCommand(this, new_pos.y() * 0.00001 * move_coef, new_pos.x() * 0.00001 * move_coef, 0, false));
+    CommandManager::instance().executeCommand(new RotateCommand(this, new_pos.y() * 0.00001 * move_coef, new_pos.x() * 0.00001 * move_coef, 0, false));
     update();
   } else if (event->buttons() & Qt::RightButton) {
     Logger::instance().log("mouse move");

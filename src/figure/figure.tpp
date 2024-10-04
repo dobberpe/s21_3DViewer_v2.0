@@ -110,16 +110,27 @@ inline void Figure::scale_figure(double scale_coef) {
 /// @param alpha_y
 /// @param alpha_z
 inline void Figure::rotate_figure(double alpha_x, double alpha_y,
-                                  double alpha_z) {
+                                  double alpha_z, bool undo) {
   alpha_x = alpha_x * M_PI / 180.0;
   alpha_y = alpha_y * M_PI / 180.0;
   alpha_z = alpha_z * M_PI / 180.0;
-  fill_rotation_matrix_crd(alpha_x, x);
-  rotate_(x);
-  fill_rotation_matrix_crd(alpha_y, y);
-  rotate_(y);
-  fill_rotation_matrix_crd(alpha_z, z);
-  rotate_(z);
+  if (undo) {
+      Logger::instance().log("undo = true");
+      fill_rotation_matrix_crd(alpha_z, z);
+      rotate_(z);
+      fill_rotation_matrix_crd(alpha_y, y);
+      rotate_(y);
+      fill_rotation_matrix_crd(alpha_x, x);
+      rotate_(x);
+  } else {
+    Logger::instance().log("undo = false");
+    fill_rotation_matrix_crd(alpha_x, x);
+    rotate_(x);
+    fill_rotation_matrix_crd(alpha_y, y);
+    rotate_(y);
+    fill_rotation_matrix_crd(alpha_z, z);
+    rotate_(z);
+  }
 }
 
 /// @brief Clears all attributes of the figure
