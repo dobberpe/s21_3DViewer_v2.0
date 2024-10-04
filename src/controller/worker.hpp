@@ -20,12 +20,7 @@ class Worker {
   size_t get_n_vertices() const;
   size_t get_n_polygons() const;
   size_t get_n_polygons_edges() const;
-  double get_x_max() const;
-  double get_y_max() const;
-  double get_z_max() const;
-  double get_x_min() const;
-  double get_y_min() const;
-  double get_z_min() const;
+  double get_move_coeff() const;
 
  private:
   Figure& figure;

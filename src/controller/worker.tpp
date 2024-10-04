@@ -64,12 +64,9 @@ inline size_t Worker::get_n_polygons_edges() const {
   return figure.get_n_polygons_edges();
 }
 
-inline double Worker::get_x_max() const { return figure.get_x_max_(); }
-inline double Worker::get_y_max() const { return figure.get_y_max_(); }
-inline double Worker::get_z_max() const { return figure.get_z_max_(); }
-inline double Worker::get_x_min() const { return figure.get_x_min_(); }
-inline double Worker::get_y_min() const { return figure.get_y_min_(); }
-inline double Worker::get_z_min() const { return figure.get_z_min_(); }
+/// @brief Move coefficient: max(x, y, z) - min(x, y, z)
+/// @return coefficient
+inline double Worker::get_move_coeff() const { return figure.get_move_coeff(); }
 
 };  // namespace s21
 

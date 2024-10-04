@@ -2,8 +2,8 @@
 #define __parser_HPP__
 #include <fstream>
 #include <iostream>
-#include <string>
 #include <locale>
+#include <string>
 
 #include "../figure/figure.hpp"
 

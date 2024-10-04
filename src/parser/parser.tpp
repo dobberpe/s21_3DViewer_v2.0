@@ -71,7 +71,8 @@ inline void Parser::read_vertex_line(const string& line) {
     start = end + 1;
     end = line.find(' ', start);
   }
-  Logger::instance().log(valid ? "after cycle valid = true" : "after cycle valid = false");
+  Logger::instance().log(valid ? "after cycle valid = true"
+                               : "after cycle valid = false");
 
   if (valid) {
     token = line.substr(start);
@@ -83,7 +84,8 @@ inline void Parser::read_vertex_line(const string& line) {
   }
   if (valid && (count == 3 || count == 4)) {
     figure.add_vertex(coords[0], coords[1], coords[2]);
-  } else Logger::instance().log(valid ? "count != 3 && count != 4" : "!valid");
+  } else
+    Logger::instance().log(valid ? "count != 3 && count != 4" : "!valid");
 }
 
 /// @brief Reads a polygon token

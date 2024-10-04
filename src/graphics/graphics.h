@@ -24,7 +24,7 @@ class Viewer : public QOpenGLWidget {
 
  public:
   Worker *worker;
-  RenderStrategy* render_strategy = NULL;
+  RenderStrategy *render_strategy = NULL;
 
   Viewer(QWidget *parent = nullptr);
   ~Viewer();
@@ -32,8 +32,8 @@ class Viewer : public QOpenGLWidget {
   // void update_alpha(int valueX, int valueY);
   // void update_move_vector(int valueX, int valueY);
   // void update_scale(int value);
-  void setRenderStrategy(RenderStrategy* strategy);
-  Worker* get_worker();
+  void setRenderStrategy(RenderStrategy *strategy);
+  Worker *get_worker();
 
   double vertex_r = 0, vertex_g = 0, vertex_b = 1;
   double polygon_r = 0, polygon_g = 1, polygon_b = 0;

@@ -15,7 +15,8 @@ inline Figure::Figure()
       y_max(0),
       z_max(0),
       move_matrix(16, 0.0),
-      rotation_matrix(9, 0.0) {};
+      rotation_matrix(9, 0.0),
+      move_coefficient(0) {};
 
 /// @brief Creates an instance of Figure in case the figure is empty
 /// @return an instance of Figure
@@ -25,29 +26,30 @@ inline Figure& Figure::get_instance() {
 }
 
 /// @brief adds a vertex to the figure
-/// @param x
-/// @param y
-/// @param z
-inline void Figure::add_vertex(double x, double y, double z) {
-  Logger::instance().log("add_vertex " + QString::number(x) + " " + QString::number(y) + " " + QString::number(z));
+/// @param x_
+/// @param y_
+/// @param z_
+inline void Figure::add_vertex(double x_, double y_, double z_) {
+  Logger::instance().log("add_vertex " + QString::number(x_) + " " +
+                         QString::number(y_) + " " + QString::number(z_));
   if (!n_vertex) {
-    x_max = x;
-    y_max = y;
-    z_max = z;
-    x_min = x;
-    y_min = y;
-    z_min = z;
+    x_max = x_;
+    y_max = y_;
+    z_max = z_;
+    x_min = x_;
+    y_min = y_;
+    z_min = z_;
   } else {
-    if (x > x_max) x_max = x;
-    if (y > y_max) y_max = y;
-    if (z > z_max) z_max = z;
-    if (x < x_min) x_min = x;
-    if (y < y_min) y_min = y;
-    if (z < z_min) z_min = z;
+    if (x_ > x_max) x_max = x_;
+    if (y_ > y_max) y_max = y_;
+    if (z_ > z_max) z_max = z_;
+    if (x_ < x_min) x_min = x_;
+    if (y_ < y_min) y_min = y_;
+    if (z_ < z_min) z_min = z_;
   }
-  vertex.push_back(x);
-  vertex.push_back(y);
-  vertex.push_back(z);
+  vertex.push_back(x_);
+  vertex.push_back(y_);
+  vertex.push_back(z_);
   ++n_vertex;
   Logger::instance().log("n_vertex " + QString::number(n_vertex));
 }
@@ -90,6 +92,7 @@ inline void Figure::align_to_center() {
     vertex[i * 3 + x] = (vertex[i * 3 + x] - x_center);
     vertex[i * 3 + y] = (vertex[i * 3 + y] - y_center);
     vertex[i * 3 + z] = (vertex[i * 3 + z] - z_center);
+    calc_min_max(i);
   }
 }
 
@@ -101,8 +104,22 @@ inline void Figure::scale_figure(double scale_coef) {
       vertex[i * 3 + x] *= scale_coef;
       vertex[i * 3 + y] *= scale_coef;
       vertex[i * 3 + z] *= scale_coef;
+      calc_min_max(i);
     }
   }
+}
+
+/// @brief Calculates min max values of the figure
+/// @param index
+inline void Figure::calc_min_max(size_t index) {
+  if (vertex[index * 3 + x] > x_max) x_max = vertex[index * 3 + x];
+  if (vertex[index * 3 + y] > y_max) y_max = vertex[index * 3 + y];
+  if (vertex[index * 3 + z] > z_max) z_max = vertex[index * 3 + z];
+  if (vertex[index * 3 + x] < x_min) x_min = vertex[index * 3 + x];
+  if (vertex[index * 3 + y] < y_min) y_min = vertex[index * 3 + y];
+  if (vertex[index * 3 + z] < z_min) z_min = vertex[index * 3 + z];
+  move_coefficient =
+      max(max(x_max, y_max), z_max) - min(min(x_min, y_min), z_min);
 }
 
 /// @brief Rotates a figure by an angle in each axis
@@ -115,13 +132,13 @@ inline void Figure::rotate_figure(double alpha_x, double alpha_y,
   alpha_y = alpha_y * M_PI / 180.0;
   alpha_z = alpha_z * M_PI / 180.0;
   if (undo) {
-      Logger::instance().log("undo = true");
-      fill_rotation_matrix_crd(alpha_z, z);
-      rotate_(z);
-      fill_rotation_matrix_crd(alpha_y, y);
-      rotate_(y);
-      fill_rotation_matrix_crd(alpha_x, x);
-      rotate_(x);
+    Logger::instance().log("undo = true");
+    fill_rotation_matrix_crd(alpha_z, z);
+    rotate_(z);
+    fill_rotation_matrix_crd(alpha_y, y);
+    rotate_(y);
+    fill_rotation_matrix_crd(alpha_x, x);
+    rotate_(x);
   } else {
     Logger::instance().log("undo = false");
     fill_rotation_matrix_crd(alpha_x, x);
@@ -149,6 +166,7 @@ inline void Figure::clear_figure() {
   x_max = 0;
   y_max = 0;
   z_max = 0;
+  move_coefficient = 0;
   Logger::instance().log("x y z min max 0");
   move_matrix.clear();
   Logger::instance().log("move matrix clear");
@@ -175,9 +193,10 @@ inline void Figure::fill_move_matrix(double x_factor, double y_factor,
 /// @brief Actually moves a figure by the move matrix
 inline void Figure::move_() {
   for (size_t i = 0; i < n_vertex; ++i) {
-    vertex[i * 3 + 0] = vertex[i * 3 + 0] * move_matrix[0] + move_matrix[12];
-    vertex[i * 3 + 1] = vertex[i * 3 + 1] * move_matrix[5] + move_matrix[13];
-    vertex[i * 3 + 2] = vertex[i * 3 + 2] * move_matrix[10] + move_matrix[14];
+    vertex[i * 3 + x] = vertex[i * 3 + x] * move_matrix[0] + move_matrix[12];
+    vertex[i * 3 + y] = vertex[i * 3 + y] * move_matrix[5] + move_matrix[13];
+    vertex[i * 3 + z] = vertex[i * 3 + z] * move_matrix[10] + move_matrix[14];
+    calc_min_max(i);
   }
 }
 
@@ -213,6 +232,7 @@ inline void Figure::rotate_(int crd) {
     for (int j = 0; j < 3; ++j) {
       vertex[i * 3 + j] = tmp[j];
     }
+    calc_min_max(i);
   }
 }
 

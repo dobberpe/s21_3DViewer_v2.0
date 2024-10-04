@@ -2,6 +2,7 @@
 #define __figure_HPP__
 
 #include <iostream>
+
 #include "logger/logger.h"
 
 using namespace std;
@@ -39,16 +40,13 @@ class Figure {
 
   tuple<const Polygon*, size_t> get_polygon() const;
 
-  double get_x_max_() const { return x_max; }
-  double get_y_max_() const { return y_max; }
-  double get_z_max_() const { return z_max; }
-  double get_x_min_() const { return x_min; }
-  double get_y_min_() const { return y_min; }
-  double get_z_min_() const { return z_min; }
+  double get_move_coeff() const { return move_coefficient; }
 
   void align_to_center();
 
   void scale_figure(double scale_coef);
+
+  void calc_min_max(size_t index);
 
   void move_figure(double x_factor, double y_factor, double z_factor);
 
@@ -79,6 +77,8 @@ class Figure {
 
   vector<double> move_matrix;
   vector<double> rotation_matrix;
+
+  double move_coefficient;
 };
 
 };  // namespace s21

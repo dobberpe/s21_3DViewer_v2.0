@@ -1,4 +1,5 @@
 #include "main_window.h"
+
 #include "logger/logger.h"
 
 using namespace s21;
@@ -18,8 +19,8 @@ main_window::main_window(QWidget *parent) : QMainWindow(parent) {
 
   setup_shortcuts();
   rotation_setup();
-  move_setup();  
-  scale_setup();  
+  move_setup();
+  scale_setup();
   appearance_setup();
 
   screenshotButton = new QPushButton("Снимок экрана");
@@ -243,7 +244,8 @@ void main_window::on_loadButton_clicked() {
     v->loadModel(fileName);
     Logger::instance().log("model loaded");
     fnameLabel->setText(QFileInfo(fileName).fileName());
-    amountVnumberLabel->setText(QString::number(v->get_worker()->get_n_vertices()));
+    amountVnumberLabel->setText(
+        QString::number(v->get_worker()->get_n_vertices()));
     amountEnumberLabel->setText(
         QString::number(v->get_worker()->get_n_polygons_edges()));
     Logger::instance().log("info set");
@@ -252,110 +254,129 @@ void main_window::on_loadButton_clicked() {
 }
 
 void main_window::on_rotationXSlider_valueChanged(int value) {
-    Logger::instance().log("rotate x slider");
-    CommandManager::instance().combineCommand(new RotateCommand(v, value - curr_rotateX, 0, 0, true));
-    spinBoxSetValueMuted(rotationXSpinBox, value);
-    curr_rotateX = value;
+  Logger::instance().log("rotate x slider");
+  CommandManager::instance().combineCommand(
+      new RotateCommand(v, value - curr_rotateX, 0, 0, true));
+  spinBoxSetValueMuted(rotationXSpinBox, value);
+  curr_rotateX = value;
 }
 
 void main_window::on_rotationYSlider_valueChanged(int value) {
-    Logger::instance().log("rotate y slider");
-    CommandManager::instance().combineCommand(new RotateCommand(v, 0, value - curr_rotateY, 0, true));
-    spinBoxSetValueMuted(rotationYSpinBox, value);
-    curr_rotateY = value;
+  Logger::instance().log("rotate y slider");
+  CommandManager::instance().combineCommand(
+      new RotateCommand(v, 0, value - curr_rotateY, 0, true));
+  spinBoxSetValueMuted(rotationYSpinBox, value);
+  curr_rotateY = value;
 }
 
 void main_window::on_rotationZSlider_valueChanged(int value) {
-    Logger::instance().log("rotate z slider");
-    CommandManager::instance().combineCommand(new RotateCommand(v, 0, 0, value - curr_rotateZ, true));
-    spinBoxSetValueMuted(rotationZSpinBox, value);
-    curr_rotateZ = value;
+  Logger::instance().log("rotate z slider");
+  CommandManager::instance().combineCommand(
+      new RotateCommand(v, 0, 0, value - curr_rotateZ, true));
+  spinBoxSetValueMuted(rotationZSpinBox, value);
+  curr_rotateZ = value;
 }
 
 void main_window::on_rotationXSpinBox_valueChanged(int value) {
-    Logger::instance().log("rotate x spin");
-    CommandManager::instance().executeCommand(new RotateCommand(v, value - curr_rotateX, 0, 0, true));
-    curr_rotateX = value;
+  Logger::instance().log("rotate x spin");
+  CommandManager::instance().executeCommand(
+      new RotateCommand(v, value - curr_rotateX, 0, 0, true));
+  curr_rotateX = value;
 
-    sliderSetValueMuted(rotationXSlider, value);
-    focusNextChild();
+  sliderSetValueMuted(rotationXSlider, value);
+  focusNextChild();
 }
 
 void main_window::on_rotationYSpinBox_valueChanged(int value) {
-    Logger::instance().log("rotate y spin");
-    CommandManager::instance().executeCommand(new RotateCommand(v, 0, value - curr_rotateY, 0, true));
-    curr_rotateY = value;
+  Logger::instance().log("rotate y spin");
+  CommandManager::instance().executeCommand(
+      new RotateCommand(v, 0, value - curr_rotateY, 0, true));
+  curr_rotateY = value;
 
-    sliderSetValueMuted(rotationYSlider, value);
-    focusNextChild();
+  sliderSetValueMuted(rotationYSlider, value);
+  focusNextChild();
 }
 
 void main_window::on_rotationZSpinBox_valueChanged(int value) {
-    Logger::instance().log("rotate z spin");
-    CommandManager::instance().executeCommand(new RotateCommand(v, 0, 0, value - curr_rotateZ, true));
-    curr_rotateZ = value;
+  Logger::instance().log("rotate z spin");
+  CommandManager::instance().executeCommand(
+      new RotateCommand(v, 0, 0, value - curr_rotateZ, true));
+  curr_rotateZ = value;
 
-    sliderSetValueMuted(rotationZSlider, value);
-    focusNextChild();
+  sliderSetValueMuted(rotationZSlider, value);
+  focusNextChild();
 }
 
 void main_window::on_moveXSlider_valueChanged(int value) {
-    Logger::instance().log("move x slider");
-    CommandManager::instance().combineCommand(new MoveCommand(v, value - curr_moveX, 0, 0, true));
-    spinBoxSetValueMuted(moveXSpinBox, value);
-    curr_moveX = value;
+  Logger::instance().log("move x slider");
+  CommandManager::instance().combineCommand(
+      new MoveCommand(v, value - curr_moveX, 0, 0, true));
+  spinBoxSetValueMuted(moveXSpinBox, value);
+  curr_moveX = value;
 }
 
 void main_window::on_moveYSlider_valueChanged(int value) {
-    Logger::instance().log("move y slider");
-    CommandManager::instance().combineCommand(new MoveCommand(v, 0, value - curr_moveY, 0, true));
-    spinBoxSetValueMuted(moveYSpinBox, value);
-    curr_moveY = value;
+  Logger::instance().log("move y slider");
+  CommandManager::instance().combineCommand(
+      new MoveCommand(v, 0, value - curr_moveY, 0, true));
+  spinBoxSetValueMuted(moveYSpinBox, value);
+  curr_moveY = value;
 }
 
 void main_window::on_moveZSlider_valueChanged(int value) {
-    Logger::instance().log("move z slider");
-    CommandManager::instance().combineCommand(new MoveCommand(v, 0, 0, value - curr_moveZ, true));
-    spinBoxSetValueMuted(moveZSpinBox, value);
-    curr_moveZ = value;
+  Logger::instance().log("move z slider");
+  CommandManager::instance().combineCommand(
+      new MoveCommand(v, 0, 0, value - curr_moveZ, true));
+  spinBoxSetValueMuted(moveZSpinBox, value);
+  curr_moveZ = value;
 }
 
 void main_window::on_moveXSpinBox_valueChanged(int value) {
-    Logger::instance().log("move x spin");
-    CommandManager::instance().executeCommand(new MoveCommand(v, value - curr_moveX, 0, 0, true));
-    curr_moveX = value;
+  Logger::instance().log("move x spin");
+  CommandManager::instance().executeCommand(
+      new MoveCommand(v, value - curr_moveX, 0, 0, true));
+  curr_moveX = value;
 
-    sliderSetValueMuted(moveXSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
-    focusNextChild();
+  sliderSetValueMuted(moveXSlider, (value < -180)  ? -180
+                                   : (value > 180) ? 180
+                                                   : value);
+  focusNextChild();
 }
 
 void main_window::on_moveYSpinBox_valueChanged(int value) {
-    Logger::instance().log("move y spin");
-    CommandManager::instance().executeCommand(new MoveCommand(v, 0, value - curr_moveY, 0, true));
-    curr_moveY = value;
+  Logger::instance().log("move y spin");
+  CommandManager::instance().executeCommand(
+      new MoveCommand(v, 0, value - curr_moveY, 0, true));
+  curr_moveY = value;
 
-    sliderSetValueMuted(moveYSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
-    focusNextChild();
+  sliderSetValueMuted(moveYSlider, (value < -180)  ? -180
+                                   : (value > 180) ? 180
+                                                   : value);
+  focusNextChild();
 }
 
 void main_window::on_moveZSpinBox_valueChanged(int value) {
-    Logger::instance().log("move z spin");
-    CommandManager::instance().executeCommand(new MoveCommand(v, 0, 0, value - curr_moveZ, true));
-    curr_moveZ = value;
+  Logger::instance().log("move z spin");
+  CommandManager::instance().executeCommand(
+      new MoveCommand(v, 0, 0, value - curr_moveZ, true));
+  curr_moveZ = value;
 
-    sliderSetValueMuted(moveZSlider, (value < -180) ? -180 : (value > 180) ? 180 : value);
-    focusNextChild();
+  sliderSetValueMuted(moveZSlider, (value < -180)  ? -180
+                                   : (value > 180) ? 180
+                                                   : value);
+  focusNextChild();
 }
 
 void main_window::on_scaleSlider_valueChanged(int value) {
   Logger::instance().log("scale slider");
-  CommandManager::instance().combineCommand(new ScaleCommand(v, value - curr_scale, true));
+  CommandManager::instance().combineCommand(
+      new ScaleCommand(v, value - curr_scale, true));
 
   curr_scale = value;
 }
 
 void main_window::on_transformSlider_sliderReleased() {
-    CommandManager::instance().combinedCommandFinished();
+  CommandManager::instance().combinedCommandFinished();
 }
 
 void main_window::on_increaseScaleButton_clicked() {
@@ -371,68 +392,80 @@ void main_window::on_decreaseScaleButton_clicked() {
 }
 
 void main_window::on_backgroundColorButton_clicked() {
-    Logger::instance().log("bg color button");
+  Logger::instance().log("bg color button");
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета фона");
 
-  if (color.isValid()) CommandManager::instance().executeCommand(new BgColorCommand(v, color.redF(), color.greenF(), color.blueF()));
+  if (color.isValid())
+    CommandManager::instance().executeCommand(
+        new BgColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_vertexColorButton_clicked() {
-    Logger::instance().log("vertex color button");
+  Logger::instance().log("vertex color button");
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета вершин");
 
-  if (color.isValid()) CommandManager::instance().executeCommand(new VertexColorCommand(v, color.redF(), color.greenF(), color.blueF()));
+  if (color.isValid())
+    CommandManager::instance().executeCommand(
+        new VertexColorCommand(v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_edgesColorButton_clicked() {
-    Logger::instance().log("edges color button");
+  Logger::instance().log("edges color button");
   QColor color = QColorDialog::getColor(Qt::white, this, "Выбор цвета ребер");
 
-  if (color.isValid()) CommandManager::instance().executeCommand(new PolygonColorCommand(v, color.redF(), color.greenF(), color.blueF()));
+  if (color.isValid())
+    CommandManager::instance().executeCommand(new PolygonColorCommand(
+        v, color.redF(), color.greenF(), color.blueF()));
 }
 
 void main_window::on_vertexSizeSlider_valueChanged(int value) {
-    if (syncUpdate) VertexSizeCommand(v, value).execute();
-    else {
-        Logger::instance().log("vertex size slider");
-        CommandManager::instance().combineCommand(new VertexSizeCommand(v, value));
-    }
+  if (syncUpdate)
+    VertexSizeCommand(v, value).execute();
+  else {
+    Logger::instance().log("vertex size slider");
+    CommandManager::instance().combineCommand(new VertexSizeCommand(v, value));
+  }
 }
 
 void main_window::on_edgesWidthSlider_valueChanged(int value) {
-    if (syncUpdate) LineWidthCommand(v, value).execute();
-    else {
-        Logger::instance().log("edges width slider");
-        CommandManager::instance().combineCommand(new LineWidthCommand(v, value));
-    }
+  if (syncUpdate)
+    LineWidthCommand(v, value).execute();
+  else {
+    Logger::instance().log("edges width slider");
+    CommandManager::instance().combineCommand(new LineWidthCommand(v, value));
+  }
 }
 
 void main_window::on_projectionTypeComboBox_indexChanged(int index) {
-  if (syncUpdate) ProjectionTypeCommand(v, index).execute();
+  if (syncUpdate)
+    ProjectionTypeCommand(v, index).execute();
   else {
-      Logger::instance().log("pr type box");
-      CommandManager::instance().executeCommand(new ProjectionTypeCommand(v, index));
+    Logger::instance().log("pr type box");
+    CommandManager::instance().executeCommand(
+        new ProjectionTypeCommand(v, index));
   }
 }
 
 void main_window::on_vertexTypeComboBox_indexChanged(int index) {
-  if (syncUpdate) VertexTypeCommand(v, index).execute();
+  if (syncUpdate)
+    VertexTypeCommand(v, index).execute();
   else {
-      Logger::instance().log("vertex type box");
-      CommandManager::instance().executeCommand(new VertexTypeCommand(v, index));
+    Logger::instance().log("vertex type box");
+    CommandManager::instance().executeCommand(new VertexTypeCommand(v, index));
   }
 }
 
 void main_window::on_edgesTypeComboBox_indexChanged(int index) {
-  if (syncUpdate) LineTypeCommand(v, index).execute();
+  if (syncUpdate)
+    LineTypeCommand(v, index).execute();
   else {
-      Logger::instance().log("edges type box");
-      CommandManager::instance().executeCommand(new LineTypeCommand(v, index));
+    Logger::instance().log("edges type box");
+    CommandManager::instance().executeCommand(new LineTypeCommand(v, index));
   }
 }
 
 void main_window::on_screenshotButton_clicked() {
-    Logger::instance().log("screenshot button");
+  Logger::instance().log("screenshot button");
   // Создание QPixmap для захвата виджета viewer
   QPixmap pixmap(v->size());
   v->render(&pixmap);
@@ -465,7 +498,7 @@ void main_window::on_screenshotButton_clicked() {
 }
 
 void main_window::on_gifButton_clicked() {
-    Logger::instance().log("gif button");
+  Logger::instance().log("gif button");
   if (!timer->isActive()) {
     gifImage = new QGifImage();
     gifImage->setDefaultDelay(100);
@@ -474,7 +507,7 @@ void main_window::on_gifButton_clicked() {
 }
 
 void main_window::on_timer_timeout() {
-    Logger::instance().log("gif timeout");
+  Logger::instance().log("gif timeout");
   if (currentFrame < totalFrames) {
     QPixmap pixmap(v->size());
     v->render(&pixmap);
@@ -500,107 +533,132 @@ void main_window::on_timer_timeout() {
 }
 
 void main_window::on_gifAction_triggered() {
-    Logger::instance().log("gif action");
-    gifButton->setChecked(true);
-    on_gifButton_clicked();
+  Logger::instance().log("gif action");
+  gifButton->setChecked(true);
+  on_gifButton_clicked();
 }
 
 void main_window::keyPressEvent(QKeyEvent *event) {
-    bool undo = true;
+  bool undo = true;
 
-    ICommand* command = nullptr;
-    if (event->key() == Qt::Key_Z && event->modifiers() == Qt::ControlModifier) {
-        Logger::instance().log("ctrl z");
-        command = CommandManager::instance().undoCommand();  // Обработка Ctrl + Z
-    } else if (event->key() == Qt::Key_Y && event->modifiers() == Qt::ControlModifier) {
-        Logger::instance().log("ctrl y");
-        undo = false;
-        command = CommandManager::instance().redoCommand();  // Обработка Ctrl + Y
-    } else if (event->key() == Qt::Key_W && event->modifiers() == Qt::ControlModifier) {
-        Logger::instance().log("ctrl w");
-        close();
-    }
+  ICommand *command = nullptr;
+  if (event->key() == Qt::Key_Z && event->modifiers() == Qt::ControlModifier) {
+    Logger::instance().log("ctrl z");
+    command = CommandManager::instance().undoCommand();  // Обработка Ctrl + Z
+  } else if (event->key() == Qt::Key_Y &&
+             event->modifiers() == Qt::ControlModifier) {
+    Logger::instance().log("ctrl y");
+    undo = false;
+    command = CommandManager::instance().redoCommand();  // Обработка Ctrl + Y
+  } else if (event->key() == Qt::Key_W &&
+             event->modifiers() == Qt::ControlModifier) {
+    Logger::instance().log("ctrl w");
+    close();
+  }
 
-    if (command) undo_UI(command, undo);
+  if (command) undo_UI(command, undo);
 }
 
-void main_window::undo_UI(ICommand* command, bool undo) {
-    Logger::instance().log("undo ui");
-    if (dynamic_cast<RotateCommand*>(command)) {
-        auto [x, y, z] = dynamic_cast<RotateCommand*>(command)->get_angle();
+void main_window::undo_UI(ICommand *command, bool undo) {
+  Logger::instance().log("undo ui");
+  if (dynamic_cast<RotateCommand *>(command)) {
+    auto [x, y, z] = dynamic_cast<RotateCommand *>(command)->get_angle();
 
-        if (x) {
-            curr_rotateX = undo ? curr_rotateX - x : curr_rotateX + x;
-            sliderSetValueMuted(rotationXSlider, curr_rotateX);
-            spinBoxSetValueMuted(rotationXSpinBox, curr_rotateX);
-        } else if (y) {
-            curr_rotateY = undo ? curr_rotateY - y : curr_rotateY + y;
-            sliderSetValueMuted(rotationYSlider, curr_rotateY);
-            spinBoxSetValueMuted(rotationYSpinBox, curr_rotateY);
-        } else {
-            curr_rotateZ = undo ? curr_rotateZ - z : curr_rotateZ + z;
-            sliderSetValueMuted(rotationZSlider, curr_rotateZ);
-            spinBoxSetValueMuted(rotationZSpinBox, curr_rotateZ);
-        }
-    } else if (dynamic_cast<MoveCommand*>(command)) {
-        auto [x, y, z] = dynamic_cast<MoveCommand*>(command)->get_shift();
+    if (x) {
+      curr_rotateX = undo ? curr_rotateX - x : curr_rotateX + x;
+      sliderSetValueMuted(rotationXSlider, curr_rotateX);
+      spinBoxSetValueMuted(rotationXSpinBox, curr_rotateX);
+    } else if (y) {
+      curr_rotateY = undo ? curr_rotateY - y : curr_rotateY + y;
+      sliderSetValueMuted(rotationYSlider, curr_rotateY);
+      spinBoxSetValueMuted(rotationYSpinBox, curr_rotateY);
+    } else {
+      curr_rotateZ = undo ? curr_rotateZ - z : curr_rotateZ + z;
+      sliderSetValueMuted(rotationZSlider, curr_rotateZ);
+      spinBoxSetValueMuted(rotationZSpinBox, curr_rotateZ);
+    }
+  } else if (dynamic_cast<MoveCommand *>(command)) {
+    auto [x, y, z] = dynamic_cast<MoveCommand *>(command)->get_shift();
 
-        if (x) {
-            curr_moveX = undo ? curr_moveX - x : curr_moveX + x;
-            sliderSetValueMuted(moveXSlider, (curr_moveX < -180) ? -180 : (curr_moveX > 180) ? 180 : curr_moveX);
-            spinBoxSetValueMuted(moveXSpinBox, curr_moveX);
-        } else if (y) {
-            curr_moveY = undo ? curr_moveY - y : curr_moveY + y;
-            sliderSetValueMuted(moveYSlider, (curr_moveY < -180) ? -180 : (curr_moveY > 180) ? 180 : curr_moveY);
-            spinBoxSetValueMuted(moveYSpinBox, curr_moveY);
-        } else {
-            curr_moveZ = undo ? curr_moveZ - z : curr_moveZ + z;
-            sliderSetValueMuted(moveZSlider, (curr_moveZ < -180) ? -180 : (curr_moveZ > 180) ? 180 : curr_moveZ);
-            spinBoxSetValueMuted(moveZSpinBox, curr_moveZ);
-        }
-    } else if (dynamic_cast<ScaleCommand*>(command)) {
-        double scale = dynamic_cast<ScaleCommand*>(command)->get_scale();
+    if (x) {
+      curr_moveX = undo ? curr_moveX - x : curr_moveX + x;
+      sliderSetValueMuted(moveXSlider, (curr_moveX < -180)  ? -180
+                                       : (curr_moveX > 180) ? 180
+                                                            : curr_moveX);
+      spinBoxSetValueMuted(moveXSpinBox, curr_moveX);
+    } else if (y) {
+      curr_moveY = undo ? curr_moveY - y : curr_moveY + y;
+      sliderSetValueMuted(moveYSlider, (curr_moveY < -180)  ? -180
+                                       : (curr_moveY > 180) ? 180
+                                                            : curr_moveY);
+      spinBoxSetValueMuted(moveYSpinBox, curr_moveY);
+    } else {
+      curr_moveZ = undo ? curr_moveZ - z : curr_moveZ + z;
+      sliderSetValueMuted(moveZSlider, (curr_moveZ < -180)  ? -180
+                                       : (curr_moveZ > 180) ? 180
+                                                            : curr_moveZ);
+      spinBoxSetValueMuted(moveZSpinBox, curr_moveZ);
+    }
+  } else if (dynamic_cast<ScaleCommand *>(command)) {
+    double scale = dynamic_cast<ScaleCommand *>(command)->get_scale();
 
-        curr_scale = undo ? curr_scale - scale : curr_scale + scale;
-        sliderSetValueMuted(scaleSlider, curr_scale);
-    } else if (dynamic_cast<VertexSizeCommand*>(command)) sliderSetValueMuted(vertexSizeSlider, dynamic_cast<VertexSizeCommand*>(command)->get_prev());
-    else if (dynamic_cast<LineWidthCommand*>(command)) sliderSetValueMuted(edgesWidthSlider, dynamic_cast<LineWidthCommand*>(command)->get_prev());
-    else if (dynamic_cast<ProjectionTypeCommand*>(command)) comboBoxSetValueMuted(projectionTypeComboBox, dynamic_cast<ProjectionTypeCommand*>(command)->get_type());
-    else if (dynamic_cast<VertexTypeCommand*>(command)) comboBoxSetValueMuted(vertexTypeComboBox, dynamic_cast<VertexTypeCommand*>(command)->get_type());
-    else if (dynamic_cast<LineTypeCommand*>(command)) comboBoxSetValueMuted(edgesTypeComboBox, dynamic_cast<LineTypeCommand*>(command)->get_type());
+    curr_scale = undo ? curr_scale - scale : curr_scale + scale;
+    sliderSetValueMuted(scaleSlider, curr_scale);
+  } else if (dynamic_cast<VertexSizeCommand *>(command))
+    sliderSetValueMuted(vertexSizeSlider,
+                        dynamic_cast<VertexSizeCommand *>(command)->get_prev());
+  else if (dynamic_cast<LineWidthCommand *>(command))
+    sliderSetValueMuted(edgesWidthSlider,
+                        dynamic_cast<LineWidthCommand *>(command)->get_prev());
+  else if (dynamic_cast<ProjectionTypeCommand *>(command))
+    comboBoxSetValueMuted(
+        projectionTypeComboBox,
+        dynamic_cast<ProjectionTypeCommand *>(command)->get_type());
+  else if (dynamic_cast<VertexTypeCommand *>(command))
+    comboBoxSetValueMuted(
+        vertexTypeComboBox,
+        dynamic_cast<VertexTypeCommand *>(command)->get_type());
+  else if (dynamic_cast<LineTypeCommand *>(command))
+    comboBoxSetValueMuted(edgesTypeComboBox,
+                          dynamic_cast<LineTypeCommand *>(command)->get_type());
 }
 
 void main_window::setup_shortcuts() {
-    QAction *screenshotAction = new QAction(this);
-    screenshotAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S));
+  QAction *screenshotAction = new QAction(this);
+  screenshotAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S));
 
-    connect(screenshotAction, &QAction::triggered, this, &main_window::on_screenshotButton_clicked);
+  connect(screenshotAction, &QAction::triggered, this,
+          &main_window::on_screenshotButton_clicked);
 
-    QAction *gifAction = new QAction(this);
-    gifAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
+  QAction *gifAction = new QAction(this);
+  gifAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R));
 
-    connect(gifAction, &QAction::triggered, this, &main_window::on_gifAction_triggered);
+  connect(gifAction, &QAction::triggered, this,
+          &main_window::on_gifAction_triggered);
 
-    QAction *loadAction = new QAction(this);
-    loadAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_O));
+  QAction *loadAction = new QAction(this);
+  loadAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_O));
 
-    connect(loadAction, &QAction::triggered, this, &main_window::on_loadButton_clicked);
+  connect(loadAction, &QAction::triggered, this,
+          &main_window::on_loadButton_clicked);
 
-    QAction *increaseScaleAction = new QAction(this);
-    increaseScaleAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Equal));
+  QAction *increaseScaleAction = new QAction(this);
+  increaseScaleAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Equal));
 
-    connect(increaseScaleAction, &QAction::triggered, this, &main_window::on_increaseScaleButton_clicked);
+  connect(increaseScaleAction, &QAction::triggered, this,
+          &main_window::on_increaseScaleButton_clicked);
 
-    QAction *decreaseScaleAction = new QAction(this);
-    decreaseScaleAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
+  QAction *decreaseScaleAction = new QAction(this);
+  decreaseScaleAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Minus));
 
-    connect(decreaseScaleAction, &QAction::triggered, this, &main_window::on_decreaseScaleButton_clicked);
+  connect(decreaseScaleAction, &QAction::triggered, this,
+          &main_window::on_decreaseScaleButton_clicked);
 
-    addAction(screenshotAction);
-    addAction(gifAction);
-    addAction(loadAction);
-    addAction(increaseScaleAction);
-    addAction(decreaseScaleAction);
+  addAction(screenshotAction);
+  addAction(gifAction);
+  addAction(loadAction);
+  addAction(increaseScaleAction);
+  addAction(decreaseScaleAction);
 }
 
 void main_window::save_settings() {
@@ -794,7 +852,8 @@ void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {
   QLabel *amountVLabel = new QLabel("Вершин:");
   QSpacerItem *amountVSpacer =
       new QSpacerItem(20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-  amountVnumberLabel = new QLabel(QString::number(v->get_worker()->get_n_vertices()));
+  amountVnumberLabel =
+      new QLabel(QString::number(v->get_worker()->get_n_vertices()));
 
   QHBoxLayout *amountVLayout = new QHBoxLayout;
   amountVLayout->addWidget(amountVLabel);
@@ -826,19 +885,19 @@ void main_window::setupFileInfo(QVBoxLayout *rightColumnLayout) {
 }
 
 void main_window::sliderSetValueMuted(QSlider *slider, int value) {
-    slider->blockSignals(true);
-    slider->setValue(value);
-    slider->blockSignals(false);
+  slider->blockSignals(true);
+  slider->setValue(value);
+  slider->blockSignals(false);
 }
 
 void main_window::spinBoxSetValueMuted(QSpinBox *spinBox, int value) {
-    spinBox->blockSignals(true);
-    spinBox->setValue(value);
-    spinBox->blockSignals(false);
+  spinBox->blockSignals(true);
+  spinBox->setValue(value);
+  spinBox->blockSignals(false);
 }
 
 void main_window::comboBoxSetValueMuted(QComboBox *comboBox, int value) {
-    comboBox->blockSignals(true);
-    comboBox->setCurrentIndex(value);
-    comboBox->blockSignals(false);
+  comboBox->blockSignals(true);
+  comboBox->setCurrentIndex(value);
+  comboBox->blockSignals(false);
 }
