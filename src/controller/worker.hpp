@@ -16,7 +16,7 @@ class Worker {
 
   void scale(double scale_coef);
   void move_figure(double x_factor, double y_factor, double z_factor);
-  void rotate_figure(double x_angle, double y_angle, double z_angle);
+  void rotate_figure(double x_angle, double y_angle, double z_angle, bool undo);
   size_t get_n_vertices() const;
   size_t get_n_polygons() const;
   size_t get_n_polygons_edges() const;

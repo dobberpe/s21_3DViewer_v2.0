@@ -11,20 +11,28 @@ QMAKE_CXXFLAGS += -Wall -Wextra -Werror -std=c++17 -O0 -DGL_SILENCE_DEPRECATION
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+CONFIG += silent
+
 SOURCES += \
     main_window/main_window.cpp \
-    transformations/transformations.c \
-    parser/memory_manipulation.c \
-    parser/parser.c \
+    command/command.cpp \
     main.cpp \
-    graphics/graphics.cpp
+    graphics/graphics.cpp \
+    graphics/render_strategy.cpp \
+    logger/logger.cpp
 
 HEADERS += \
     main_window/main_window.h \
-    transformations/transformations.h \
-    parser/parser.h \
-    common/common.h \
-    graphics/graphics.h
+    command/command.h \
+    graphics/graphics.h \
+    graphics/render_strategy.h \
+    controller/worker.hpp \
+    controller/worker.tpp \
+    figure/figure.hpp \
+    figure/figure.tpp \
+    parser/parser.hpp \
+    parser/parser.tpp \
+    logger/logger.h
 
 # LIBS += -lGL -lGLU
 

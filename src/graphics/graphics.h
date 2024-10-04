@@ -7,9 +7,6 @@
 #include <QWheelEvent>
 #include <QtOpenGL>
 
-
-#include "../controller/worker.hpp"
-
 #define CENTRAL_PR 0
 #define PARALLEL_PR 1
 #define SOLID_LINE 0
@@ -18,22 +15,25 @@
 #define ROUND 1
 #define SQUARE 2
 
+#include "../controller/worker.hpp"
+
 class RenderStrategy;
 
 class Viewer : public QOpenGLWidget {
   Q_OBJECT
 
  public:
+  Worker *worker;
   RenderStrategy* render_strategy = NULL;
-  double curr_scale = 1;
 
   Viewer(QWidget *parent = nullptr);
   ~Viewer();
   void loadModel(QString filename);
-  void update_alpha(int valueX, int valueY);
-  void update_move_vector(int valueX, int valueY);
-  void update_scale(int value);
+  // void update_alpha(int valueX, int valueY);
+  // void update_move_vector(int valueX, int valueY);
+  // void update_scale(int value);
   void setRenderStrategy(RenderStrategy* strategy);
+  Worker* get_worker();
 
   double vertex_r = 0, vertex_g = 0, vertex_b = 1;
   double polygon_r = 0, polygon_g = 1, polygon_b = 0;
@@ -49,6 +49,7 @@ class Viewer : public QOpenGLWidget {
   void resizeGL(int w, int h) override;
   void mousePressEvent(QMouseEvent *event) override;
   void mouseMoveEvent(QMouseEvent *event) override;
+  void mouseReleaseEvent(QMouseEvent *event) override;
   void wheelEvent(QWheelEvent *event) override;
 
   QPoint cur_pos;

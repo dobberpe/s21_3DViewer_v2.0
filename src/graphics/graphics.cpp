@@ -1,9 +1,12 @@
 #include "graphics.h"
 #include "render_strategy.h"
+#include "command/command.h"
+
 
 Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {
   
   setWindowTitle("3dViewer");
+  worker = new Worker();
   loadModel(start_file);
 
   CompositeRenderStrategy* compose  = new CompositeRenderStrategy();
@@ -11,23 +14,25 @@ Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {
   compose->addStrategy(new PolygonRenderStrategy());
   setRenderStrategy(compose);
 
-  w = new Worker();
 }
 
 void Viewer::loadModel(QString filename) {
-
-  w->parse_file(filename.toUtf8().constData());
-  std::vector<double> values{w->get_x_min(), w->get_y_min(), w->get_z_min(),
-                             w->get_x_max(), w->get_y_max(), w->get_z_max()};
+  worker->parse_file(filename.toUtf8().constData());
+  std::vector<double> values{worker->get_x_min(), worker->get_y_min(), worker->get_z_min(),
+                             worker->get_x_max(), worker->get_y_max(), worker->get_z_max()};
   const auto [min, max] = std::minmax_element(begin(values), end(values));
   move_coef = (*max - *min) * 1.4;
   update();
 }
 
+Worker *Viewer::get_worker() { return worker; }
+
 Viewer::~Viewer() {
+  delete worker;
   if (render_strategy) {
-        delete render_strategy;
-    }
+      delete render_strategy;
+  }
+
 }
 
 void Viewer::initializeGL() { glEnable(GL_DEPTH_TEST); }
@@ -35,23 +40,21 @@ void Viewer::initializeGL() { glEnable(GL_DEPTH_TEST); }
 void Viewer::mouseMoveEvent(QMouseEvent *event) {
   new_pos = QPoint(event->globalPosition().toPoint() - cur_pos);
   if (event->buttons() & Qt::LeftButton) {
-    double x = new_pos.x() * 0.00001 * move_coef;
-    double y = -new_pos.y() * 0.00001 * move_coef;
-    w->move_figure(x, y, 0);
-    update();
+    Logger::instance().log("mouse rotate");
+    CommandManager::instance().executeCommand(new RotateCommand(this, new_pos.y() * 0.00001 * move_coef, new_pos.x() * 0.00001 * move_coef, 0, false));
   } else if (event->buttons() & Qt::RightButton) {
-    double alpha_x = new_pos.y() * 0.005;
-    double alpha_y = new_pos.x() * 0.005;
-    w->rotate_figure(alpha_x, alpha_y, 0);
-    update();
+    Logger::instance().log("mouse move");
+    CommandManager::instance().combineCommand(new MoveCommand(this, new_pos.x() * 0.005, -new_pos.y() * 0.005, 0, false));
   }
 }
 
+void Viewer::mouseReleaseEvent(QMouseEvent *event) {
+    Logger::instance().log("mouse release");
+    if ((event->button() == Qt::LeftButton) || (event->button() == Qt::RightButton)) CommandManager::instance().combinedCommandFinished();
+}
+
 void Viewer::wheelEvent(QWheelEvent *event) {
-  int num_degrees = event->angleDelta().y();
-  curr_scale *= num_degrees < 0 ? 0.99 : 1.01;
-  w->scale(curr_scale);
-  update();
+  CommandManager::instance().combineCommand(new ScaleCommand(this, event->angleDelta().y(), false));
 }
 
 void Viewer::mousePressEvent(QMouseEvent *event) {
@@ -80,6 +83,7 @@ void Viewer::paintGL() {
   glEnableClientState(GL_VERTEX_ARRAY);
   render_strategy->render(this);
   glDisableClientState(GL_VERTEX_ARRAY);
+
 }
 
 void Viewer::resizeGL(int w, int h) {
@@ -100,7 +104,6 @@ void Viewer::resizeGL(int w, int h) {
     glOrtho(left, right, bottom, top, -move_coef, move_coef * 100);
   }
 }
-
 
 void Viewer::setRenderStrategy(RenderStrategy* strategy) {
     if (render_strategy) {

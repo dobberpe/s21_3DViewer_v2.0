@@ -3,8 +3,10 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <locale>
 
 #include "../figure/figure.hpp"
+
 using namespace s21;
 
 namespace s21 {
@@ -17,8 +19,8 @@ class Parser {
  private:
   Figure& figure;
   long v = 0;
-  vector<long> polygon_line;
-  vector<long> sub_line;
+  vector<unsigned int> polygon_line;
+  vector<unsigned int> sub_line;
 
   int num_slash = 0, prev_num_slash = 0;
   int pattern_size = 0, prev_pattern_size = 0;

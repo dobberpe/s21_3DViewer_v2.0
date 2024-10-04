@@ -10,6 +10,7 @@ inline Worker::Worker() : figure(Figure::get_instance()) {}
 /// @param file_path
 /// @return true if file exists
 inline bool Worker::parse_file(const string& file_path) {
+  Logger::instance().log("parse " + QString::fromStdString(file_path));
   Parser parser;
   bool res = false;
   res = parser.parse_file_to_figure(file_path);
@@ -50,8 +51,8 @@ inline void Worker::move_figure(double x_factor, double y_factor,
 /// @param y_angle
 /// @param z_angle
 inline void Worker::rotate_figure(double x_angle, double y_angle,
-                                  double z_angle) {
-  figure.rotate_figure(x_angle, y_angle, z_angle);
+                                  double z_angle, bool undo) {
+  figure.rotate_figure(x_angle, y_angle, z_angle, undo);
 }
 
 inline size_t Worker::get_n_vertices() const { return figure.get_n_vertex(); }

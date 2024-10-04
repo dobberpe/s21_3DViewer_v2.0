@@ -2,14 +2,16 @@
 #define __figure_HPP__
 
 #include <iostream>
+#include "logger/logger.h"
+
 using namespace std;
 
 typedef enum { x = 0, y, z, homo } crd;
 
 struct Polygon {
-  vector<long> points;
+  vector<unsigned int> points;
   size_t n_points;
-  Polygon(const vector<long>& p_line)
+  Polygon(const vector<unsigned int>& p_line)
       : points(p_line), n_points(p_line.size()) {}
 };
 
@@ -50,7 +52,7 @@ class Figure {
 
   void move_figure(double x_factor, double y_factor, double z_factor);
 
-  void rotate_figure(double alpha_x, double alpha_y, double alpha_z);
+  void rotate_figure(double alpha_x, double alpha_y, double alpha_z, bool undo);
 
   void clear_figure();
 
