@@ -18,6 +18,8 @@
 #include "../controller/worker.hpp"
 #include "../logger/logger.h"
 
+namespace s21 {
+
 class RenderStrategy;
 
 class Viewer : public QOpenGLWidget {
@@ -30,9 +32,6 @@ class Viewer : public QOpenGLWidget {
   Viewer(QWidget *parent = nullptr);
   ~Viewer();
   void loadModel(QString filename);
-  // void update_alpha(int valueX, int valueY);
-  // void update_move_vector(int valueX, int valueY);
-  // void update_scale(int value);
   void setRenderStrategy(RenderStrategy *strategy);
   Worker *get_worker();
 
@@ -65,5 +64,7 @@ class Viewer : public QOpenGLWidget {
 
   Worker *w;
 };
+
+}  // namespace s21
 
 #endif  // VIEWER_H

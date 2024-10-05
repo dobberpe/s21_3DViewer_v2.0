@@ -1,5 +1,6 @@
 #include "main_window.h"
 
+#include "../graphics/render_strategy.h"
 #include "logger/logger.h"
 
 using namespace s21;
@@ -9,6 +10,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   // setMinimumSize(800, 600);
 
   v = new Viewer;
+  CompositeRenderStrategy *compose = new CompositeRenderStrategy();
+  compose->addStrategy(new VertexRenderStrategy());
+  compose->addStrategy(new PolygonRenderStrategy());
+  v->setRenderStrategy(compose);
+
   connect(v, &Viewer::mouseRotate, this, &MainWindow::on_viewer_mouseRotate);
   connect(v, &Viewer::mouseMove, this, &MainWindow::on_viewer_mouseMove);
   connect(v, &Viewer::wheelScale, this, &MainWindow::on_viewer_wheelScale);

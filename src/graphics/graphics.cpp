@@ -3,15 +3,12 @@
 #include "command/command.h"
 #include "render_strategy.h"
 
+using namespace s21;
+
 Viewer::Viewer(QWidget *parent) : QOpenGLWidget(parent) {
   setWindowTitle("3dViewer");
   worker = new Worker();
   loadModel(start_file);
-
-  CompositeRenderStrategy *compose = new CompositeRenderStrategy();
-  compose->addStrategy(new VertexRenderStrategy());
-  compose->addStrategy(new PolygonRenderStrategy());
-  setRenderStrategy(compose);
 }
 
 void Viewer::loadModel(QString filename) {

@@ -3,6 +3,8 @@
 
 #include <vector>
 
+namespace s21 {
+
 class Viewer;
 
 class RenderStrategy {
@@ -30,5 +32,7 @@ class CompositeRenderStrategy : public RenderStrategy {
   void addStrategy(RenderStrategy* strategy);
   void render(Viewer* viewer) override;
 };
+
+}  // namespace s21
 
 #endif

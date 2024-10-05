@@ -2,6 +2,8 @@
 
 #include "graphics.h"
 
+using namespace s21;
+
 void VertexRenderStrategy::render(Viewer *viewer) {
   if (viewer->vertex_type != NONE) {
     if (viewer->vertex_type == ROUND) glEnable(GL_POINT_SMOOTH);
