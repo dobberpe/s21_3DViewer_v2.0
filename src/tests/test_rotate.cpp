@@ -13,7 +13,7 @@ TEST(Suite_rotate, test_1) {
   size_t n;
   std::tie(array, n) = figure.get_vertex();
 
-  figure.rotate_figure(20, 0, 0);
+  figure.rotate_figure(20, 0, 0, false);
 
   EXPECT_NEAR(array[x], 2.712726, 1e-5);
   EXPECT_NEAR(array[y], -1.40156774, 1e-5);
@@ -37,7 +37,7 @@ TEST(Suite_rotate, test_2) {
   size_t n;
   std::tie(array, n) = figure.get_vertex();
 
-  figure.rotate_figure(0, 50, 0);
+  figure.rotate_figure(0, 50, 0, false);
 
   EXPECT_NEAR(array[x], -0.165766, 1e-5);
   EXPECT_NEAR(array[y], -2.398764, 1e-5);
@@ -61,7 +61,7 @@ TEST(Suite_rotate, test_3) {
   size_t n;
   std::tie(array, n) = figure.get_vertex();
 
-  figure.rotate_figure(0, 0, 185);
+  figure.rotate_figure(0, 0, 185, false);
 
   EXPECT_NEAR(array[x], -2.911469, 1e-5);
   EXPECT_NEAR(array[y], 2.153206, 1e-5);
@@ -85,7 +85,7 @@ TEST(Suite_rotate, test_4) {
   size_t n;
   std::tie(array, n) = figure.get_vertex();
 
-  figure.rotate_figure(-274, 216, -164);
+  figure.rotate_figure(-274, 216, -164, false);
 
   EXPECT_NEAR(array[x], 1.298613, 1e-5);
   EXPECT_NEAR(array[y], -2.040332, 1e-5);

@@ -3,8 +3,6 @@
 
 #include <iostream>
 
-#include "logger/logger.h"
-
 using namespace std;
 
 typedef enum { x = 0, y, z, homo } crd;
@@ -56,7 +54,7 @@ class Figure {
 
  private:
   Figure();
-  ~Figure(){};
+  ~Figure() {};
 
   void fill_move_matrix(double x_factor, double y_factor, double z_factor);
 

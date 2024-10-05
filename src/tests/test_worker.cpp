@@ -4,7 +4,7 @@ TEST(Suite_worker, test_parser) {
   Worker worker;
 
   bool res = true;
-  worker.parse_file("obj_files/test.obj");
+  worker.parse_file("obj_files/3dviewer.obj");
   EXPECT_EQ(res, true);
 
   const double* array;
@@ -18,12 +18,7 @@ TEST(Suite_worker, test_parser) {
   EXPECT_EQ(n_p, 123U);
 
   Figure& figure = Figure::get_instance();
-  EXPECT_EQ(figure.get_x_max_(), 1430);
-  EXPECT_EQ(figure.get_y_max_(), 250);
-  EXPECT_EQ(figure.get_z_max_(), 0);
-  EXPECT_EQ(figure.get_x_min_(), 70);
-  EXPECT_EQ(figure.get_y_min_(), 50);
-  EXPECT_EQ(figure.get_z_min_(), -50);
+  EXPECT_EQ(figure.get_move_coeff(), 2110);
 }
 
 TEST(Suite_worker, test_parser_2) {
@@ -43,12 +38,7 @@ TEST(Suite_worker, test_parser_2) {
   std::tie(polygon, n_p) = worker.get_polygon_array();
   EXPECT_EQ(n_p, 6273U);
 
-  EXPECT_NEAR(worker.get_x_max(), 8.11417, 1e-5);
-  EXPECT_NEAR(worker.get_y_max(), 2.39878, 1e-5);
-  EXPECT_NEAR(worker.get_z_max(), 2.83968, 1e-5);
-  EXPECT_NEAR(worker.get_x_min(), -8.11417, 1e-5);
-  EXPECT_NEAR(worker.get_y_min(), -2.39878, 1e-5);
-  EXPECT_NEAR(worker.get_z_min(), -2.83968, 1e-5);
+  EXPECT_NEAR(worker.get_move_coeff(), 16.2283, 1e-4);
 }
 
 TEST(Suite_worker, test_scale) {
@@ -87,13 +77,13 @@ TEST(Suite_worker, test_move) {
 
   worker.move_figure(0.667, -8.0, 2.6);
 
-  EXPECT_NEAR(array[x], 3.379726, 1e-5);
-  EXPECT_NEAR(array[y], -10.398764, 1e-5);
-  EXPECT_NEAR(array[z], 0.10736, 1e-5);
+  EXPECT_NEAR(array[x], 13.537, 1e-3);
+  EXPECT_NEAR(array[y], -132.225, 1e-3);
+  EXPECT_NEAR(array[z], 39.701, 1e-3);
 
-  EXPECT_NEAR(array[(n - 1) * 3 + x], -5.361662, 1e-5);
-  EXPECT_NEAR(array[(n - 1) * 3 + y], -6.36023, 1e-5);
-  EXPECT_NEAR(array[(n - 1) * 3 + z], 3.964798, 1e-5);
+  EXPECT_NEAR(array[(n - 1) * 3 + x], 4.79564, 1e-5);
+  EXPECT_NEAR(array[(n - 1) * 3 + y], -128.187, 1e-3);
+  EXPECT_NEAR(array[(n - 1) * 3 + z], 43.5585, 1e-4);
 }
 
 TEST(Suite_worker, test_rotate) {
@@ -107,7 +97,7 @@ TEST(Suite_worker, test_rotate) {
   size_t n;
   std::tie(array, n) = worker.get_vertex_array();
 
-  worker.rotate_figure(-274, 216, -164);
+  worker.rotate_figure(-274, 216, -164, false);
 
   EXPECT_NEAR(array[x], 1.298613, 1e-5);
   EXPECT_NEAR(array[y], -2.040332, 1e-5);

@@ -16,6 +16,7 @@
 #define SQUARE 2
 
 #include "../controller/worker.hpp"
+#include "../logger/logger.h"
 
 class RenderStrategy;
 

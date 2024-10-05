@@ -10,7 +10,6 @@ UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)
 	GFLAGS = -lm -lgtest -lsubunit
 endif
-
 ifeq ($(UNAME), Darwin)
 	GFLAGS =  -I/opt/homebrew/include -L/opt/homebrew/lib -lgtest
 endif
@@ -86,7 +85,7 @@ format_check:
 	@echo "checking format..."
 
 cppcheck:
-	cppcheck --enable=all --suppress=missingIncludeSystem $(PARSER_DIR)/* $(CONTROLLER_DIR)/* $(FIGURE_DIR)/* $(TEST_DIR)/* $(QTMAIN)/* $(QTGRAPHICS)/* ./*cpp ./*h
+	find . -name '*.cpp' -o -name '*.hpp' -o -name '*.tpp' -o -name '*.h' | xargs cppcheck --enable=all --suppress=missingIncludeSystem
 
 valgrind_tests: clean
 	$(CPP) $(CPPFLAGS) $(SOURCE_TEST) -o $(TEST) $(GFLAGS)

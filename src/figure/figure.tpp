@@ -16,7 +16,7 @@ inline Figure::Figure()
       z_max(0),
       move_matrix(16, 0.0),
       rotation_matrix(9, 0.0),
-      move_coefficient(0){};
+      move_coefficient(0) {};
 
 /// @brief Creates an instance of Figure in case the figure is empty
 /// @return an instance of Figure
@@ -30,8 +30,6 @@ inline Figure& Figure::get_instance() {
 /// @param y_
 /// @param z_
 inline void Figure::add_vertex(double x_, double y_, double z_) {
-  Logger::instance().log("add_vertex " + QString::number(x_) + " " +
-                         QString::number(y_) + " " + QString::number(z_));
   if (!n_vertex) {
     x_max = x_;
     y_max = y_;
@@ -47,11 +45,12 @@ inline void Figure::add_vertex(double x_, double y_, double z_) {
     if (y_ < y_min) y_min = y_;
     if (z_ < z_min) z_min = z_;
   }
+  move_coefficient =
+      max(max(x_max, y_max), z_max) - min(min(x_min, y_min), z_min);
   vertex.push_back(x_);
   vertex.push_back(y_);
   vertex.push_back(z_);
   ++n_vertex;
-  Logger::instance().log("n_vertex " + QString::number(n_vertex));
 }
 
 inline size_t Figure::get_n_vertex() const { return n_vertex; }
@@ -73,7 +72,6 @@ inline tuple<const Polygon*, size_t> Figure::get_polygon() const {
 inline void Figure::add_polygon(const Polygon& polygon) {
   polygons.push_back(polygon);
   ++n_polygons;
-  Logger::instance().log("n_polygons " + QString::number(n_polygons));
   n_polygon_edges += polygon.n_points / 2;
 }
 
@@ -105,7 +103,6 @@ inline void Figure::scale_figure(double scale_coef) {
       vertex[i * 3 + x] *= scale_coef;
       vertex[i * 3 + y] *= scale_coef;
       vertex[i * 3 + z] *= scale_coef;
-      // calc_min_max(i);
     }
   }
 }
@@ -133,7 +130,6 @@ inline void Figure::rotate_figure(double alpha_x, double alpha_y,
   alpha_y = alpha_y * M_PI / 180.0;
   alpha_z = alpha_z * M_PI / 180.0;
   if (undo) {
-    Logger::instance().log("undo = true");
     fill_rotation_matrix_crd(alpha_z, z);
     rotate_(z);
     fill_rotation_matrix_crd(alpha_y, y);
@@ -141,7 +137,6 @@ inline void Figure::rotate_figure(double alpha_x, double alpha_y,
     fill_rotation_matrix_crd(alpha_x, x);
     rotate_(x);
   } else {
-    Logger::instance().log("undo = false");
     fill_rotation_matrix_crd(alpha_x, x);
     rotate_(x);
     fill_rotation_matrix_crd(alpha_y, y);
@@ -153,14 +148,11 @@ inline void Figure::rotate_figure(double alpha_x, double alpha_y,
 
 /// @brief Clears all attributes of the figure
 inline void Figure::clear_figure() {
-  Logger::instance().log("clear_figure");
   vertex.clear();
   n_vertex = 0U;
-  Logger::instance().log("vertex cleared, n_vertex 0");
   polygons.clear();
   n_polygons = 0U;
   n_polygon_edges = 0U;
-  Logger::instance().log("polygons cleared, n_polygons 0, n_polygon_edges");
   x_min = 0;
   y_min = 0;
   z_min = 0;
@@ -168,11 +160,8 @@ inline void Figure::clear_figure() {
   y_max = 0;
   z_max = 0;
   move_coefficient = 0;
-  Logger::instance().log("x y z min max 0");
   move_matrix.clear();
-  Logger::instance().log("move matrix clear");
   rotation_matrix.clear();
-  Logger::instance().log("rotation matrix clear");
 }
 
 /// @brief Fills a move matrix 4x4, matrix is transposed by default
@@ -197,7 +186,6 @@ inline void Figure::move_() {
     vertex[i * 3 + x] = vertex[i * 3 + x] * move_matrix[0] + move_matrix[12];
     vertex[i * 3 + y] = vertex[i * 3 + y] * move_matrix[5] + move_matrix[13];
     vertex[i * 3 + z] = vertex[i * 3 + z] * move_matrix[10] + move_matrix[14];
-    // calc_min_max(i);
   }
 }
 
@@ -233,7 +221,6 @@ inline void Figure::rotate_(int crd) {
     for (int j = 0; j < 3; ++j) {
       vertex[i * 3 + j] = tmp[j];
     }
-    // calc_min_max(i);
   }
 }
 

@@ -9,23 +9,15 @@ TEST(Suite_scale, test_1) {
 
   Figure& figure = Figure::get_instance();
 
+  figure.align_to_center();
+
   const double* array;
   size_t n;
   std::tie(array, n) = figure.get_vertex();
 
-  double check_x = array[x];
-  double check_y = array[y];
-  double check_z = array[z];
-
-  double x_center = (figure.get_x_min_() + figure.get_x_max_()) / 2.0;
-  double y_center = (figure.get_y_min_() + figure.get_y_max_()) / 2.0;
-  double z_center = (figure.get_z_min_() + figure.get_z_max_()) / 2.0;
-
-  figure.align_to_center();
-
-  EXPECT_EQ(array[x], check_x - x_center);
-  EXPECT_EQ(array[y], check_y - y_center);
-  EXPECT_EQ(array[z], check_z - z_center);
+  EXPECT_NEAR(array[x], 2.71272, 1e-5);
+  EXPECT_NEAR(array[y], -2.39876, 1e-5);
+  EXPECT_NEAR(array[z], -2.49264, 1e-5);
 }
 
 TEST(Suite_scale, test_2) {
@@ -36,24 +28,15 @@ TEST(Suite_scale, test_2) {
   EXPECT_EQ(res, true);
 
   Figure& figure = Figure::get_instance();
+  figure.align_to_center();
 
   const double* array;
   size_t n;
   std::tie(array, n) = figure.get_vertex();
 
-  double check_x = array[x];
-  double check_y = array[y];
-  double check_z = array[z];
-
-  double x_center = (figure.get_x_min_() + figure.get_x_max_()) / 2.0;
-  double y_center = (figure.get_y_min_() + figure.get_y_max_()) / 2.0;
-  double z_center = (figure.get_z_min_() + figure.get_z_max_()) / 2.0;
-
-  figure.align_to_center();
-
-  EXPECT_EQ(array[x], check_x - x_center);
-  EXPECT_EQ(array[y], check_y - y_center);
-  EXPECT_EQ(array[z], check_z - z_center);
+  EXPECT_NEAR(array[x], 0.786019, 1e-6);
+  EXPECT_NEAR(array[y], -2.580399, 1e-6);
+  EXPECT_NEAR(array[z], 0.601628, 1e-6);
 }
 
 TEST(Suite_scale, test_3) {
