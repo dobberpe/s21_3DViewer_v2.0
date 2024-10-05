@@ -51,3 +51,5 @@ Mkfile.old
 dkms.conf
 
 .DS_Store
+mmm.cpp
+*.vscode

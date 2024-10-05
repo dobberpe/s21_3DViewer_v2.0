@@ -68,7 +68,10 @@ tests: clean
 gcov_report: clean
 	$(CPP) $(CPPFLAGS) $(SOURCE_TEST) -o $(TEST) $(GFLAGS) --coverage
 	@./$(TEST)
-	@lcov -t "tests" -o tests.info -c -d . -rc lcov_branch_coverage=1 --exclude "$(PWD)/tests/*" --exclude "$(PWD)/QtGifImage/*"
+	@lcov -t "tests" -o tests.info -c -d . -rc lcov_branch_coverage=1 \
+								--exclude "$(PWD)/tests/*" \
+								--exclude "/usr/*" \
+								--exclude "/11/*" \
 	@genhtml -o report tests.info -rc lcov_branch_coverage=1
 	@rm -rf *.gcno *.gcda *.gcov
 
@@ -93,6 +96,7 @@ valgrind_tests: clean
 	valgrind -s -q --tool=memcheck --leak-check=yes --track-origins=yes --show-leak-kinds=all --verbose --log-file=valgrind_out.txt ./$(TEST)
 	@cat valgrind_out.txt
 	@rm valgrind_out.txt
+	@rm -rf $(TEST)
 
 rebuild: uninstall install
 

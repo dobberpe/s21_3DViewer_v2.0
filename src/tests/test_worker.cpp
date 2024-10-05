@@ -18,7 +18,7 @@ TEST(Suite_worker, test_parser) {
   EXPECT_EQ(n_p, 123U);
 
   Figure& figure = Figure::get_instance();
-  EXPECT_EQ(figure.get_move_coeff(), 2110);
+  EXPECT_EQ(figure.get_move_coeff(), 1360);
 }
 
 TEST(Suite_worker, test_parser_2) {

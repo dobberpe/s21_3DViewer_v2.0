@@ -30,27 +30,11 @@ inline Figure& Figure::get_instance() {
 /// @param y_
 /// @param z_
 inline void Figure::add_vertex(double x_, double y_, double z_) {
-  if (!n_vertex) {
-    x_max = x_;
-    y_max = y_;
-    z_max = z_;
-    x_min = x_;
-    y_min = y_;
-    z_min = z_;
-  } else {
-    if (x_ > x_max) x_max = x_;
-    if (y_ > y_max) y_max = y_;
-    if (z_ > z_max) z_max = z_;
-    if (x_ < x_min) x_min = x_;
-    if (y_ < y_min) y_min = y_;
-    if (z_ < z_min) z_min = z_;
-  }
-  move_coefficient =
-      max(max(x_max, y_max), z_max) - min(min(x_min, y_min), z_min);
   vertex.push_back(x_);
   vertex.push_back(y_);
   vertex.push_back(z_);
   ++n_vertex;
+  calc_move_coeff(n_vertex - 1);
 }
 
 inline size_t Figure::get_n_vertex() const { return n_vertex; }
@@ -77,6 +61,7 @@ inline void Figure::add_polygon(const Polygon& polygon) {
 
 inline void Figure::move_figure(double x_factor, double y_factor,
                                 double z_factor) {
+  if (!move_coefficient) move_coefficient = 1.0;
   fill_move_matrix(move_coefficient * x_factor, move_coefficient * y_factor,
                    move_coefficient * z_factor);
   move_();
@@ -91,7 +76,7 @@ inline void Figure::align_to_center() {
     vertex[i * 3 + x] = (vertex[i * 3 + x] - x_center);
     vertex[i * 3 + y] = (vertex[i * 3 + y] - y_center);
     vertex[i * 3 + z] = (vertex[i * 3 + z] - z_center);
-    calc_min_max(i);
+    calc_move_coeff(i);
   }
 }
 
@@ -107,15 +92,21 @@ inline void Figure::scale_figure(double scale_coef) {
   }
 }
 
-/// @brief Calculates min max values of the figure
+/// @brief Calculates min max values of the figure and set move_coefficient
 /// @param index
-inline void Figure::calc_min_max(size_t index) {
-  if (vertex[index * 3 + x] > x_max) x_max = vertex[index * 3 + x];
-  if (vertex[index * 3 + y] > y_max) y_max = vertex[index * 3 + y];
-  if (vertex[index * 3 + z] > z_max) z_max = vertex[index * 3 + z];
-  if (vertex[index * 3 + x] < x_min) x_min = vertex[index * 3 + x];
-  if (vertex[index * 3 + y] < y_min) y_min = vertex[index * 3 + y];
-  if (vertex[index * 3 + z] < z_min) z_min = vertex[index * 3 + z];
+inline void Figure::calc_move_coeff(size_t index) {
+  if (!index) {
+    x_max = x_min = vertex[x];
+    y_max = y_min = vertex[y];
+    z_max = z_min = vertex[z];
+  } else {
+    if (vertex[index * 3 + x] > x_max) x_max = vertex[index * 3 + x];
+    if (vertex[index * 3 + y] > y_max) y_max = vertex[index * 3 + y];
+    if (vertex[index * 3 + z] > z_max) z_max = vertex[index * 3 + z];
+    if (vertex[index * 3 + x] < x_min) x_min = vertex[index * 3 + x];
+    if (vertex[index * 3 + y] < y_min) y_min = vertex[index * 3 + y];
+    if (vertex[index * 3 + z] < z_min) z_min = vertex[index * 3 + z];
+  }
   move_coefficient =
       max(max(x_max, y_max), z_max) - min(min(x_min, y_min), z_min);
 }
@@ -153,12 +144,8 @@ inline void Figure::clear_figure() {
   polygons.clear();
   n_polygons = 0U;
   n_polygon_edges = 0U;
-  x_min = 0;
-  y_min = 0;
-  z_min = 0;
-  x_max = 0;
-  y_max = 0;
-  z_max = 0;
+  x_min = y_min = z_min = 0;
+  x_max = y_max = z_max = 0;
   move_coefficient = 0;
   move_matrix.clear();
   rotation_matrix.clear();

@@ -1,6 +1,7 @@
 #ifndef __figure_HPP__
 #define __figure_HPP__
 
+#include <cmath>
 #include <iostream>
 
 using namespace std;
@@ -44,7 +45,7 @@ class Figure {
 
   void scale_figure(double scale_coef);
 
-  void calc_min_max(size_t index);
+  void calc_move_coeff(size_t index);
 
   void move_figure(double x_factor, double y_factor, double z_factor);
 
