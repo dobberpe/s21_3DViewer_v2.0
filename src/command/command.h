@@ -22,7 +22,7 @@ class ICommand {
 
 class RotateCommand : public ICommand {
  public:
-  RotateCommand(Viewer* v_, double x_, double y_, double z_, bool ui);
+  RotateCommand(Viewer* v_, double x_, double y_, double z_);
   RotateCommand(const RotateCommand& prev, const RotateCommand& curr);
   bool execute() override;
   void undo() override;
@@ -31,12 +31,11 @@ class RotateCommand : public ICommand {
  private:
   Viewer* v;
   double x, y, z;
-  bool undo_ui;
 };
 
 class MoveCommand : public ICommand {
  public:
-  MoveCommand(Viewer* v_, double x_, double y_, double z_, bool ui);
+  MoveCommand(Viewer* v_, double x_, double y_, double z_);
   MoveCommand(const MoveCommand& prev, const MoveCommand& curr);
   bool execute() override;
   void undo() override;
@@ -45,12 +44,11 @@ class MoveCommand : public ICommand {
  private:
   Viewer* v;
   double x, y, z;
-  bool undo_ui;
 };
 
 class ScaleCommand : public ICommand {
  public:
-  ScaleCommand(Viewer* v_, double s, bool ui);
+  ScaleCommand(Viewer* v_, double s);
   ScaleCommand(const ScaleCommand& prev, const ScaleCommand& curr);
   bool execute() override;
   void undo() override;
@@ -59,7 +57,6 @@ class ScaleCommand : public ICommand {
  private:
   Viewer* v;
   double scale;
-  bool undo_ui;
 };
 
 class BgColorCommand : public ICommand {

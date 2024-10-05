@@ -6,12 +6,9 @@ using namespace s21;
 
 ICommand::~ICommand() {}
 
-RotateCommand::RotateCommand(Viewer *v_, double x_, double y_, double z_,
-                             bool ui)
-    : v(v_), x(x_), y(y_), z(z_), undo_ui(ui) {
+RotateCommand::RotateCommand(Viewer *v_, double x_, double y_, double z_) : v(v_), x(x_), y(y_), z(z_) {
   Logger::instance().log("created rotate " + QString::number(x) + " " +
-                         QString::number(y) + " " + QString::number(z) +
-                         " from " + (undo_ui ? "main window" : "viewer"));
+                         QString::number(y) + " " + QString::number(z));
 }
 
 RotateCommand::RotateCommand(const RotateCommand &prev,
@@ -20,17 +17,15 @@ RotateCommand::RotateCommand(const RotateCommand &prev,
   x = prev.x + curr.x;
   y = prev.y + curr.y;
   z = prev.z + curr.z;
-  undo_ui = prev.undo_ui;
   Logger::instance().log("created combined rotate " + QString::number(x) + " " +
-                         QString::number(y) + " " + QString::number(z) +
-                         " from " + (undo_ui ? "main window" : "viewer"));
+                         QString::number(y) + " " + QString::number(z));
 }
 
 bool RotateCommand::execute() {
   bool res = false;
 
   if (x || y || z) {
-    v->get_worker()->rotate_figure(x, y, z, false);
+    v->get_worker()->rotate_figure(x * 0.01, y * 0.01, z * 0.01, false);
     v->update();
     res = true;
   }
@@ -39,19 +34,18 @@ bool RotateCommand::execute() {
 }
 
 void RotateCommand::undo() {
-  v->get_worker()->rotate_figure(-x, -y, -z, true);
+  v->get_worker()->rotate_figure(-x * 0.01, -y * 0.01, -z * 0.01, true);
   v->update();
 }
 
 tuple<double, double, double> RotateCommand::get_angle() const {
-  return undo_ui ? make_tuple(x, y, z) : make_tuple(0.0, 0.0, 0.0);
+  return make_tuple(x, y, z);
 }
 
-MoveCommand::MoveCommand(Viewer *v_, double x_, double y_, double z_, bool ui)
-    : v(v_), x(x_), y(y_), z(z_), undo_ui(ui) {
+MoveCommand::MoveCommand(Viewer *v_, double x_, double y_, double z_)
+    : v(v_), x(x_), y(y_), z(z_) {
   Logger::instance().log("created move " + QString::number(x) + " " +
-                         QString::number(y) + " " + QString::number(z) +
-                         " from " + (undo_ui ? "main window" : "viewer"));
+                         QString::number(y) + " " + QString::number(z));
 }
 
 MoveCommand::MoveCommand(const MoveCommand &prev, const MoveCommand &curr) {
@@ -59,17 +53,15 @@ MoveCommand::MoveCommand(const MoveCommand &prev, const MoveCommand &curr) {
   x = prev.x + curr.x;
   y = prev.y + curr.y;
   z = prev.z + curr.z;
-  undo_ui = prev.undo_ui;
   Logger::instance().log("created combined move " + QString::number(x) + " " +
-                         QString::number(y) + " " + QString::number(z) +
-                         " from " + (undo_ui ? "main window" : "viewer"));
+                         QString::number(y) + " " + QString::number(z));
 }
 
 bool MoveCommand::execute() {
   bool res = false;
 
   if (x || y || z) {
-    v->get_worker()->move_figure(x * 0.001, y * 0.001, z * 0.001);
+    v->get_worker()->move_figure(x * 0.00005, y * 0.00005, z * 0.00005);
     v->update();
     res = true;
   }
@@ -78,33 +70,30 @@ bool MoveCommand::execute() {
 }
 
 void MoveCommand::undo() {
-  v->get_worker()->move_figure(-x * 0.001, -y * 0.001, -z * 0.001);
+  v->get_worker()->move_figure(-x * 0.00005, -y * 0.00005, -z * 0.00005);
   v->update();
 }
 
 tuple<double, double, double> MoveCommand::get_shift() const {
-  return undo_ui ? make_tuple(x, y, z) : make_tuple(0.0, 0.0, 0.0);
+  return make_tuple(x, y, z);
 }
 
-ScaleCommand::ScaleCommand(Viewer *v_, double s, bool ui)
-    : v(v_), scale(s), undo_ui(ui) {
-  Logger::instance().log("created scale " + QString::number(scale) + " from " +
-                         (undo_ui ? "main window" : "viewer"));
+ScaleCommand::ScaleCommand(Viewer *v_, double s)
+    : v(v_), scale(s) {
+  Logger::instance().log("created scale " + QString::number(scale));
 }
 
 ScaleCommand::ScaleCommand(const ScaleCommand &prev, const ScaleCommand &curr) {
   v = prev.v;
   scale = prev.scale + curr.scale;
-  undo_ui = prev.undo_ui;
-  Logger::instance().log("created combined scale " + QString::number(scale) +
-                         " from " + (undo_ui ? "main window" : "viewer"));
+  Logger::instance().log("created combined scale " + QString::number(scale));
 }
 
 bool ScaleCommand::execute() {
   bool res = false;
 
   if (scale != 0) {
-    v->get_worker()->scale(pow(1.001, scale));
+    v->get_worker()->scale(pow(1.05, scale));
     v->update();
     res = true;
   }
@@ -113,11 +102,11 @@ bool ScaleCommand::execute() {
 }
 
 void ScaleCommand::undo() {
-  v->get_worker()->scale(pow(1.001, -scale));
+  v->get_worker()->scale(pow(1.05, -scale));
   v->update();
 }
 
-double ScaleCommand::get_scale() const { return undo_ui ? scale : 0; }
+double ScaleCommand::get_scale() const { return scale; }
 
 BgColorCommand::BgColorCommand(Viewer *v_, double r_, double g_, double b_)
     : v(v_),

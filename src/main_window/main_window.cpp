@@ -9,6 +9,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
   // setMinimumSize(800, 600);
 
   v = new Viewer;
+  connect(v, &Viewer::mouseRotate, this, &MainWindow::on_viewer_mouseRotate);
+  connect(v, &Viewer::mouseMove, this, &MainWindow::on_viewer_mouseMove);
+  connect(v, &Viewer::wheelScale, this, &MainWindow::on_viewer_wheelScale);
+
   v->setMinimumWidth(1024);
   v->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -42,21 +46,21 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 void MainWindow::rotation_setup() {
   rotationXSlider = new QSlider(Qt::Horizontal);
-  rotationXSlider->setRange(-180, 180);
+  rotationXSlider->setRange(-18000, 18000);
   connect(rotationXSlider, &QSlider::valueChanged, this,
           &MainWindow::on_rotationXSlider_valueChanged);
   connect(rotationXSlider, &QSlider::sliderReleased, this,
           &MainWindow::on_transformSlider_sliderReleased);
 
   rotationYSlider = new QSlider(Qt::Horizontal);
-  rotationYSlider->setRange(-180, 180);
+  rotationYSlider->setRange(-18000, 18000);
   connect(rotationYSlider, &QSlider::valueChanged, this,
           &MainWindow::on_rotationYSlider_valueChanged);
   connect(rotationYSlider, &QSlider::sliderReleased, this,
           &MainWindow::on_transformSlider_sliderReleased);
 
   rotationZSlider = new QSlider(Qt::Horizontal);
-  rotationZSlider->setRange(-180, 180);
+  rotationZSlider->setRange(-18000, 18000);
   connect(rotationZSlider, &QSlider::valueChanged, this,
           &MainWindow::on_rotationZSlider_valueChanged);
   connect(rotationZSlider, &QSlider::sliderReleased, this,
@@ -86,21 +90,21 @@ void MainWindow::rotation_setup() {
 
 void MainWindow::move_setup() {
   moveXSlider = new QSlider(Qt::Horizontal);
-  moveXSlider->setRange(-180, 180);
+  moveXSlider->setRange(-10000, 10000);
   connect(moveXSlider, &QSlider::valueChanged, this,
           &MainWindow::on_moveXSlider_valueChanged);
   connect(moveXSlider, &QSlider::sliderReleased, this,
           &MainWindow::on_transformSlider_sliderReleased);
 
   moveYSlider = new QSlider(Qt::Horizontal);
-  moveYSlider->setRange(-180, 180);
+  moveYSlider->setRange(-10000, 10000);
   connect(moveYSlider, &QSlider::valueChanged, this,
           &MainWindow::on_moveYSlider_valueChanged);
   connect(moveYSlider, &QSlider::sliderReleased, this,
           &MainWindow::on_transformSlider_sliderReleased);
 
   moveZSlider = new QSlider(Qt::Horizontal);
-  moveZSlider->setRange(-180, 180);
+  moveZSlider->setRange(-10000, 10000);
   connect(moveZSlider, &QSlider::valueChanged, this,
           &MainWindow::on_moveZSlider_valueChanged);
   connect(moveZSlider, &QSlider::sliderReleased, this,
@@ -130,7 +134,7 @@ void MainWindow::move_setup() {
 
 void MainWindow::scale_setup() {
   scaleSlider = new QSlider(Qt::Horizontal);
-  scaleSlider->setRange(-180, 180);
+  scaleSlider->setRange(-50, 50);
   connect(scaleSlider, &QSlider::valueChanged, this,
           &MainWindow::on_scaleSlider_valueChanged);
   connect(scaleSlider, &QSlider::sliderReleased, this,
@@ -268,31 +272,32 @@ void MainWindow::on_loadButton_clicked() {
 void MainWindow::on_rotationXSlider_valueChanged(int value) {
   Logger::instance().log("rotate x slider");
   CommandManager::instance().combineCommand(
-      new RotateCommand(v, value - curr_rotateX, 0, 0, true));
-  spinBoxSetValueMuted(rotationXSpinBox, value);
+      new RotateCommand(v, value - curr_rotateX, 0, 0));
+  spinBoxSetValueMuted(rotationXSpinBox, value / 100);
   curr_rotateX = value;
 }
 
 void MainWindow::on_rotationYSlider_valueChanged(int value) {
   Logger::instance().log("rotate y slider");
   CommandManager::instance().combineCommand(
-      new RotateCommand(v, 0, value - curr_rotateY, 0, true));
-  spinBoxSetValueMuted(rotationYSpinBox, value);
+      new RotateCommand(v, 0, value - curr_rotateY, 0));
+  spinBoxSetValueMuted(rotationYSpinBox, value / 100);
   curr_rotateY = value;
 }
 
 void MainWindow::on_rotationZSlider_valueChanged(int value) {
   Logger::instance().log("rotate z slider");
   CommandManager::instance().combineCommand(
-      new RotateCommand(v, 0, 0, value - curr_rotateZ, true));
-  spinBoxSetValueMuted(rotationZSpinBox, value);
+      new RotateCommand(v, 0, 0, value - curr_rotateZ));
+  spinBoxSetValueMuted(rotationZSpinBox, value / 100);
   curr_rotateZ = value;
 }
 
 void MainWindow::on_rotationXSpinBox_valueChanged(int value) {
   Logger::instance().log("rotate x spin");
+  value *= 100;
   CommandManager::instance().combineCommand(
-      new RotateCommand(v, value - curr_rotateX, 0, 0, true));
+      new RotateCommand(v, value - curr_rotateX, 0, 0));
   curr_rotateX = value;
 
   sliderSetValueMuted(rotationXSlider, value);
@@ -300,8 +305,9 @@ void MainWindow::on_rotationXSpinBox_valueChanged(int value) {
 
 void MainWindow::on_rotationYSpinBox_valueChanged(int value) {
   Logger::instance().log("rotate y spin");
+  value *= 100;
   CommandManager::instance().combineCommand(
-      new RotateCommand(v, 0, value - curr_rotateY, 0, true));
+      new RotateCommand(v, 0, value - curr_rotateY, 0));
   curr_rotateY = value;
 
   sliderSetValueMuted(rotationYSlider, value);
@@ -309,68 +315,92 @@ void MainWindow::on_rotationYSpinBox_valueChanged(int value) {
 
 void MainWindow::on_rotationZSpinBox_valueChanged(int value) {
   Logger::instance().log("rotate z spin");
+  value *= 100;
   CommandManager::instance().combineCommand(
-      new RotateCommand(v, 0, 0, value - curr_rotateZ, true));
+      new RotateCommand(v, 0, 0, value - curr_rotateZ));
   curr_rotateZ = value;
 
   sliderSetValueMuted(rotationZSlider, value);
 }
 
+void MainWindow::on_viewer_mouseRotate(int x, int y) {
+    Logger::instance().log("sync rotate interface " + QString::number(x) + " " + QString::number(y));
+  curr_rotateX = (curr_rotateX + x) % 36000;
+  curr_rotateY = (curr_rotateY + y) % 36000;
+  if (abs(curr_rotateX) > 18000) curr_rotateX = (36000 - abs(curr_rotateX)) * NEG_SIGN(curr_rotateX);
+  if (abs(curr_rotateY) > 18000) curr_rotateY = (36000 - abs(curr_rotateY)) * NEG_SIGN(curr_rotateY);
+
+  sliderSetValueMuted(rotationXSlider, curr_rotateX);
+  sliderSetValueMuted(rotationYSlider, curr_rotateY);
+  spinBoxSetValueMuted(rotationXSpinBox, curr_rotateX / 100);
+  spinBoxSetValueMuted(rotationYSpinBox, curr_rotateY / 100);
+}
+
 void MainWindow::on_moveXSlider_valueChanged(int value) {
   Logger::instance().log("move x slider");
   CommandManager::instance().combineCommand(
-      new MoveCommand(v, value - curr_moveX, 0, 0, true));
-  spinBoxSetValueMuted(moveXSpinBox, value);
+      new MoveCommand(v, value - curr_moveX, 0, 0));
+  spinBoxSetValueMuted(moveXSpinBox, value / 100);
   curr_moveX = value;
 }
 
 void MainWindow::on_moveYSlider_valueChanged(int value) {
   Logger::instance().log("move y slider");
   CommandManager::instance().combineCommand(
-      new MoveCommand(v, 0, value - curr_moveY, 0, true));
-  spinBoxSetValueMuted(moveYSpinBox, value);
+      new MoveCommand(v, 0, value - curr_moveY, 0));
+  spinBoxSetValueMuted(moveYSpinBox, value / 100);
   curr_moveY = value;
 }
 
 void MainWindow::on_moveZSlider_valueChanged(int value) {
   Logger::instance().log("move z slider");
   CommandManager::instance().combineCommand(
-      new MoveCommand(v, 0, 0, value - curr_moveZ, true));
-  spinBoxSetValueMuted(moveZSpinBox, value);
+      new MoveCommand(v, 0, 0, value - curr_moveZ));
+  spinBoxSetValueMuted(moveZSpinBox, value / 100);
   curr_moveZ = value;
 }
 
 void MainWindow::on_moveXSpinBox_valueChanged(int value) {
   Logger::instance().log("move x spin");
+  value *= 100;
   CommandManager::instance().combineCommand(
-      new MoveCommand(v, value - curr_moveX, 0, 0, true));
+      new MoveCommand(v, value - curr_moveX, 0, 0));
   curr_moveX = value;
 
-  sliderSetValueMuted(moveXSlider, (value < -180)  ? -180
-                                   : (value > 180) ? 180
-                                                   : value);
+  sliderSetValueMuted(moveXSlider, value);
 }
 
 void MainWindow::on_moveYSpinBox_valueChanged(int value) {
   Logger::instance().log("move y spin");
+  value *= 100;
   CommandManager::instance().combineCommand(
-      new MoveCommand(v, 0, value - curr_moveY, 0, true));
+      new MoveCommand(v, 0, value - curr_moveY, 0));
   curr_moveY = value;
 
-  sliderSetValueMuted(moveYSlider, (value < -180)  ? -180
-                                   : (value > 180) ? 180
-                                                   : value);
+  sliderSetValueMuted(moveYSlider, value);
 }
 
 void MainWindow::on_moveZSpinBox_valueChanged(int value) {
   Logger::instance().log("move z spin");
+  value *= 100;
   CommandManager::instance().combineCommand(
-      new MoveCommand(v, 0, 0, value - curr_moveZ, true));
+      new MoveCommand(v, 0, 0, value - curr_moveZ));
   curr_moveZ = value;
 
-  sliderSetValueMuted(moveZSlider, (value < -180)  ? -180
-                                   : (value > 180) ? 180
-                                                   : value);
+  sliderSetValueMuted(moveZSlider, value);
+}
+
+void MainWindow::on_viewer_mouseMove(int x, int y) {
+    Logger::instance().log("sync move interface" + QString::number(x) + " " + QString::number(y));
+    curr_moveX += x;
+    Logger::instance().log("curr_moveX = " + QString::number(curr_moveX));
+    curr_moveY += y;
+    Logger::instance().log("curr_moveY = " + QString::number(curr_moveY));
+
+    sliderSetValueMuted(moveXSlider, curr_moveX);
+    sliderSetValueMuted(moveYSlider, curr_moveY);
+    spinBoxSetValueMuted(moveXSpinBox, curr_moveX / 100);
+    spinBoxSetValueMuted(moveYSpinBox, curr_moveY / 100);
 }
 
 void MainWindow::on_spinBox_focusLost() { CommandManager::instance().combinedCommandFinished(); }
@@ -378,7 +408,7 @@ void MainWindow::on_spinBox_focusLost() { CommandManager::instance().combinedCom
 void MainWindow::on_scaleSlider_valueChanged(int value) {
   Logger::instance().log("scale slider");
   CommandManager::instance().combineCommand(
-      new ScaleCommand(v, value - curr_scale, true));
+      new ScaleCommand(v, value - curr_scale));
 
   curr_scale = value;
 }
@@ -397,6 +427,18 @@ void MainWindow::on_decreaseScaleButton_clicked() {
   Logger::instance().log("- scale");
   scaleSlider->setValue(scaleSlider->value() - 1);
   on_transformSlider_sliderReleased();
+}
+
+void MainWindow::on_resetScaleAction_triggered() {
+    CommandManager::instance().combinedCommandFinished();
+    scaleSlider->setValue(0);
+    on_transformSlider_sliderReleased();
+}
+
+void MainWindow::on_viewer_wheelScale(int scale) {
+    Logger::instance().log("sync scale interface" + QString::number(scale));
+    curr_scale += scale;
+    sliderSetValueMuted(scaleSlider, curr_scale);
 }
 
 void MainWindow::on_backgroundColorButton_clicked() {
@@ -574,38 +616,44 @@ void MainWindow::undo_UI(ICommand *command, bool undo) {
 
     if (x) {
       curr_rotateX = undo ? curr_rotateX - x : curr_rotateX + x;
+      curr_rotateX %= 36000;
+      if (abs(curr_rotateX) > 18000) curr_rotateX = (36000 - abs(curr_rotateX)) * NEG_SIGN(curr_rotateX);
       sliderSetValueMuted(rotationXSlider, curr_rotateX);
-      spinBoxSetValueMuted(rotationXSpinBox, curr_rotateX);
-    } else if (y) {
+      spinBoxSetValueMuted(rotationXSpinBox, curr_rotateX / 100);
+    }
+    if (y) {
       curr_rotateY = undo ? curr_rotateY - y : curr_rotateY + y;
+      Logger::instance().log("curr rotate y = " + QString::number(curr_rotateY));
+      curr_rotateY %= 36000;
+      if (abs(curr_rotateY) > 18000) curr_rotateY = (36000 - abs(curr_rotateY)) * NEG_SIGN(curr_rotateY);
+      Logger::instance().log("curr rotate y = " + QString::number(curr_rotateY));
       sliderSetValueMuted(rotationYSlider, curr_rotateY);
-      spinBoxSetValueMuted(rotationYSpinBox, curr_rotateY);
-    } else {
+      spinBoxSetValueMuted(rotationYSpinBox, curr_rotateY / 100);
+    }
+    if (z) {
       curr_rotateZ = undo ? curr_rotateZ - z : curr_rotateZ + z;
+      curr_rotateZ %= 36000;
+      if (abs(curr_rotateZ) > 18000) curr_rotateZ = (36000 - abs(curr_rotateZ)) * NEG_SIGN(curr_rotateZ);
       sliderSetValueMuted(rotationZSlider, curr_rotateZ);
-      spinBoxSetValueMuted(rotationZSpinBox, curr_rotateZ);
+      spinBoxSetValueMuted(rotationZSpinBox, curr_rotateZ / 100);
     }
   } else if (dynamic_cast<MoveCommand *>(command)) {
     auto [x, y, z] = dynamic_cast<MoveCommand *>(command)->get_shift();
 
     if (x) {
       curr_moveX = undo ? curr_moveX - x : curr_moveX + x;
-      sliderSetValueMuted(moveXSlider, (curr_moveX < -180)  ? -180
-                                       : (curr_moveX > 180) ? 180
-                                                            : curr_moveX);
-      spinBoxSetValueMuted(moveXSpinBox, curr_moveX);
-    } else if (y) {
+      sliderSetValueMuted(moveXSlider, curr_moveX);
+      spinBoxSetValueMuted(moveXSpinBox, curr_moveX / 100);
+    }
+    if (y) {
       curr_moveY = undo ? curr_moveY - y : curr_moveY + y;
-      sliderSetValueMuted(moveYSlider, (curr_moveY < -180)  ? -180
-                                       : (curr_moveY > 180) ? 180
-                                                            : curr_moveY);
-      spinBoxSetValueMuted(moveYSpinBox, curr_moveY);
-    } else {
+      sliderSetValueMuted(moveYSlider, curr_moveY);
+      spinBoxSetValueMuted(moveYSpinBox, curr_moveY / 100);
+    }
+    if (z) {
       curr_moveZ = undo ? curr_moveZ - z : curr_moveZ + z;
-      sliderSetValueMuted(moveZSlider, (curr_moveZ < -180)  ? -180
-                                       : (curr_moveZ > 180) ? 180
-                                                            : curr_moveZ);
-      spinBoxSetValueMuted(moveZSpinBox, curr_moveZ);
+      sliderSetValueMuted(moveZSlider, curr_moveZ);
+      spinBoxSetValueMuted(moveZSpinBox, curr_moveZ / 100);
     }
   } else if (dynamic_cast<ScaleCommand *>(command)) {
     double scale = dynamic_cast<ScaleCommand *>(command)->get_scale();
@@ -662,11 +710,18 @@ void MainWindow::setup_shortcuts() {
   connect(decreaseScaleAction, &QAction::triggered, this,
           &MainWindow::on_decreaseScaleButton_clicked);
 
+  QAction *resetScaleAction = new QAction(this);
+  resetScaleAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_0));
+
+  connect(resetScaleAction, &QAction::triggered, this,
+          &MainWindow::on_resetScaleAction_triggered);
+
   addAction(screenshotAction);
   addAction(gifAction);
   addAction(loadAction);
   addAction(increaseScaleAction);
   addAction(decreaseScaleAction);
+  addAction(resetScaleAction);
 }
 
 void MainWindow::save_settings() {

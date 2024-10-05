@@ -21,6 +21,8 @@
 #define ROTATE true
 #define MOVE false
 
+#define NEG_SIGN(x) ((x) <= 0 ? 1 : -1)
+
 namespace s21 {
 
 class MainWindow;
@@ -66,6 +68,7 @@ class MainWindow : public QMainWindow {
   void on_transformSlider_sliderReleased();
   void on_increaseScaleButton_clicked();
   void on_decreaseScaleButton_clicked();
+  void on_resetScaleAction_triggered();
   void on_backgroundColorButton_clicked();
   void on_vertexColorButton_clicked();
   void on_edgesColorButton_clicked();
@@ -78,6 +81,9 @@ class MainWindow : public QMainWindow {
   void on_gifButton_clicked();
   void on_timer_timeout();
   void on_gifAction_triggered();
+  void on_viewer_mouseRotate(int x, int y);
+  void on_viewer_mouseMove(int x, int y);
+  void on_viewer_wheelScale(int scale);
 
  protected:
   friend class MySpinBox;

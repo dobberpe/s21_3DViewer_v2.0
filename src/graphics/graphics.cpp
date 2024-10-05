@@ -33,16 +33,19 @@ void Viewer::initializeGL() { glEnable(GL_DEPTH_TEST); }
 
 void Viewer::mouseMoveEvent(QMouseEvent *event) {
   new_pos = QPoint(event->globalPosition().toPoint() - cur_pos);
+    Logger::instance().log("new pos " + QString::number(new_pos.x()) + " " + QString::number(new_pos.y()));
   if (event->buttons() & Qt::LeftButton) {
     Logger::instance().log("mouse rotate");
     CommandManager::instance().executeCommand(
-        new RotateCommand(this, new_pos.y() * 0.01,
-                          new_pos.x() * 0.01, 0, false));
+        new RotateCommand(this, new_pos.y(),
+                          new_pos.x(), 0));
+    emit mouseRotate(new_pos.y(), new_pos.x());
   } else if (event->buttons() & Qt::RightButton) {
     Logger::instance().log("mouse move");
     CommandManager::instance().combineCommand(
-        new MoveCommand(this, new_pos.x() * 0.01,
-                        -new_pos.y() * 0.01, 0, false));
+        new MoveCommand(this, new_pos.x(),
+                        -new_pos.y(), 0));
+    emit mouseMove(new_pos.x(), -new_pos.y());
   }
 }
 
@@ -55,7 +58,8 @@ void Viewer::mouseReleaseEvent(QMouseEvent *event) {
 
 void Viewer::wheelEvent(QWheelEvent *event) {
   CommandManager::instance().combineCommand(
-      new ScaleCommand(this, event->angleDelta().y(), false));
+      new ScaleCommand(this, event->angleDelta().y() / 120));
+    emit wheelScale(event->angleDelta().y() / 120);
 }
 
 void Viewer::mousePressEvent(QMouseEvent *event) {

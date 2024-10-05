@@ -43,6 +43,11 @@ class Viewer : public QOpenGLWidget {
   int line_type = SOLID_LINE;        // DASH_LINE
   int vertex_type = SQUARE;          // NONE, ROUND
 
+ signals:
+  void mouseRotate(int x, int y);
+  void mouseMove(int x, int y);
+  void wheelScale(int s);
+
  protected:
   void initializeGL() override;
   void paintGL() override;
