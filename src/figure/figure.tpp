@@ -104,7 +104,7 @@ inline void Figure::scale_figure(double scale_coef) {
       vertex[i * 3 + x] *= scale_coef;
       vertex[i * 3 + y] *= scale_coef;
       vertex[i * 3 + z] *= scale_coef;
-      calc_min_max(i);
+      // calc_min_max(i);
     }
   }
 }
@@ -196,7 +196,7 @@ inline void Figure::move_() {
     vertex[i * 3 + x] = vertex[i * 3 + x] * move_matrix[0] + move_matrix[12];
     vertex[i * 3 + y] = vertex[i * 3 + y] * move_matrix[5] + move_matrix[13];
     vertex[i * 3 + z] = vertex[i * 3 + z] * move_matrix[10] + move_matrix[14];
-    calc_min_max(i);
+    // calc_min_max(i);
   }
 }
 
@@ -232,7 +232,7 @@ inline void Figure::rotate_(int crd) {
     for (int j = 0; j < 3; ++j) {
       vertex[i * 3 + j] = tmp[j];
     }
-    calc_min_max(i);
+    // calc_min_max(i);
   }
 }
 
