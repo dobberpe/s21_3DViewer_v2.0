@@ -71,7 +71,7 @@ gcov_report: clean
 	@lcov -t "tests" -o tests.info -c -d . -rc lcov_branch_coverage=1 \
 								--exclude "$(PWD)/tests/*" \
 								--exclude "/usr/*" \
-								--exclude "/11/*" \
+								--exclude "/11/*"
 	@genhtml -o report tests.info -rc lcov_branch_coverage=1
 	@rm -rf *.gcno *.gcda *.gcov
 
