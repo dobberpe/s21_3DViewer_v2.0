@@ -6,7 +6,8 @@ using namespace s21;
 
 ICommand::~ICommand() {}
 
-RotateCommand::RotateCommand(Viewer *v_, double x_, double y_, double z_) : v(v_), x(x_), y(y_), z(z_) {
+RotateCommand::RotateCommand(Viewer *v_, double x_, double y_, double z_)
+    : v(v_), x(x_), y(y_), z(z_) {
   Logger::instance().log("created rotate " + QString::number(x) + " " +
                          QString::number(y) + " " + QString::number(z));
 }
@@ -78,8 +79,7 @@ tuple<double, double, double> MoveCommand::get_shift() const {
   return make_tuple(x, y, z);
 }
 
-ScaleCommand::ScaleCommand(Viewer *v_, double s)
-    : v(v_), scale(s) {
+ScaleCommand::ScaleCommand(Viewer *v_, double s) : v(v_), scale(s) {
   Logger::instance().log("created scale " + QString::number(scale));
 }
 

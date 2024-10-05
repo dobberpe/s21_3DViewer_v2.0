@@ -16,7 +16,7 @@ inline Figure::Figure()
       z_max(0),
       move_matrix(16, 0.0),
       rotation_matrix(9, 0.0),
-      move_coefficient(0) {};
+      move_coefficient(0){};
 
 /// @brief Creates an instance of Figure in case the figure is empty
 /// @return an instance of Figure
@@ -79,7 +79,8 @@ inline void Figure::add_polygon(const Polygon& polygon) {
 
 inline void Figure::move_figure(double x_factor, double y_factor,
                                 double z_factor) {
-  fill_move_matrix(move_coefficient * x_factor, move_coefficient * y_factor, move_coefficient * z_factor);
+  fill_move_matrix(move_coefficient * x_factor, move_coefficient * y_factor,
+                   move_coefficient * z_factor);
   move_();
 }
 

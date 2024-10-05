@@ -56,7 +56,7 @@ class Figure {
 
  private:
   Figure();
-  ~Figure() {};
+  ~Figure(){};
 
   void fill_move_matrix(double x_factor, double y_factor, double z_factor);
 

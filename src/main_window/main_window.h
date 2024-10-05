@@ -28,19 +28,19 @@ namespace s21 {
 class MainWindow;
 
 class MySpinBox : public QSpinBox {
-    Q_OBJECT
-public:
-    MySpinBox(MainWindow *w, QWidget *parent = nullptr);
+  Q_OBJECT
+ public:
+  MySpinBox(MainWindow *w, QWidget *parent = nullptr);
 
-signals:
-    void focusLost();
+ signals:
+  void focusLost();
 
-protected:
-    void keyPressEvent(QKeyEvent *event) override;
-    void focusOutEvent(QFocusEvent *event) override;
+ protected:
+  void keyPressEvent(QKeyEvent *event) override;
+  void focusOutEvent(QFocusEvent *event) override;
 
-private:
-    MainWindow *window;
+ private:
+  MainWindow *window;
 };
 
 class MainWindow : public QMainWindow {
@@ -105,6 +105,10 @@ class MainWindow : public QMainWindow {
   void spinBoxSetValueMuted(QSpinBox *spinBox, int value);
   void comboBoxSetValueMuted(QComboBox *comboBox, int value);
   void undo_UI(ICommand *command, bool undo);
+  bool undo_transform(ICommand *command, bool undo);
+  void undo_appearance(ICommand *command);
+  void undo_rotateUI(int &curr_rotate, QSlider *slider, MySpinBox *spinbox);
+  void undo_moveUI(int &curr_move, QSlider *slider, MySpinBox *spinbox);
 
   Viewer *v;
 

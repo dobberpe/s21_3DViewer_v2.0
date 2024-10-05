@@ -324,11 +324,14 @@ void MainWindow::on_rotationZSpinBox_valueChanged(int value) {
 }
 
 void MainWindow::on_viewer_mouseRotate(int x, int y) {
-    Logger::instance().log("sync rotate interface " + QString::number(x) + " " + QString::number(y));
+  Logger::instance().log("sync rotate interface " + QString::number(x) + " " +
+                         QString::number(y));
   curr_rotateX = (curr_rotateX + x) % 36000;
   curr_rotateY = (curr_rotateY + y) % 36000;
-  if (abs(curr_rotateX) > 18000) curr_rotateX = (36000 - abs(curr_rotateX)) * NEG_SIGN(curr_rotateX);
-  if (abs(curr_rotateY) > 18000) curr_rotateY = (36000 - abs(curr_rotateY)) * NEG_SIGN(curr_rotateY);
+  if (abs(curr_rotateX) > 18000)
+    curr_rotateX = (36000 - abs(curr_rotateX)) * NEG_SIGN(curr_rotateX);
+  if (abs(curr_rotateY) > 18000)
+    curr_rotateY = (36000 - abs(curr_rotateY)) * NEG_SIGN(curr_rotateY);
 
   sliderSetValueMuted(rotationXSlider, curr_rotateX);
   sliderSetValueMuted(rotationYSlider, curr_rotateY);
@@ -391,19 +394,22 @@ void MainWindow::on_moveZSpinBox_valueChanged(int value) {
 }
 
 void MainWindow::on_viewer_mouseMove(int x, int y) {
-    Logger::instance().log("sync move interface" + QString::number(x) + " " + QString::number(y));
-    curr_moveX += x;
-    Logger::instance().log("curr_moveX = " + QString::number(curr_moveX));
-    curr_moveY += y;
-    Logger::instance().log("curr_moveY = " + QString::number(curr_moveY));
+  Logger::instance().log("sync move interface" + QString::number(x) + " " +
+                         QString::number(y));
+  curr_moveX += x;
+  Logger::instance().log("curr_moveX = " + QString::number(curr_moveX));
+  curr_moveY += y;
+  Logger::instance().log("curr_moveY = " + QString::number(curr_moveY));
 
-    sliderSetValueMuted(moveXSlider, curr_moveX);
-    sliderSetValueMuted(moveYSlider, curr_moveY);
-    spinBoxSetValueMuted(moveXSpinBox, curr_moveX / 100);
-    spinBoxSetValueMuted(moveYSpinBox, curr_moveY / 100);
+  sliderSetValueMuted(moveXSlider, curr_moveX);
+  sliderSetValueMuted(moveYSlider, curr_moveY);
+  spinBoxSetValueMuted(moveXSpinBox, curr_moveX / 100);
+  spinBoxSetValueMuted(moveYSpinBox, curr_moveY / 100);
 }
 
-void MainWindow::on_spinBox_focusLost() { CommandManager::instance().combinedCommandFinished(); }
+void MainWindow::on_spinBox_focusLost() {
+  CommandManager::instance().combinedCommandFinished();
+}
 
 void MainWindow::on_scaleSlider_valueChanged(int value) {
   Logger::instance().log("scale slider");
@@ -430,15 +436,15 @@ void MainWindow::on_decreaseScaleButton_clicked() {
 }
 
 void MainWindow::on_resetScaleAction_triggered() {
-    CommandManager::instance().combinedCommandFinished();
-    scaleSlider->setValue(0);
-    on_transformSlider_sliderReleased();
+  CommandManager::instance().combinedCommandFinished();
+  scaleSlider->setValue(0);
+  on_transformSlider_sliderReleased();
 }
 
 void MainWindow::on_viewer_wheelScale(int scale) {
-    Logger::instance().log("sync scale interface" + QString::number(scale));
-    curr_scale += scale;
-    sliderSetValueMuted(scaleSlider, curr_scale);
+  Logger::instance().log("sync scale interface" + QString::number(scale));
+  curr_scale += scale;
+  sliderSetValueMuted(scaleSlider, curr_scale);
 }
 
 void MainWindow::on_backgroundColorButton_clicked() {
@@ -611,56 +617,60 @@ void MainWindow::keyPressEvent(QKeyEvent *event) {
 
 void MainWindow::undo_UI(ICommand *command, bool undo) {
   Logger::instance().log("undo ui");
+  if (!undo_transform(command, undo)) undo_appearance(command);
+}
+
+bool MainWindow::undo_transform(ICommand *command, bool undo) {
+  bool done = false;
+
   if (dynamic_cast<RotateCommand *>(command)) {
     auto [x, y, z] = dynamic_cast<RotateCommand *>(command)->get_angle();
 
     if (x) {
       curr_rotateX = undo ? curr_rotateX - x : curr_rotateX + x;
-      curr_rotateX %= 36000;
-      if (abs(curr_rotateX) > 18000) curr_rotateX = (36000 - abs(curr_rotateX)) * NEG_SIGN(curr_rotateX);
-      sliderSetValueMuted(rotationXSlider, curr_rotateX);
-      spinBoxSetValueMuted(rotationXSpinBox, curr_rotateX / 100);
+      undo_rotateUI(curr_rotateX, rotationXSlider, rotationXSpinBox);
     }
     if (y) {
       curr_rotateY = undo ? curr_rotateY - y : curr_rotateY + y;
-      Logger::instance().log("curr rotate y = " + QString::number(curr_rotateY));
-      curr_rotateY %= 36000;
-      if (abs(curr_rotateY) > 18000) curr_rotateY = (36000 - abs(curr_rotateY)) * NEG_SIGN(curr_rotateY);
-      Logger::instance().log("curr rotate y = " + QString::number(curr_rotateY));
-      sliderSetValueMuted(rotationYSlider, curr_rotateY);
-      spinBoxSetValueMuted(rotationYSpinBox, curr_rotateY / 100);
+      undo_rotateUI(curr_rotateY, rotationYSlider, rotationYSpinBox);
     }
     if (z) {
       curr_rotateZ = undo ? curr_rotateZ - z : curr_rotateZ + z;
-      curr_rotateZ %= 36000;
-      if (abs(curr_rotateZ) > 18000) curr_rotateZ = (36000 - abs(curr_rotateZ)) * NEG_SIGN(curr_rotateZ);
-      sliderSetValueMuted(rotationZSlider, curr_rotateZ);
-      spinBoxSetValueMuted(rotationZSpinBox, curr_rotateZ / 100);
+      undo_rotateUI(curr_rotateZ, rotationZSlider, rotationZSpinBox);
     }
+
+    done = true;
   } else if (dynamic_cast<MoveCommand *>(command)) {
     auto [x, y, z] = dynamic_cast<MoveCommand *>(command)->get_shift();
 
     if (x) {
       curr_moveX = undo ? curr_moveX - x : curr_moveX + x;
-      sliderSetValueMuted(moveXSlider, curr_moveX);
-      spinBoxSetValueMuted(moveXSpinBox, curr_moveX / 100);
+      undo_moveUI(curr_moveX, moveXSlider, moveXSpinBox);
     }
     if (y) {
       curr_moveY = undo ? curr_moveY - y : curr_moveY + y;
-      sliderSetValueMuted(moveYSlider, curr_moveY);
-      spinBoxSetValueMuted(moveYSpinBox, curr_moveY / 100);
+      undo_moveUI(curr_moveY, moveYSlider, moveYSpinBox);
     }
     if (z) {
       curr_moveZ = undo ? curr_moveZ - z : curr_moveZ + z;
-      sliderSetValueMuted(moveZSlider, curr_moveZ);
-      spinBoxSetValueMuted(moveZSpinBox, curr_moveZ / 100);
+      undo_moveUI(curr_moveZ, moveZSlider, moveZSpinBox);
     }
+
+    done = true;
   } else if (dynamic_cast<ScaleCommand *>(command)) {
     double scale = dynamic_cast<ScaleCommand *>(command)->get_scale();
 
     curr_scale = undo ? curr_scale - scale : curr_scale + scale;
     sliderSetValueMuted(scaleSlider, curr_scale);
-  } else if (dynamic_cast<VertexSizeCommand *>(command))
+
+    done = true;
+  }
+
+  return done;
+}
+
+void MainWindow::undo_appearance(ICommand *command) {
+  if (dynamic_cast<VertexSizeCommand *>(command))
     sliderSetValueMuted(vertexSizeSlider,
                         dynamic_cast<VertexSizeCommand *>(command)->get_prev());
   else if (dynamic_cast<LineWidthCommand *>(command))
@@ -677,6 +687,21 @@ void MainWindow::undo_UI(ICommand *command, bool undo) {
   else if (dynamic_cast<LineTypeCommand *>(command))
     comboBoxSetValueMuted(edgesTypeComboBox,
                           dynamic_cast<LineTypeCommand *>(command)->get_type());
+}
+
+void MainWindow::undo_rotateUI(int &curr_rotate, QSlider *slider,
+                               MySpinBox *spinbox) {
+  curr_rotate %= 36000;
+  if (abs(curr_rotate) > 18000)
+    curr_rotate = (36000 - abs(curr_rotate)) * NEG_SIGN(curr_rotate);
+  sliderSetValueMuted(slider, curr_rotate);
+  spinBoxSetValueMuted(spinbox, curr_rotate / 100);
+}
+
+void MainWindow::undo_moveUI(int &curr_move, QSlider *slider,
+                             MySpinBox *spinbox) {
+  sliderSetValueMuted(slider, curr_move);
+  spinBoxSetValueMuted(spinbox, curr_move / 100);
 }
 
 void MainWindow::setup_shortcuts() {
@@ -965,18 +990,24 @@ void MainWindow::comboBoxSetValueMuted(QComboBox *comboBox, int value) {
   comboBox->blockSignals(false);
 }
 
-MySpinBox::MySpinBox(MainWindow *w, QWidget *parent) : QSpinBox(parent), window(w) {}
+MySpinBox::MySpinBox(MainWindow *w, QWidget *parent)
+    : QSpinBox(parent), window(w) {}
 
 void MySpinBox::keyPressEvent(QKeyEvent *event) {
-    Logger::instance().log("MySpinBox keyPressEvent");
-    if ((event->key() == Qt::Key_Z && event->modifiers() == Qt::ControlModifier) || (event->key() == Qt::Key_Y && event->modifiers() == Qt::ControlModifier) || (event->key() == Qt::Key_W && event->modifiers() == Qt::ControlModifier)) {
-        CommandManager::instance().combinedCommandFinished();
-        window->keyPressEvent(event);
-    }
-    else QSpinBox::keyPressEvent(event);
+  Logger::instance().log("MySpinBox keyPressEvent");
+  if ((event->key() == Qt::Key_Z &&
+       event->modifiers() == Qt::ControlModifier) ||
+      (event->key() == Qt::Key_Y &&
+       event->modifiers() == Qt::ControlModifier) ||
+      (event->key() == Qt::Key_W &&
+       event->modifiers() == Qt::ControlModifier)) {
+    CommandManager::instance().combinedCommandFinished();
+    window->keyPressEvent(event);
+  } else
+    QSpinBox::keyPressEvent(event);
 }
 
 void MySpinBox::focusOutEvent(QFocusEvent *event) {
-    QSpinBox::focusOutEvent(event);
-    emit focusLost();
+  QSpinBox::focusOutEvent(event);
+  emit focusLost();
 }
