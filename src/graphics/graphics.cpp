@@ -71,14 +71,14 @@ void Viewer::paintGL() {
   float aspect = static_cast<float>(width()) / static_cast<float>(height());
 
   if (projection_type == CENTRAL_PR) {
-    glFrustum(-aspect, aspect, -1.0f, 1.0f, 1.0f, move_coef * 8);
-    glTranslatef(0, 0, -move_coef / 2);
+    glFrustum(-aspect, aspect, -1.0f, 1.0f, 1.0f, move_coef * 80);
+    glTranslatef(0, 0, -move_coef * 1.2f);
   } else {
     float left = -move_coef * aspect;
     float right = move_coef * aspect;
     float bottom = -move_coef;
     float top = move_coef;
-    glOrtho(left, right, bottom, top, -move_coef, move_coef * 100);
+    glOrtho(left, right, bottom, top, -move_coef * 400, move_coef * 400);
   }
 
   glEnableClientState(GL_VERTEX_ARRAY);
