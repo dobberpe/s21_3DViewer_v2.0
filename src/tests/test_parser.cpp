@@ -7,7 +7,7 @@ TEST(Suite_parser, test_1) {
 
   EXPECT_EQ(res, true);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;
@@ -29,7 +29,7 @@ TEST(Suite_parser, test_2) {
 
   EXPECT_EQ(res, true);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;
@@ -51,7 +51,7 @@ TEST(Suite_parser, test_3) {
 
   EXPECT_EQ(res, true);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;
@@ -73,7 +73,7 @@ TEST(Suite_parser, wrong_test_1) {
 
   EXPECT_EQ(res, true);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;
@@ -95,7 +95,7 @@ TEST(Suite_parser, wrong_test_2) {
 
   EXPECT_EQ(res, true);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;
@@ -117,7 +117,7 @@ TEST(Suite_parser, wrong_test_3) {
 
   EXPECT_EQ(res, true);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;
@@ -139,7 +139,7 @@ TEST(Suite_parser, wrong_test_4) {
 
   EXPECT_EQ(res, true);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;
@@ -161,7 +161,7 @@ TEST(Suite_parser, wrong_test_5) {
 
   EXPECT_EQ(res, true);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;
@@ -183,7 +183,7 @@ TEST(Suite_parser, wrong_test_6) {
 
   EXPECT_EQ(res, true);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;
@@ -205,7 +205,7 @@ TEST(Suite_parser, wrong_test_7) {
 
   EXPECT_EQ(res, true);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;
@@ -227,7 +227,7 @@ TEST(Suite_parser, wrong_test_missing_file) {
 
   EXPECT_EQ(res, false);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
 
   const double* array;
   size_t n;

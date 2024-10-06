@@ -5,7 +5,7 @@
 #include <stack>
 #include <vector>
 
-#include "../graphics/graphics.h"
+#include "../graphics/graphics.hpp"
 
 #define MAX_HISTORY_SIZE 100000
 

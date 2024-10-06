@@ -88,7 +88,7 @@ format_check:
 	@echo "checking format..."
 
 cppcheck:
-	find . -name '*.cpp' -o -name '*.hpp' -o -name '*.tpp' -o -name '*.h' | xargs cppcheck --enable=all --suppress=missingIncludeSystem
+	find . -path './QtGifImage' -prune -o \( -name '*.cpp' -o -name '*.hpp' -o -name '*.tpp' -o -name '*.h' \) -print | xargs cppcheck --enable=all --suppress=missingIncludeSystem
 
 valgrind_tests: clean
 	$(CPP) $(CPPFLAGS) $(SOURCE_TEST) -o $(TEST) $(GFLAGS)

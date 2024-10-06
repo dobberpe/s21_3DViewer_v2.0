@@ -1,6 +1,6 @@
-#include "render_strategy.h"
+#include "render_strategy.hpp"
 
-#include "graphics.h"
+#include "graphics.hpp"
 
 using namespace s21;
 

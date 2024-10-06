@@ -14,9 +14,9 @@ inline bool Parser::parse_file_to_figure(const string& filePath) {
   bool success = true;
   figure.clear_figure();
   ifstream file(filePath);
-  string line;
 
   if (file.is_open()) {
+    string line;
     while (getline(file, line)) {
       line = strip_comment(line);
       if (line.compare(0, 2, "v ") == 0) {
@@ -38,7 +38,8 @@ inline bool Parser::parse_file_to_figure(const string& filePath) {
 inline string Parser::strip_comment(string& line) {
   size_t commentPos = line.find('#');
   if (commentPos != string::npos) {
-    line = line.substr(0, commentPos);
+    // line = line.substr(0, commentPos);
+    line.resize(commentPos);
   }
   return line;
 }
@@ -53,7 +54,6 @@ inline void Parser::read_vertex_line(const string& line) {
   size_t count = 0;
   string token;
   bool valid = true;
-  char* check;
 
   while (end != string_view::npos && valid && count < 5) {
     token = line.substr(start, end - start);

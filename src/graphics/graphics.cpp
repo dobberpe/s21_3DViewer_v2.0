@@ -1,7 +1,7 @@
-#include "graphics.h"
+#include "graphics.hpp"
 
-#include "command/command.h"
-#include "render_strategy.h"
+#include "../command/command.hpp"
+#include "render_strategy.hpp"
 
 using namespace s21;
 

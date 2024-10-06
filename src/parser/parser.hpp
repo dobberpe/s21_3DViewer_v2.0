@@ -1,7 +1,6 @@
 #ifndef __parser_HPP__
 #define __parser_HPP__
 #include <fstream>
-#include <iostream>
 #include <locale>
 #include <string>
 
@@ -25,7 +24,7 @@ class Parser {
   int num_slash = 0, prev_num_slash = 0;
   int pattern_size = 0, prev_pattern_size = 0;
 
-  char* check;
+  char* check = nullptr;
 
   string strip_comment(string& line);
 

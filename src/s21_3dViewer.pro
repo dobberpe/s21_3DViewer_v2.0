@@ -22,17 +22,17 @@ SOURCES += \
     logger/logger.cpp
 
 HEADERS += \
-    main_window/main_window.h \
-    command/command.h \
-    graphics/graphics.h \
-    graphics/render_strategy.h \
+    main_window/main_window.hpp \
+    command/command.hpp \
+    graphics/graphics.hpp \
+    graphics/render_strategy.hpp \
     controller/worker.hpp \
     controller/worker.tpp \
     figure/figure.hpp \
     figure/figure.tpp \
     parser/parser.hpp \
     parser/parser.tpp \
-    logger/logger.h
+    logger/logger.hpp
 
 # LIBS += -lGL -lGLU
 

@@ -1,5 +1,5 @@
-#ifndef VIEWER_H
-#define VIEWER_H
+#ifndef VIEWER_HPP
+#define VIEWER_HPP
 
 #include <QMouseEvent>
 #include <QOpenGLFunctions>
@@ -16,7 +16,7 @@
 #define SQUARE 2
 
 #include "../controller/worker.hpp"
-#include "../logger/logger.h"
+#include "../logger/logger.hpp"
 
 namespace s21 {
 
@@ -29,7 +29,7 @@ class Viewer : public QOpenGLWidget {
   Worker *worker;
   RenderStrategy *render_strategy = NULL;
 
-  Viewer(QWidget *parent = nullptr);
+  explicit Viewer(QWidget *parent = nullptr);
   ~Viewer();
   void loadModel(QString filename);
   void setRenderStrategy(RenderStrategy *strategy);

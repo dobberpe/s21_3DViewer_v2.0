@@ -17,7 +17,7 @@ TEST(Suite_worker, test_parser) {
   std::tie(polygon, n_p) = worker.get_polygon_array();
   EXPECT_EQ(n_p, 123U);
 
-  Figure& figure = Figure::get_instance();
+  const Figure& figure = Figure::get_instance();
   EXPECT_EQ(figure.get_move_coeff(), 1360);
 }
 

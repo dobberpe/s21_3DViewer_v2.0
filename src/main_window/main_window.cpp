@@ -1,7 +1,7 @@
-#include "main_window.h"
+#include "main_window.hpp"
 
-#include "../graphics/render_strategy.h"
-#include "logger/logger.h"
+#include "../graphics/render_strategy.hpp"
+#include "../logger/logger.hpp"
 
 using namespace s21;
 

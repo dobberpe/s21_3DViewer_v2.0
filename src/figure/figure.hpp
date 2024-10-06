@@ -11,7 +11,7 @@ typedef enum { x = 0, y, z, homo } crd;
 struct Polygon {
   vector<unsigned int> points;
   size_t n_points;
-  Polygon(const vector<unsigned int>& p_line)
+  explicit Polygon(const vector<unsigned int>& p_line)
       : points(p_line), n_points(p_line.size()) {}
 };
 

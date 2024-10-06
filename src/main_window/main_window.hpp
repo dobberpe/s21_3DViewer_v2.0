@@ -1,5 +1,5 @@
-#ifndef MAIN_WINDOW_H
-#define MAIN_WINDOW_H
+#ifndef MAIN_WINDOW_HPP
+#define MAIN_WINDOW_HPP
 
 #include <qgifimage.h>
 
@@ -15,8 +15,8 @@
 #include <QTimer>
 #include <QVBoxLayout>
 
-#include "command/command.h"
-#include "graphics/graphics.h"
+#include "../command/command.hpp"
+#include "../graphics/graphics.hpp"
 
 #define ROTATE true
 #define MOVE false

@@ -1,6 +1,6 @@
-#include "command.h"
+#include "command.hpp"
 
-#include "../logger/logger.h"
+#include "../logger/logger.hpp"
 
 using namespace s21;
 

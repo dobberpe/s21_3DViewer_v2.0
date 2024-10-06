@@ -1,4 +1,4 @@
-#include "logger.h"
+#include "logger.hpp"
 
 s21::Logger &s21::Logger::instance() {
   static Logger logger;

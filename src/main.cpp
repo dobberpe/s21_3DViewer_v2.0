@@ -1,6 +1,6 @@
 #include <QApplication>
 
-#include "main_window/main_window.h"
+#include "main_window/main_window.hpp"
 
 using namespace s21;
 
