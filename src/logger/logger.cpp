@@ -19,6 +19,7 @@ void s21::Logger::clearLog() {
   if (file.isOpen()) file.close();
 
   file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+  if (out) delete out;
   out = new QTextStream(&file);
   file.close();
 }
@@ -30,6 +31,7 @@ s21::Logger::Logger() {
     qWarning() << "Cannot open log file for writing";
   }
 
+  if (out) delete out;
   out = new QTextStream(&file);
 }
 
@@ -38,5 +40,5 @@ s21::Logger::~Logger() {
     file.close();
   }
 
-  delete out;
+  if (out) delete out;
 }

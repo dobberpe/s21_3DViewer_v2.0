@@ -467,6 +467,11 @@ void CommandManager::clear() {
 
 CommandManager::CommandManager() {}
 
+CommandManager::~CommandManager() {
+  clearHistory();
+  clearUndoHistory();
+}
+
 void CommandManager::clearHistory() {
   Logger::instance().log("clear undo");
   while (!history.empty()) {

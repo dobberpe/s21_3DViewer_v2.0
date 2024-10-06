@@ -179,6 +179,7 @@ class CommandManager {
 
  private:
   CommandManager();
+  ~CommandManager();
   void clearHistory();
   void clearUndoHistory();
 
