@@ -16,7 +16,7 @@ inline Figure::Figure()
       z_max(0),
       move_matrix(16, 0.0),
       rotation_matrix(9, 0.0),
-      move_coefficient(0) {};
+      move_coefficient(0){};
 
 /// @brief Creates an instance of Figure in case the figure is empty
 /// @return an instance of Figure
