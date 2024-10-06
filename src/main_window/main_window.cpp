@@ -704,7 +704,7 @@ void MainWindow::undo_rotateUI(int &curr_rotate, QSlider *slider,
   spinBoxSetValueMuted(spinbox, curr_rotate / 100);
 }
 
-void MainWindow::undo_moveUI(int &curr_move, QSlider *slider,
+void MainWindow::undo_moveUI(const int &curr_move, QSlider *slider,
                              MySpinBox *spinbox) {
   sliderSetValueMuted(slider, curr_move);
   spinBoxSetValueMuted(spinbox, curr_move / 100);
